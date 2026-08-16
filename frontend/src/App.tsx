@@ -1,37 +1,65 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './hooks/AuthContext';
+import { ProtectedRoute } from './components/common/ProtectedRoute';
+import { PublicOnlyRoute } from './components/common/PublicOnlyRoute';
+import { AppLayout } from './layouts/AppLayout';
+import { AuthLayout } from './layouts/AuthLayout';
+
+import {
+  Landing,
+  Login,
+  Register,
+  ForgotPassword,
+  ResetPassword,
+  Dashboard,
+  Research,
+  ResearchProgress,
+  Report,
+  History,
+  EvidenceExplorer,
+  AskAI,
+} from './pages';
+
 function App() {
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
-      <section className="mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center px-6 text-center">
-        <div className="mb-6 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300">
-          AI-Powered Company Intelligence
-        </div>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public Landing Page */}
+          <Route path="/" element={<Landing />} />
 
-        <h1 className="text-5xl font-bold tracking-tight sm:text-6xl">
-          Vishleshan AI
-        </h1>
+          {/* Authentication Routes (Public Only) */}
+          <Route element={<PublicOnlyRoute />}>
+            <Route element={<AuthLayout />}>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+            </Route>
+          </Route>
 
-        <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-          Research, verify and analyze companies using evidence-backed
-          intelligence, trust analysis and recruitment risk signals.
-        </p>
+          {/* Password Reset Route (Supports Recovery Sessions and Public Links) */}
+          <Route element={<AuthLayout />}>
+            <Route path="/reset-password" element={<ResetPassword />} />
+          </Route>
 
-        <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-          <button
-            type="button"
-            className="rounded-xl bg-cyan-400 px-6 py-3 font-semibold text-slate-950 transition hover:bg-cyan-300"
-          >
-            Research a Company
-          </button>
+          {/* Protected Application Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<AppLayout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/research" element={<Research />} />
+              <Route path="/research/:runId" element={<ResearchProgress />} />
+              <Route path="/reports/:reportId" element={<Report />} />
+              <Route path="/history" element={<History />} />
+              <Route path="/evidence/:id" element={<EvidenceExplorer />} />
+              <Route path="/ask" element={<AskAI />} />
+            </Route>
+          </Route>
 
-          <button
-            type="button"
-            className="rounded-xl border border-slate-700 px-6 py-3 font-semibold text-slate-200 transition hover:bg-slate-800"
-          >
-            Explore Reports
-          </button>
-        </div>
-      </section>
-    </main>
+          {/* Catch-all Redirect */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

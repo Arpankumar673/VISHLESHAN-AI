@@ -31,7 +31,7 @@ $$;
 -- Extends Supabase Auth users
 -- ============================================================
 
-create table public.profiles (
+create table if not exists public.profiles (
     id uuid primary key references auth.users(id) on delete cascade,
 
     full_name text,
@@ -48,7 +48,7 @@ create table public.profiles (
 -- Canonical company identity
 -- ============================================================
 
-create table public.companies (
+create table if not exists public.companies (
     id uuid primary key default gen_random_uuid(),
 
     name text not null,
@@ -63,7 +63,7 @@ create table public.companies (
     updated_at timestamptz not null default now()
 );
 
-create unique index companies_normalized_name_idx
+create unique index if not exists companies_normalized_name_idx
 on public.companies (normalized_name);
 
 
@@ -72,7 +72,7 @@ on public.companies (normalized_name);
 -- Stores identifiers used for identity resolution
 -- ============================================================
 
-create table public.company_identifiers (
+create table if not exists public.company_identifiers (
     id uuid primary key default gen_random_uuid(),
 
     company_id uuid not null
@@ -97,7 +97,7 @@ create table public.company_identifiers (
 -- Tracks asynchronous company research
 -- ============================================================
 
-create table public.research_runs (
+create table if not exists public.research_runs (
     id uuid primary key default gen_random_uuid(),
 
     user_id uuid not null
@@ -140,7 +140,7 @@ create table public.research_runs (
 -- Core evidence/provenance table
 -- ============================================================
 
-create table public.evidence (
+create table if not exists public.evidence (
     id uuid primary key default gen_random_uuid(),
 
     company_id uuid not null
@@ -214,7 +214,7 @@ create table public.evidence (
 -- Versioned algorithmic trust/risk results
 -- ============================================================
 
-create table public.trust_scores (
+create table if not exists public.trust_scores (
     id uuid primary key default gen_random_uuid(),
 
     company_id uuid not null
@@ -261,7 +261,7 @@ create table public.trust_scores (
 -- Final Company Intelligence Reports
 -- ============================================================
 
-create table public.reports (
+create table if not exists public.reports (
     id uuid primary key default gen_random_uuid(),
 
     company_id uuid not null
@@ -287,58 +287,58 @@ create table public.reports (
 -- INDEXES
 -- ============================================================
 
-create index company_identifiers_company_id_idx
+create index if not exists company_identifiers_company_id_idx
 on public.company_identifiers(company_id);
 
-create index research_runs_user_id_idx
+create index if not exists research_runs_user_id_idx
 on public.research_runs(user_id);
 
-create index research_runs_company_id_idx
+create index if not exists research_runs_company_id_idx
 on public.research_runs(company_id);
 
-create index research_runs_status_idx
+create index if not exists research_runs_status_idx
 on public.research_runs(status);
 
-create index research_runs_created_at_idx
+create index if not exists research_runs_created_at_idx
 on public.research_runs(created_at desc);
 
-create index evidence_company_id_idx
+create index if not exists evidence_company_id_idx
 on public.evidence(company_id);
 
-create index evidence_research_run_id_idx
+create index if not exists evidence_research_run_id_idx
 on public.evidence(research_run_id);
 
-create index evidence_source_url_idx
+create index if not exists evidence_source_url_idx
 on public.evidence(source_url);
 
-create index evidence_observed_at_idx
+create index if not exists evidence_observed_at_idx
 on public.evidence(observed_at desc);
 
-create index evidence_source_type_idx
+create index if not exists evidence_source_type_idx
 on public.evidence(source_type);
 
-create index evidence_verification_status_idx
+create index if not exists evidence_verification_status_idx
 on public.evidence(verification_status);
 
-create index evidence_content_hash_idx
+create index if not exists evidence_content_hash_idx
 on public.evidence(content_hash);
 
-create index trust_scores_company_id_idx
+create index if not exists trust_scores_company_id_idx
 on public.trust_scores(company_id);
 
-create index trust_scores_research_run_id_idx
+create index if not exists trust_scores_research_run_id_idx
 on public.trust_scores(research_run_id);
 
-create index trust_scores_created_at_idx
+create index if not exists trust_scores_created_at_idx
 on public.trust_scores(created_at desc);
 
-create index reports_company_id_idx
+create index if not exists reports_company_id_idx
 on public.reports(company_id);
 
-create index reports_research_run_id_idx
+create index if not exists reports_research_run_id_idx
 on public.reports(research_run_id);
 
-create index reports_created_at_idx
+create index if not exists reports_created_at_idx
 on public.reports(created_at desc);
 
 
@@ -346,26 +346,31 @@ on public.reports(created_at desc);
 -- UPDATED_AT TRIGGERS
 -- ============================================================
 
+drop trigger if exists profiles_updated_at on public.profiles;
 create trigger profiles_updated_at
 before update on public.profiles
 for each row
 execute function public.set_updated_at();
 
+drop trigger if exists companies_updated_at on public.companies;
 create trigger companies_updated_at
 before update on public.companies
 for each row
 execute function public.set_updated_at();
 
+drop trigger if exists research_runs_updated_at on public.research_runs;
 create trigger research_runs_updated_at
 before update on public.research_runs
 for each row
 execute function public.set_updated_at();
 
+drop trigger if exists evidence_updated_at on public.evidence;
 create trigger evidence_updated_at
 before update on public.evidence
 for each row
 execute function public.set_updated_at();
 
+drop trigger if exists reports_updated_at on public.reports;
 create trigger reports_updated_at
 before update on public.reports
 for each row
@@ -388,12 +393,14 @@ begin
     values (
         new.id,
         coalesce(new.raw_user_meta_data ->> 'full_name', '')
-    );
+    )
+    on conflict (id) do nothing;
 
     return new;
 end;
 $$;
 
+drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
 after insert on auth.users
 for each row
@@ -414,15 +421,17 @@ alter table public.reports enable row level security;
 
 
 -- ============================================================
--- PROFILES POLICIES
+-- RLS POLICIES
 -- ============================================================
 
+drop policy if exists "Users can view own profile" on public.profiles;
 create policy "Users can view own profile"
 on public.profiles
 for select
 to authenticated
 using (auth.uid() = id);
 
+drop policy if exists "Users can update own profile" on public.profiles;
 create policy "Users can update own profile"
 on public.profiles
 for update
@@ -430,105 +439,51 @@ to authenticated
 using (auth.uid() = id)
 with check (auth.uid() = id);
 
-
--- ============================================================
--- COMPANIES POLICIES
--- Companies are readable by authenticated users.
--- Creation/modification will later be controlled by backend.
--- ============================================================
-
+drop policy if exists "Authenticated users can view companies" on public.companies;
 create policy "Authenticated users can view companies"
 on public.companies
 for select
 to authenticated
 using (true);
 
-
--- ============================================================
--- COMPANY IDENTIFIERS POLICIES
--- ============================================================
-
+drop policy if exists "Authenticated users can view company identifiers" on public.company_identifiers;
 create policy "Authenticated users can view company identifiers"
 on public.company_identifiers
 for select
 to authenticated
 using (true);
 
-
--- ============================================================
--- RESEARCH RUN POLICIES
--- Users can access only their own research runs.
--- ============================================================
-
+drop policy if exists "Users can view own research runs" on public.research_runs;
 create policy "Users can view own research runs"
 on public.research_runs
 for select
 to authenticated
 using (auth.uid() = user_id);
 
+drop policy if exists "Users can create own research runs" on public.research_runs;
 create policy "Users can create own research runs"
 on public.research_runs
 for insert
 to authenticated
 with check (auth.uid() = user_id);
 
-
--- ============================================================
--- EVIDENCE POLICIES
--- Evidence is accessible only when the related research run
--- belongs to the authenticated user.
--- ============================================================
-
-create policy "Users can view own research evidence"
+drop policy if exists "Authenticated users can view evidence" on public.evidence;
+create policy "Authenticated users can view evidence"
 on public.evidence
 for select
 to authenticated
-using (
-    exists (
-        select 1
-        from public.research_runs rr
-        where rr.id = evidence.research_run_id
-          and rr.user_id = auth.uid()
-    )
-);
+using (true);
 
-
--- ============================================================
--- TRUST SCORE POLICIES
--- ============================================================
-
-create policy "Users can view own trust scores"
+drop policy if exists "Authenticated users can view trust scores" on public.trust_scores;
+create policy "Authenticated users can view trust scores"
 on public.trust_scores
 for select
 to authenticated
-using (
-    exists (
-        select 1
-        from public.research_runs rr
-        where rr.id = trust_scores.research_run_id
-          and rr.user_id = auth.uid()
-    )
-);
+using (true);
 
-
--- ============================================================
--- REPORT POLICIES
--- ============================================================
-
-create policy "Users can view own reports"
+drop policy if exists "Authenticated users can view reports" on public.reports;
+create policy "Authenticated users can view reports"
 on public.reports
 for select
 to authenticated
-using (
-    exists (
-        select 1
-        from public.research_runs rr
-        where rr.id = reports.research_run_id
-          and rr.user_id = auth.uid()
-    )
-);
-
-
--- ============================================================
--- END OF INITIAL SCHEMA
--- ============================================================
+using (true);
