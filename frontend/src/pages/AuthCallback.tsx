@@ -22,6 +22,13 @@ export const AuthCallback: React.FC = () => {
       const hashParams = new URLSearchParams(hash.replace(/^#/, ''));
       const queryParams = new URLSearchParams(search);
 
+      // Check if this is a password recovery callback
+      const authType = hashParams.get('type') || queryParams.get('type');
+      if (authType === 'recovery') {
+        navigate(`/reset-password${window.location.hash || location.search}`, { replace: true });
+        return;
+      }
+
       const error = hashParams.get('error') || queryParams.get('error');
       const errorDescription =
         hashParams.get('error_description') || queryParams.get('error_description');

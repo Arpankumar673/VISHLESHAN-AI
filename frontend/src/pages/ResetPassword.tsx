@@ -38,46 +38,104 @@ export const ResetPassword: React.FC = () => {
   const [isInvalidLink, setIsInvalidLink] = useState(false);
   const [isCheckingLink, setIsCheckingLink] = useState(true);
 
-  // Check URL hash and session state on mount
+  // Check URL hash, search params, and session state on mount
   useEffect(() => {
+    let isMounted = true;
+
     const checkRecoverySession = async () => {
-      // Check for error parameters in URL hash (e.g. #error=access_denied&error_code=otp_expired)
+      // 1. Check for error parameters in URL hash (e.g. #error=access_denied&error_code=otp_expired)
       const hash = window.location.hash;
-      if (hash) {
-        const params = new URLSearchParams(hash.replace(/^#/, ''));
-        const error = params.get('error');
-        const errorCode = params.get('error_code');
-        if (error || errorCode) {
+      const search = location.search;
+
+      const hashParams = new URLSearchParams(hash.replace(/^#/, ''));
+      const searchParams = new URLSearchParams(search);
+
+      const error = hashParams.get('error') || searchParams.get('error');
+      const errorCode = hashParams.get('error_code') || searchParams.get('error_code');
+      if (error || errorCode) {
+        if (isMounted) {
           setIsInvalidLink(true);
           setIsCheckingLink(false);
-          return;
         }
-      }
-
-      // Check query params if any
-      const searchParams = new URLSearchParams(location.search);
-      if (searchParams.get('error') || searchParams.get('error_code')) {
-        setIsInvalidLink(true);
-        setIsCheckingLink(false);
         return;
       }
 
-      // Check if active Supabase session or recovery event exists
+      // 2. Handle PKCE code in query parameter if present
+      const code = searchParams.get('code');
+      if (code) {
+        try {
+          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+          if (!exchangeError) {
+            if (isMounted) {
+              setIsInvalidLink(false);
+              setIsCheckingLink(false);
+            }
+            return;
+          }
+        } catch {
+          // Fall through to standard session check
+        }
+      }
+
+      // 3. Check if active Supabase session exists
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        // If there is no session and no hash access token, the user navigated directly to /reset-password
-        if (!session && !hash.includes('access_token')) {
+        if (session) {
+          if (isMounted) {
+            setIsInvalidLink(false);
+            setIsCheckingLink(false);
+          }
+          return;
+        }
+
+        // If hash contains recovery tokens, Supabase is still parsing
+        if (hash.includes('access_token') || hash.includes('type=recovery')) {
+          return;
+        }
+
+        // No session and no tokens
+        if (isMounted) {
           setIsInvalidLink(true);
+          setIsCheckingLink(false);
         }
       } catch {
-        setIsInvalidLink(true);
-      } finally {
-        setIsCheckingLink(false);
+        if (isMounted) {
+          setIsInvalidLink(true);
+          setIsCheckingLink(false);
+        }
       }
     };
 
+    // Listen for auth state changes (especially PASSWORD_RECOVERY)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, newSession) => {
+        if (!isMounted) return;
+        if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && newSession)) {
+          setIsInvalidLink(false);
+          setIsCheckingLink(false);
+        }
+      }
+    );
+
     checkRecoverySession();
-  }, [location]);
+
+    const timeout = setTimeout(() => {
+      if (isMounted && isCheckingLink) {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          if (isMounted) {
+            setIsInvalidLink(!session);
+            setIsCheckingLink(false);
+          }
+        });
+      }
+    }, 2500);
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
+  }, [location, isCheckingLink]);
 
   // Compute password strength
   const calculateStrength = (pass: string): { level: PasswordStrength; score: number; label: string; color: string } => {
