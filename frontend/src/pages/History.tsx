@@ -69,7 +69,7 @@ export const History: React.FC = () => {
   });
 
   return (
-    <div className="space-y-8 animate-fade-in pb-12 text-[#181534]">
+    <div className="space-y-6 sm:space-y-8 animate-fade-in pb-12 text-[#181534]">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -85,17 +85,22 @@ export const History: React.FC = () => {
           </p>
         </div>
 
-        <Link to="/research">
-          <Button variant="primary" size="md" className="finnova-btn-primary px-6" leftIcon={<Search className="h-4 w-4" />}>
+        <Link to="/research" className="w-full sm:w-auto">
+          <Button
+            variant="primary"
+            size="md"
+            className="w-full sm:w-auto finnova-btn-primary px-6 justify-center"
+            leftIcon={<Search className="h-4 w-4" />}
+          >
             New Research Run
           </Button>
         </Link>
       </div>
 
-      {/* Filters and Search Bar (Finnova White Pill Card) */}
-      <div className="rounded-3xl bg-white border border-slate-200/80 p-4 shadow-sm">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="relative w-full sm:w-80">
+      {/* Filters and Search Bar */}
+      <div className="rounded-2xl sm:rounded-3xl bg-white border border-slate-200/80 p-4 sm:p-5 shadow-sm">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
+          <div className="relative w-full md:w-80">
             <input
               type="text"
               placeholder="Filter by company name..."
@@ -106,13 +111,13 @@ export const History: React.FC = () => {
             <Search className="absolute right-3.5 top-3 h-3.5 w-3.5 text-slate-400" />
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
             {(['all', 'completed', 'running', 'queued', 'failed'] as const).map((statusKey) => (
               <button
                 key={statusKey}
                 type="button"
                 onClick={() => setFilter(statusKey)}
-                className={`rounded-full px-3.5 py-1.5 text-xs font-bold capitalize transition-all ${
+                className={`rounded-full px-3 sm:px-3.5 py-1.5 text-xs font-bold capitalize transition-all ${
                   filter === statusKey
                     ? 'bg-[#5b5dfa] text-white shadow-xs'
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200/80'
@@ -125,7 +130,7 @@ export const History: React.FC = () => {
             <button
               type="button"
               onClick={handleRefresh}
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200/80 transition-all"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200/80 transition-all shrink-0 ml-auto sm:ml-0"
               title="Refresh"
             >
               <RefreshCw className="h-3.5 w-3.5" />
@@ -134,14 +139,14 @@ export const History: React.FC = () => {
         </div>
       </div>
 
-      {/* Runs Table Card */}
-      <div className="rounded-[32px] bg-white border border-slate-200/80 shadow-sm overflow-hidden">
+      {/* Runs Container */}
+      <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 shadow-sm overflow-hidden">
         {isLoading ? (
           <div className="p-6 space-y-4">
             <LoadingSkeleton variant="rect" count={4} />
           </div>
         ) : filteredRuns.length === 0 ? (
-          <div className="p-10">
+          <div className="p-8 sm:p-10">
             <EmptyState
               icon={<Search className="h-8 w-8 text-[#5b5dfa]" />}
               title="No records found"
@@ -153,85 +158,154 @@ export const History: React.FC = () => {
             />
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-[#181534]">
-              <thead className="bg-slate-50 border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                <tr>
-                  <th scope="col" className="px-6 py-4">Company</th>
-                  <th scope="col" className="px-6 py-4">Status</th>
-                  <th scope="col" className="px-6 py-4">Trust Score</th>
-                  <th scope="col" className="px-6 py-4">Risk Level</th>
-                  <th scope="col" className="px-6 py-4">Created</th>
-                  <th scope="col" className="px-6 py-4 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {filteredRuns.map((run) => (
-                  <tr key={run.id} className="hover:bg-slate-50/70 transition-colors">
-                    <td className="px-6 py-4 font-bold text-[#181534]">
-                      <div className="flex items-center gap-2.5">
-                        <Building2 className="h-4 w-4 text-[#5b5dfa] shrink-0" />
-                        <span className="truncate max-w-[200px]">
-                          {run.company?.name || 'Target Entity'}
-                        </span>
+          <>
+            {/* Desktop / Tablet Table View (md:table) */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-sm text-[#181534]">
+                <thead className="bg-slate-50 border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                  <tr>
+                    <th scope="col" className="px-6 py-4">Company</th>
+                    <th scope="col" className="px-6 py-4">Status</th>
+                    <th scope="col" className="px-6 py-4">Trust Score</th>
+                    <th scope="col" className="px-6 py-4">Risk Level</th>
+                    <th scope="col" className="px-6 py-4">Created</th>
+                    <th scope="col" className="px-6 py-4 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredRuns.map((run) => (
+                    <tr key={run.id} className="hover:bg-slate-50/70 transition-colors">
+                      <td className="px-6 py-4 font-bold text-[#181534]">
+                        <div className="flex items-center gap-2.5">
+                          <Building2 className="h-4 w-4 text-[#5b5dfa] shrink-0" />
+                          <span className="truncate max-w-[200px]">
+                            {run.company?.name || 'Target Entity'}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <StatusBadge
+                          status={
+                            run.status === 'completed'
+                              ? 'verified'
+                              : run.status === 'failed'
+                              ? 'conflicting'
+                              : 'unverified'
+                          }
+                          size="sm"
+                        />
+                      </td>
+                      <td className="px-6 py-4 font-mono text-xs">
+                        {run.trust_score?.score !== undefined ? (
+                          <span className="font-extrabold text-[#5b5dfa]">
+                            {run.trust_score.score.toFixed(1)} / 100
+                          </span>
+                        ) : (
+                          <span className="text-slate-400">—</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4">
+                        <RiskBadge
+                          level={run.trust_score?.risk_level || 'unknown'}
+                          size="sm"
+                        />
+                      </td>
+                      <td className="px-6 py-4 text-xs text-slate-500 font-medium">
+                        {new Date(run.created_at).toLocaleDateString(undefined, {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                        })}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <Link
+                          to={
+                            run.status === 'completed'
+                              ? `/reports/${run.id}`
+                              : `/research/${run.id}`
+                          }
+                        >
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            rightIcon={<ArrowRight className="h-3 w-3" />}
+                          >
+                            {run.status === 'completed' ? 'View Report' : 'Track'}
+                          </Button>
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile & Small Tablet Card Grid (md:hidden: 1-col on mobile, 2-col on sm) */}
+            <div className="md:hidden p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {filteredRuns.map((run) => (
+                <div
+                  key={run.id}
+                  className="p-4 sm:p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-3.5 flex flex-col justify-between"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-[#5b5dfa] font-bold text-xs">
+                        {(run.company?.name || 'C').charAt(0).toUpperCase()}
                       </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <StatusBadge
-                        status={
-                          run.status === 'completed'
-                            ? 'verified'
-                            : run.status === 'failed'
-                            ? 'conflicting'
-                            : 'unverified'
-                        }
-                        size="sm"
-                      />
-                    </td>
-                    <td className="px-6 py-4 font-mono text-xs">
-                      {run.trust_score?.score !== undefined ? (
-                        <span className="font-extrabold text-[#5b5dfa]">
-                          {run.trust_score.score.toFixed(1)} / 100
-                        </span>
-                      ) : (
-                        <span className="text-slate-400">—</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4">
-                      <RiskBadge
-                        level={run.trust_score?.risk_level || 'unknown'}
-                        size="sm"
-                      />
-                    </td>
-                    <td className="px-6 py-4 text-xs text-slate-500 font-medium">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-bold text-[#181534]">
+                          {run.company?.name || 'Target Entity'}
+                        </p>
+                        <p className="text-[11px] text-slate-400 font-mono">
+                          # RUN-{run.id.slice(0, 8)}
+                        </p>
+                      </div>
+                    </div>
+                    <StatusBadge
+                      status={
+                        run.status === 'completed'
+                          ? 'verified'
+                          : run.status === 'failed'
+                          ? 'conflicting'
+                          : 'unverified'
+                      }
+                      size="sm"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs bg-white p-3 rounded-xl border border-slate-200/70">
+                    <div>
+                      <span className="text-[10px] text-slate-400 font-bold uppercase block">Trust Score</span>
+                      <span className="font-extrabold text-[#5b5dfa]">
+                        {run.trust_score?.score !== undefined ? `${run.trust_score.score.toFixed(1)} / 100` : '—'}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 font-bold uppercase block">Risk Level</span>
+                      <RiskBadge level={run.trust_score?.risk_level || 'unknown'} size="sm" />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-1 border-t border-slate-200/60">
+                    <span className="text-xs text-slate-400 font-medium">
                       {new Date(run.created_at).toLocaleDateString(undefined, {
                         month: 'short',
                         day: 'numeric',
                         year: 'numeric',
                       })}
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <Link
-                        to={
-                          run.status === 'completed'
-                            ? `/reports/${run.id}`
-                            : `/research/${run.id}`
-                        }
-                      >
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          rightIcon={<ArrowRight className="h-3 w-3" />}
-                        >
-                          {run.status === 'completed' ? 'View Report' : 'Track'}
-                        </Button>
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    </span>
+                    <Link
+                      to={run.status === 'completed' ? `/reports/${run.id}` : `/research/${run.id}`}
+                    >
+                      <Button variant="secondary" size="sm" rightIcon={<ArrowRight className="h-3 w-3" />}>
+                        {run.status === 'completed' ? 'View Report' : 'Track'}
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>

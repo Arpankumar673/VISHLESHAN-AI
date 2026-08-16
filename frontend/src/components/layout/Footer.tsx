@@ -5,11 +5,11 @@ import { Logo } from '../ui/Logo';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="mt-auto border-t border-slate-200/80 bg-white text-slate-500 py-12">
+    <footer className="mt-auto border-t border-slate-200/80 bg-white text-slate-500 py-10 sm:py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* Platform Info */}
-          <div className="md:col-span-2 space-y-3.5">
+          <div className="sm:col-span-2 space-y-3.5">
             <Logo size="md" theme="light" />
             <p className="text-xs text-slate-500 max-w-md leading-relaxed">
               AI-Powered Company Intelligence, Verification & Trust Analysis Platform.
@@ -58,31 +58,31 @@ export const Footer: React.FC = () => {
             </p>
             <ul className="space-y-2 text-xs text-slate-500 font-medium">
               <li className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                <span>Tier 1: Government & Regulators</span>
+                <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
+                <span className="truncate">Tier 1: Government & Regulators</span>
               </li>
               <li className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-[#5b5dfa]" />
-                <span>Tier 2: Official Corporate Sites</span>
+                <span className="h-2 w-2 rounded-full bg-[#5b5dfa] shrink-0" />
+                <span className="truncate">Tier 2: Official Corporate Sites</span>
               </li>
               <li className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-blue-500" />
-                <span>Tier 3: Reputable News Media</span>
+                <span className="h-2 w-2 rounded-full bg-blue-500 shrink-0" />
+                <span className="truncate">Tier 3: Reputable News Media</span>
               </li>
               <li className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-amber-500" />
-                <span>Tier 4: Professional Platforms</span>
+                <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
+                <span className="truncate">Tier 4: Professional Platforms</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+        <div className="mt-8 sm:mt-10 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 text-center sm:text-left">
           <p>© {new Date().getFullYear()} Vishleshan AI. Production-Grade Engineering Platform.</p>
           <div className="flex items-center gap-4 font-semibold text-[#5b5dfa]">
             <span className="inline-flex items-center gap-1">
               Evidence-First Architecture
-              <ExternalLink className="h-3 w-3" />
+              <ExternalLink className="h-3 w-3 shrink-0" />
             </span>
           </div>
         </div>

@@ -27,17 +27,17 @@ export const StatCard: React.FC<StatCardProps> = ({
 }) => {
   return (
     <div
-      className={`relative flex flex-col justify-between rounded-3xl bg-white border border-slate-200/80 p-6 shadow-sm hover:shadow-md transition-all duration-200 ${className}`}
+      className={`relative flex flex-col justify-between rounded-2xl sm:rounded-3xl bg-white border border-slate-200/80 p-5 sm:p-6 shadow-sm hover:shadow-md transition-all duration-200 min-w-0 ${className}`}
     >
       <div>
         {/* Top Header */}
         <div className="flex items-center justify-between gap-2">
-          <span className="text-xs font-bold text-slate-500 tracking-wide">
+          <span className="text-xs font-bold text-slate-500 tracking-wide truncate">
             {title}
           </span>
           {icon && (
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full ${iconBgColor} shadow-xs`}
+              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${iconBgColor} shadow-xs`}
             >
               {icon}
             </div>
@@ -45,15 +45,15 @@ export const StatCard: React.FC<StatCardProps> = ({
         </div>
 
         {/* Big Bold Stat Value */}
-        <div className="mt-3">
-          <p className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#181534]">
+        <div className="mt-2.5 sm:mt-3">
+          <p className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#181534] truncate">
             {value}
           </p>
         </div>
 
         {/* Trend Indicator */}
         {trend && (
-          <div className="mt-1.5 flex items-center gap-1.5 text-xs font-semibold">
+          <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs font-semibold">
             <span
               className={
                 trend.isPositive !== false
@@ -63,7 +63,7 @@ export const StatCard: React.FC<StatCardProps> = ({
             >
               {trend.isPositive !== false ? '↑' : '↓'} {trend.value}
             </span>
-            <span className="text-slate-400 font-normal">
+            <span className="text-slate-400 font-normal truncate">
               {trend.label || 'from last month'}
             </span>
           </div>
@@ -74,9 +74,9 @@ export const StatCard: React.FC<StatCardProps> = ({
         )}
       </div>
 
-      {/* Embedded Visual Chart Elements (Finnova Aesthetic) */}
+      {/* Embedded Visual Chart Elements */}
       {chartType === 'bars' && (
-        <div className="mt-4 flex items-end justify-between gap-1.5 pt-2 h-14">
+        <div className="mt-4 flex items-end justify-between gap-1 sm:gap-1.5 pt-2 h-12 sm:h-14">
           <div className="w-full bg-indigo-100 rounded-t-md h-[40%]" />
           <div className="w-full bg-indigo-200 rounded-t-md h-[60%]" />
           <div className="w-full bg-indigo-300 rounded-t-md h-[30%]" />
@@ -88,7 +88,7 @@ export const StatCard: React.FC<StatCardProps> = ({
 
       {chartType === 'line' && (
         <div className="mt-4 pt-2">
-          <svg className="w-full h-14 overflow-visible" viewBox="0 0 100 40">
+          <svg className="w-full h-12 sm:h-14 overflow-visible" viewBox="0 0 100 40">
             <path
               d="M 5 32 Q 25 28, 40 22 T 70 12 T 95 6"
               fill="none"
@@ -96,7 +96,6 @@ export const StatCard: React.FC<StatCardProps> = ({
               strokeWidth="2.5"
               strokeLinecap="round"
             />
-            {/* Sparkline nodes */}
             <circle cx="5" cy="32" r="3" fill="#ffffff" stroke="#5b5dfa" strokeWidth="2" />
             <circle cx="40" cy="22" r="3" fill="#ffffff" stroke="#5b5dfa" strokeWidth="2" />
             <circle cx="70" cy="12" r="3" fill="#ffffff" stroke="#5b5dfa" strokeWidth="2" />
@@ -106,14 +105,14 @@ export const StatCard: React.FC<StatCardProps> = ({
       )}
 
       {chartType === 'cards' && (
-        <div className="mt-4 flex items-center justify-between gap-1.5 pt-2">
-          <div className="flex items-center gap-1 rounded-xl bg-slate-100/90 px-2.5 py-1.5 text-[10px] font-bold text-slate-700">
+        <div className="mt-4 flex flex-wrap xs:flex-nowrap items-center justify-between gap-1 sm:gap-1.5 pt-2">
+          <div className="flex items-center gap-1 rounded-xl bg-slate-100/90 px-2 py-1 sm:px-2.5 sm:py-1.5 text-[9px] sm:text-[10px] font-bold text-slate-700">
             <span>TLS Secure</span>
           </div>
-          <div className="flex items-center gap-1 rounded-xl bg-[#5b5dfa] px-3 py-1.5 text-[10px] font-bold text-white shadow-xs">
+          <div className="flex items-center gap-1 rounded-xl bg-[#5b5dfa] px-2.5 py-1 sm:px-3 sm:py-1.5 text-[9px] sm:text-[10px] font-bold text-white shadow-xs">
             <span>Verified</span>
           </div>
-          <div className="flex items-center gap-1 rounded-xl bg-slate-100/90 px-2.5 py-1.5 text-[10px] font-bold text-slate-700">
+          <div className="flex items-center gap-1 rounded-xl bg-slate-100/90 px-2 py-1 sm:px-2.5 sm:py-1.5 text-[9px] sm:text-[10px] font-bold text-slate-700">
             <span>MCA Valid</span>
           </div>
         </div>

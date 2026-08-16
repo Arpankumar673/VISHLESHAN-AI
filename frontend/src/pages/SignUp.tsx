@@ -15,7 +15,7 @@ import {
 import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import { GoogleIcon } from '../components/ui/GoogleIcon';
+import { GoogleButton } from '../components/ui/GoogleButton';
 
 export const SignUp: React.FC = () => {
   const { signUp, signInWithGoogle, resendVerificationEmail } = useAuth();
@@ -277,17 +277,11 @@ export const SignUp: React.FC = () => {
       )}
 
       {/* Google OAuth Button */}
-      <Button
-        type="button"
-        variant="white"
-        className="w-full finnova-btn-white py-3 justify-center gap-3"
+      <GoogleButton
         onClick={handleGoogleSignUp}
         disabled={isAnyLoading}
         isLoading={isGoogleLoading}
-      >
-        <GoogleIcon className="h-4 w-4" />
-        <span>{isGoogleLoading ? 'Connecting to Google...' : 'Continue with Google'}</span>
-      </Button>
+      />
 
       {/* Divider */}
       <div className="relative flex items-center justify-center">

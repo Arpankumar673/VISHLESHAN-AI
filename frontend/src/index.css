@@ -42,6 +42,15 @@
   background: #94a3b8;
 }
 
+/* Hide scrollbar utility for clean horizontal overflow scrolling */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Finnova-style card and pill utility helpers */
 .finnova-card {
   background: #ffffff;

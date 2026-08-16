@@ -107,9 +107,9 @@ export const Report: React.FC = () => {
   const evidenceList = content.evidence || [];
 
   return (
-    <div className="space-y-8 animate-fade-in pb-16 text-[#181534]">
+    <div className="space-y-6 sm:space-y-8 animate-fade-in pb-16 text-[#181534]">
       {/* Back Navigation & Breadcrumb */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2">
         <Link
           to="/history"
           className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-[#5b5dfa] transition-colors"
@@ -130,11 +130,11 @@ export const Report: React.FC = () => {
       </div>
 
       {/* Hero Report Header (Finnova Midnight Card) */}
-      <div className="relative overflow-hidden rounded-[32px] bg-[#181534] text-white p-6 sm:p-8 shadow-2xl border border-slate-800">
+      <div className="relative overflow-hidden rounded-2xl sm:rounded-[32px] bg-[#181534] text-white p-5 sm:p-8 shadow-2xl border border-slate-800">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-3">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="rounded-full bg-[#5b5dfa]/20 border border-[#5b5dfa]/40 px-3.5 py-1 text-xs font-bold text-indigo-300">
+          <div className="space-y-3 min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-[#5b5dfa]/20 border border-[#5b5dfa]/40 px-3 py-0.5 text-xs font-bold text-indigo-300">
                 Report v{report?.report_version || '1.0'}
               </span>
               <StatusBadge
@@ -143,14 +143,14 @@ export const Report: React.FC = () => {
               <RiskBadge level={trustScore?.risk_level || 'low'} />
             </div>
 
-            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white flex items-center gap-3">
-              <Building2 className="h-8 w-8 text-[#818cf8] shrink-0" />
-              <span>{companyName}</span>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white flex items-center gap-2.5 sm:gap-3 truncate">
+              <Building2 className="h-7 w-7 sm:h-8 sm:w-8 text-[#818cf8] shrink-0" />
+              <span className="truncate">{companyName}</span>
             </h1>
 
             {officialDomain && (
-              <div className="flex items-center gap-2 text-xs font-mono text-indigo-300">
-                <Globe className="h-3.5 w-3.5" />
+              <div className="flex items-center gap-2 text-xs font-mono text-indigo-300 truncate">
+                <Globe className="h-3.5 w-3.5 shrink-0" />
                 <a
                   href={
                     officialDomain.startsWith('http')
@@ -159,22 +159,22 @@ export const Report: React.FC = () => {
                   }
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:underline inline-flex items-center gap-1 font-bold"
+                  className="hover:underline inline-flex items-center gap-1 font-bold truncate"
                 >
-                  {officialDomain}
-                  <ExternalLink className="h-3 w-3 inline" />
+                  <span className="truncate">{officialDomain}</span>
+                  <ExternalLink className="h-3 w-3 inline shrink-0" />
                 </a>
               </div>
             )}
           </div>
 
-          {/* Trust Score Display Card (Finnova Glowing Dark Box) */}
-          <div className="flex flex-col items-center sm:items-end justify-center rounded-3xl bg-[#232048] border border-white/10 p-6 shrink-0 min-w-[220px] text-center sm:text-right">
+          {/* Trust Score Display Card */}
+          <div className="flex flex-col items-center sm:items-end justify-center rounded-2xl sm:rounded-3xl bg-[#232048] border border-white/10 p-5 sm:p-6 shrink-0 w-full md:w-auto md:min-w-[220px] text-center sm:text-right">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
               Deterministic Trust Index
             </span>
-            <div className="mt-1 flex items-baseline gap-1">
-              <span className="text-4xl font-black text-[#818cf8] font-mono">
+            <div className="mt-1 flex items-baseline justify-center sm:justify-end gap-1">
+              <span className="text-3xl sm:text-4xl font-black text-[#818cf8] font-mono">
                 {trustScore?.score ? trustScore.score.toFixed(1) : '88.5'}
               </span>
               <span className="text-xs text-slate-400 font-bold">/ 100</span>
@@ -186,8 +186,8 @@ export const Report: React.FC = () => {
         </div>
       </div>
 
-      {/* Navigation Tabs (Finnova Dark Capsule Tab Bar) */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+      {/* Navigation Tabs */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
         {[
           { id: 'overview', label: '1. Overview & Identity' },
           { id: 'verification', label: '2. Registrations & Certs' },
@@ -199,7 +199,7 @@ export const Report: React.FC = () => {
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id as typeof activeTab)}
-            className={`px-4 py-2 text-xs sm:text-sm font-bold rounded-full transition-all whitespace-nowrap ${
+            className={`px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-bold rounded-full transition-all whitespace-nowrap shrink-0 ${
               activeTab === tab.id
                 ? 'bg-[#5b5dfa] text-white shadow-md shadow-indigo-500/30'
                 : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
@@ -214,27 +214,27 @@ export const Report: React.FC = () => {
       {activeTab === 'overview' && (
         <div className="space-y-6">
           {/* Section 1: Company Overview */}
-          <div className="rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-8 shadow-sm space-y-4">
+          <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
             <div className="border-b border-slate-100 pb-3">
-              <h2 className="text-lg font-bold text-[#181534] flex items-center gap-2">
+              <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
                 <Building2 className="h-5 w-5 text-[#5b5dfa]" />
                 <span>1. Company Overview</span>
               </h2>
             </div>
-            <p className="text-sm text-slate-600 font-medium leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
               {content.overview?.summary ||
                 `${companyName} is an active enterprise with verified public operations, official digital communication channels, and institutional filings.`}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-3 border-t border-slate-100">
               <div>
                 <span className="text-xs text-slate-400 font-semibold">Industry</span>
-                <p className="text-sm font-bold text-[#181534] mt-0.5">
+                <p className="text-xs sm:text-sm font-bold text-[#181534] mt-0.5">
                   {content.overview?.industry || 'Technology & Professional Services'}
                 </p>
               </div>
               <div>
                 <span className="text-xs text-slate-400 font-semibold">Headquarters</span>
-                <p className="text-sm font-bold text-[#181534] mt-0.5">
+                <p className="text-xs sm:text-sm font-bold text-[#181534] mt-0.5">
                   {content.overview?.headquarters || 'Public Information / Global'}
                 </p>
               </div>
@@ -248,9 +248,9 @@ export const Report: React.FC = () => {
           </div>
 
           {/* Section 2: Official Resources */}
-          <div className="rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-8 shadow-sm space-y-4">
+          <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
             <div className="border-b border-slate-100 pb-3">
-              <h2 className="text-lg font-bold text-[#181534] flex items-center gap-2">
+              <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
                 <Globe className="h-5 w-5 text-[#5b5dfa]" />
                 <span>2. Official Corporate Resources</span>
               </h2>
@@ -258,13 +258,13 @@ export const Report: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
                 <span className="text-xs text-slate-400 font-semibold">Official Web Domain</span>
-                <p className="text-sm font-mono font-bold text-[#5b5dfa] truncate">
+                <p className="text-xs sm:text-sm font-mono font-bold text-[#5b5dfa] truncate">
                   {content.official_resources?.website || officialDomain || 'https://google.com'}
                 </p>
               </div>
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
                 <span className="text-xs text-slate-400 font-semibold">Verified Careers Portal</span>
-                <p className="text-sm font-mono font-bold text-[#5b5dfa] truncate">
+                <p className="text-xs sm:text-sm font-mono font-bold text-[#5b5dfa] truncate">
                   {content.official_resources?.careers_portal || `${officialDomain}/careers`}
                 </p>
               </div>
@@ -272,9 +272,9 @@ export const Report: React.FC = () => {
           </div>
 
           {/* Section 3: Identity & Verification */}
-          <div className="rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-8 shadow-sm space-y-4">
+          <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
             <div className="border-b border-slate-100 pb-3">
-              <h2 className="text-lg font-bold text-[#181534] flex items-center gap-2">
+              <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
                 <ShieldCheck className="h-5 w-5 text-emerald-500" />
                 <span>3. Identity & Provenance Verification</span>
               </h2>
@@ -301,17 +301,19 @@ export const Report: React.FC = () => {
               ).map((ident: VerifiedIdentifierItem, i: number) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80"
                 >
-                  <div>
+                  <div className="min-w-0">
                     <span className="text-xs font-bold text-[#181534]">
                       {ident.type}:{' '}
                     </span>
-                    <span className="text-xs font-mono text-slate-600 font-medium">
+                    <span className="text-xs font-mono text-slate-600 font-medium break-all">
                       {ident.value}
                     </span>
                   </div>
-                  <StatusBadge status={ident.status} size="sm" />
+                  <div className="self-start sm:self-auto shrink-0">
+                    <StatusBadge status={ident.status} size="sm" />
+                  </div>
                 </div>
               ))}
             </div>
@@ -322,9 +324,9 @@ export const Report: React.FC = () => {
       {/* TAB 2: REGISTRATIONS & CERTS */}
       {activeTab === 'verification' && (
         <div className="space-y-6">
-          <div className="rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-8 shadow-sm space-y-4">
+          <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
             <div className="border-b border-slate-100 pb-3">
-              <h2 className="text-lg font-bold text-[#181534] flex items-center gap-2">
+              <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
                 <FileCheck className="h-5 w-5 text-[#5b5dfa]" />
                 <span>4. Public Registration Findings</span>
               </h2>
@@ -346,15 +348,15 @@ export const Report: React.FC = () => {
                   key={i}
                   className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                 >
-                  <div>
-                    <p className="text-sm font-bold text-[#181534]">
+                  <div className="min-w-0">
+                    <p className="text-xs sm:text-sm font-bold text-[#181534]">
                       {reg.authority}
                     </p>
-                    <p className="text-xs text-slate-500 font-mono mt-0.5">
+                    <p className="text-xs text-slate-500 font-mono mt-0.5 truncate">
                       {reg.registration_number}
                     </p>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 shrink-0">
                     <StatusBadge status={reg.status} size="sm" />
                     <SourceReference url={reg.source_url} compact />
                   </div>
@@ -368,20 +370,22 @@ export const Report: React.FC = () => {
       {/* TAB 3: NEWS & HIRING */}
       {activeTab === 'hiring' && (
         <div className="space-y-6">
-          <div className="rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-8 shadow-sm space-y-4">
+          <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
             <div className="border-b border-slate-100 pb-3">
-              <h2 className="text-lg font-bold text-[#181534] flex items-center gap-2">
+              <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
                 <Newspaper className="h-5 w-5 text-[#5b5dfa]" />
                 <span>6. News & Hiring Signals</span>
               </h2>
             </div>
             <div className="space-y-3">
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-bold text-[#181534]">Official Recruitment Portal</p>
-                  <p className="text-xs text-slate-500 font-mono">https://{officialDomain || 'google.com'}/careers</p>
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-xs sm:text-sm font-bold text-[#181534]">Official Recruitment Portal</p>
+                  <p className="text-xs text-slate-500 font-mono truncate">https://{officialDomain || 'google.com'}/careers</p>
                 </div>
-                <StatusBadge status="verified" size="sm" />
+                <div className="self-start sm:self-auto shrink-0">
+                  <StatusBadge status="verified" size="sm" />
+                </div>
               </div>
             </div>
           </div>
@@ -391,9 +395,9 @@ export const Report: React.FC = () => {
       {/* TAB 4: RISK & TRUST ANALYSIS */}
       {activeTab === 'risk' && (
         <div className="space-y-6">
-          <div className="rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-8 shadow-sm space-y-4">
+          <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
             <div className="border-b border-slate-100 pb-3">
-              <h2 className="text-lg font-bold text-[#181534] flex items-center gap-2">
+              <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
                 <ShieldAlert className="h-5 w-5 text-emerald-500" />
                 <span>10. Forensic Risk & Anomaly Analysis</span>
               </h2>
@@ -415,9 +419,9 @@ export const Report: React.FC = () => {
       {/* TAB 5: EVIDENCE STORE */}
       {activeTab === 'evidence' && (
         <div className="space-y-6">
-          <div className="rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-8 shadow-sm space-y-4">
+          <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
             <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-[#181534] flex items-center gap-2">
+              <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
                 <Scale className="h-5 w-5 text-[#5b5dfa]" />
                 <span>12. Cryptographically Hashed Evidence Records ({evidenceList.length})</span>
               </h2>
@@ -428,13 +432,13 @@ export const Report: React.FC = () => {
                   key={idx}
                   className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2"
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <span className="text-xs font-bold text-[#181534]">Claim #{idx + 1}: {ev.claim}</span>
                     <StatusBadge status={ev.verification_status || 'verified'} size="sm" />
                   </div>
                   <p className="text-xs text-slate-600 font-medium leading-relaxed">{ev.evidence_text}</p>
                   <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200/60 text-[11px] text-slate-400 font-mono">
-                    <span>Source: {ev.source_url}</span>
+                    <span className="break-all">Source: {ev.source_url}</span>
                     <span>SHA-256: {ev.content_hash ? ev.content_hash.slice(0, 16) : 'verified'}...</span>
                   </div>
                 </div>

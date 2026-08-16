@@ -129,21 +129,21 @@ export const ResearchProgress: React.FC = () => {
   const progressPercent = Math.round((completedSteps / agentSteps.length) * 100);
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 animate-fade-in pb-12 text-[#181534]">
+    <div className="mx-auto max-w-4xl space-y-6 sm:space-y-8 animate-fade-in pb-12 text-[#181534]">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
-        <div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-5 sm:pb-6">
+        <div className="min-w-0">
           <div className="flex items-center gap-2 text-xs font-bold text-[#5b5dfa]">
             <Search className="h-3.5 w-3.5" />
-            <span>Research Run: {runId?.slice(0, 8)}...</span>
+            <span className="truncate">Research Run: {runId?.slice(0, 8)}...</span>
           </div>
-          <h1 className="mt-1 text-2xl sm:text-3xl font-extrabold tracking-tight text-[#181534] flex items-center gap-3">
-            <Building2 className="h-7 w-7 text-[#5b5dfa]" />
-            <span>{run?.company?.name || 'Company Intelligence Investigation'}</span>
+          <h1 className="mt-1 text-2xl sm:text-3xl font-extrabold tracking-tight text-[#181534] flex items-center gap-2.5 sm:gap-3 truncate">
+            <Building2 className="h-6 w-6 sm:h-7 sm:w-7 text-[#5b5dfa] shrink-0" />
+            <span className="truncate">{run?.company?.name || 'Company Intelligence Investigation'}</span>
           </h1>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
           <StatusBadge
             status={
               run?.status === 'completed'
@@ -160,17 +160,17 @@ export const ResearchProgress: React.FC = () => {
       </div>
 
       {/* Progress Bar Card (Finnova White Card) */}
-      <div className="rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-7 shadow-sm space-y-4">
-        <div className="flex items-center justify-between">
+      <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-7 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="flex items-center gap-2.5">
             {run?.status === 'completed' ? (
-              <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+              <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
             ) : run?.status === 'failed' ? (
-              <XCircle className="h-5 w-5 text-rose-500" />
+              <XCircle className="h-5 w-5 text-rose-500 shrink-0" />
             ) : (
-              <Loader2 className="h-5 w-5 animate-spin text-[#5b5dfa]" />
+              <Loader2 className="h-5 w-5 animate-spin text-[#5b5dfa] shrink-0" />
             )}
-            <span className="font-bold text-[#181534]">
+            <span className="font-bold text-sm sm:text-base text-[#181534]">
               {run?.status === 'completed'
                 ? 'Research Run Completed'
                 : run?.status === 'failed'
@@ -197,13 +197,13 @@ export const ResearchProgress: React.FC = () => {
 
         {run?.status === 'completed' && (
           <div className="pt-3 flex justify-end">
-            <Link to={`/reports/${run.id}`}>
+            <Link to={`/reports/${run.id}`} className="w-full sm:w-auto">
               <Button
                 variant="primary"
                 size="md"
                 leftIcon={<FileText className="h-4 w-4" />}
                 rightIcon={<ArrowRight className="h-4 w-4" />}
-                className="finnova-btn-primary px-7"
+                className="w-full sm:w-auto finnova-btn-primary px-7 justify-center"
               >
                 View Full Intelligence Report
               </Button>
@@ -213,8 +213,8 @@ export const ResearchProgress: React.FC = () => {
       </div>
 
       {/* Multi-Agent Steps List (Finnova Card) */}
-      <div className="rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-7 shadow-sm space-y-4">
-        <div className="border-b border-slate-100 pb-4">
+      <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-7 shadow-sm space-y-4">
+        <div className="border-b border-slate-100 pb-3 sm:pb-4">
           <h2 className="text-base font-bold text-[#181534] flex items-center gap-2">
             <Scale className="h-4 w-4 text-[#5b5dfa]" />
             <span>Agent Pipeline & Forensic Execution</span>
@@ -225,40 +225,40 @@ export const ResearchProgress: React.FC = () => {
           {agentSteps.map((step, index) => (
             <div
               key={step.agentName}
-              className="flex items-start justify-between gap-4 p-4 hover:bg-slate-50/80 rounded-2xl transition-colors"
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-3.5 sm:p-4 hover:bg-slate-50/80 rounded-2xl transition-colors"
             >
-              <div className="flex items-start gap-3.5">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-indigo-50 font-bold text-xs text-[#5b5dfa]">
+              <div className="flex items-start gap-3 sm:gap-3.5">
+                <div className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-xl bg-indigo-50 font-bold text-xs text-[#5b5dfa]">
                   {index + 1}
                 </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-bold text-[#181534]">
+                <div className="space-y-0.5 sm:space-y-1">
+                  <p className="text-xs sm:text-sm font-bold text-[#181534]">
                     {step.label}
                   </p>
-                  <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                  <p className="text-[11px] sm:text-xs text-slate-500 font-medium leading-relaxed">
                     {step.description}
                   </p>
                 </div>
               </div>
 
-              <div className="shrink-0 flex items-center">
+              <div className="self-end sm:self-center shrink-0 flex items-center">
                 {step.status === 'completed' ? (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200/80">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 sm:px-3 py-1 rounded-full border border-emerald-200/80">
                     <CheckCircle2 className="h-3.5 w-3.5" />
                     <span>Done</span>
                   </span>
                 ) : step.status === 'running' ? (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#5b5dfa] bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200/80 animate-pulse">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#5b5dfa] bg-indigo-50 px-2.5 sm:px-3 py-1 rounded-full border border-indigo-200/80 animate-pulse">
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
                     <span>Executing</span>
                   </span>
                 ) : step.status === 'failed' ? (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-700 bg-rose-50 px-3 py-1 rounded-full border border-rose-200/80">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-700 bg-rose-50 px-2.5 sm:px-3 py-1 rounded-full border border-rose-200/80">
                     <XCircle className="h-3.5 w-3.5" />
                     <span>Failed</span>
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400 bg-slate-100 px-2.5 sm:px-3 py-1 rounded-full">
                     <Clock className="h-3.5 w-3.5" />
                     <span>Queued</span>
                   </span>

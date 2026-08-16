@@ -4,7 +4,7 @@ import { Mail, Lock, AlertCircle, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import { GoogleIcon } from '../components/ui/GoogleIcon';
+import { GoogleButton } from '../components/ui/GoogleButton';
 
 export const Login: React.FC = () => {
   const { signIn, signInWithGoogle } = useAuth();
@@ -109,17 +109,11 @@ export const Login: React.FC = () => {
       )}
 
       {/* Google OAuth Button */}
-      <Button
-        type="button"
-        variant="white"
-        className="w-full finnova-btn-white py-3 justify-center gap-3"
+      <GoogleButton
         onClick={handleGoogleSignIn}
         disabled={isAnyLoading}
         isLoading={isGoogleLoading}
-      >
-        <GoogleIcon className="h-4 w-4" />
-        <span>{isGoogleLoading ? 'Connecting to Google...' : 'Continue with Google'}</span>
-      </Button>
+      />
 
       {/* Divider */}
       <div className="relative flex items-center justify-center">

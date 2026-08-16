@@ -67,26 +67,26 @@ export const Research: React.FC = () => {
   };
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 animate-fade-in text-[#181534] pb-12">
+    <div className="mx-auto w-full max-w-5xl space-y-6 sm:space-y-8 animate-fade-in text-[#181534] pb-12">
       {/* Header */}
-      <div className="space-y-2 text-center sm:text-left">
+      <div className="space-y-2 text-left">
         <div className="inline-flex items-center gap-2 rounded-full bg-indigo-50 border border-indigo-200/80 px-3.5 py-1 text-xs font-bold text-[#5b5dfa]">
           <Sparkles className="h-3.5 w-3.5" />
           <span>New Evidence Research Run</span>
         </div>
-        <h1 className="text-3xl font-extrabold tracking-tight text-[#181534] sm:text-4xl">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#181534]">
           Initiate Company Research
         </h1>
-        <p className="text-sm font-medium text-slate-500 max-w-2xl leading-relaxed">
+        <p className="text-xs sm:text-sm font-medium text-slate-500 max-w-2xl leading-relaxed">
           Launch multi-agent forensic verification across government registers, official domains,
           news archives, and recruitment signals.
         </p>
       </div>
 
-      {/* Main Form Card (Finnova White Card) */}
-      <div className="rounded-[32px] bg-white border border-slate-200/80 p-6 sm:p-8 shadow-sm space-y-6">
-        <div className="border-b border-slate-100 pb-5">
-          <h2 className="text-xl font-bold text-[#181534] flex items-center gap-2.5">
+      {/* Main Form Card (2-Column Grid on Desktop / 1-Column on Mobile) */}
+      <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-6">
+        <div className="border-b border-slate-100 pb-4 sm:pb-5">
+          <h2 className="text-lg sm:text-xl font-bold text-[#181534] flex items-center gap-2.5">
             <Building2 className="h-5 w-5 text-[#5b5dfa]" />
             <span>Target Organization Details</span>
           </h2>
@@ -102,53 +102,56 @@ export const Research: React.FC = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <Input
-            label="Company Name *"
-            type="text"
-            placeholder="e.g. Google, Infosys, OpenAI, Tata Consultancy Services"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-            leftIcon={<Building2 className="h-4 w-4" />}
-            helperText="Official legal or trading name of the company to investigate."
-            required
-            disabled={isLoading}
-          />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* 2-Column Responsive Input Grid on Tablet & Desktop */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <Input
+              label="Company Name *"
+              type="text"
+              placeholder="e.g. Google, Infosys, OpenAI"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              leftIcon={<Building2 className="h-4 w-4" />}
+              helperText="Official legal or trading name of the company to investigate."
+              required
+              disabled={isLoading}
+            />
 
-          <Input
-            label="Official Website URL (Optional)"
-            type="text"
-            placeholder="e.g. google.com or https://openai.com"
-            value={companyUrl}
-            onChange={(e) => setCompanyUrl(e.target.value)}
-            leftIcon={<Globe className="h-4 w-4" />}
-            helperText="Supplying an official domain accelerates domain provenance verification."
-            disabled={isLoading}
-          />
+            <Input
+              label="Official Website URL (Optional)"
+              type="text"
+              placeholder="e.g. google.com or https://openai.com"
+              value={companyUrl}
+              onChange={(e) => setCompanyUrl(e.target.value)}
+              leftIcon={<Globe className="h-4 w-4" />}
+              helperText="Supplying an official domain accelerates domain provenance verification."
+              disabled={isLoading}
+            />
+          </div>
 
           {/* Verification depth toggle */}
           <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 space-y-2">
-            <label className="flex items-center gap-3.5 cursor-pointer select-none">
+            <label className="flex items-start sm:items-center gap-3.5 cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={deepVerification}
                 onChange={(e) => setDeepVerification(e.target.checked)}
-                className="h-4 w-4 rounded border-slate-300 text-[#5b5dfa] focus:ring-[#5b5dfa]"
+                className="mt-1 sm:mt-0 h-4 w-4 rounded border-slate-300 text-[#5b5dfa] focus:ring-[#5b5dfa]"
                 disabled={isLoading}
               />
               <div>
                 <span className="text-sm font-bold text-[#181534]">
                   Enable Full 8-Agent Deep Intelligence Pipeline
                 </span>
-                <p className="text-xs text-slate-500 font-medium">
+                <p className="text-xs text-slate-500 font-medium leading-relaxed">
                   Includes company identity resolution, registration cross-referencing, news/hiring signals, and recruitment risk forensics.
                 </p>
               </div>
             </label>
           </div>
 
-          <div className="pt-3 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
+          <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-t border-slate-100">
+            <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 justify-center sm:justify-start">
               <ShieldCheck className="h-4 w-4 text-[#5b5dfa]" />
               <span>Deterministic Multi-Agent fusion & trust scoring</span>
             </div>
@@ -157,7 +160,7 @@ export const Research: React.FC = () => {
               type="submit"
               variant="primary"
               size="lg"
-              className="w-full sm:w-auto px-8 finnova-btn-primary"
+              className="w-full sm:w-auto px-8 finnova-btn-primary justify-center"
               isLoading={isLoading}
               leftIcon={<Search className="h-4 w-4" />}
               rightIcon={<ArrowRight className="h-4 w-4" />}
@@ -168,9 +171,9 @@ export const Research: React.FC = () => {
         </form>
       </div>
 
-      {/* Informational Guidance (Finnova 3-Card Row) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="rounded-3xl border border-slate-200/80 bg-white p-5 space-y-2 shadow-xs">
+      {/* Informational Guidance (Desktop 3 cols, Tablet 2 cols, Mobile 1 col) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-white p-5 space-y-2 shadow-xs min-w-0">
           <div className="flex items-center gap-2 text-xs font-bold text-[#181534]">
             <CheckCircle2 className="h-4 w-4 text-emerald-500" />
             <span>Tier-1 Sources</span>
@@ -180,7 +183,7 @@ export const Research: React.FC = () => {
           </p>
         </div>
 
-        <div className="rounded-3xl border border-slate-200/80 bg-white p-5 space-y-2 shadow-xs">
+        <div className="rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-white p-5 space-y-2 shadow-xs min-w-0">
           <div className="flex items-center gap-2 text-xs font-bold text-[#181534]">
             <ShieldCheck className="h-4 w-4 text-[#5b5dfa]" />
             <span>Recruitment Risk</span>
@@ -190,7 +193,7 @@ export const Research: React.FC = () => {
           </p>
         </div>
 
-        <div className="rounded-3xl border border-slate-200/80 bg-white p-5 space-y-2 shadow-xs">
+        <div className="rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-white p-5 space-y-2 shadow-xs sm:col-span-2 lg:col-span-1 min-w-0">
           <div className="flex items-center gap-2 text-xs font-bold text-[#181534]">
             <Info className="h-4 w-4 text-amber-500" />
             <span>Uncertainty First</span>
