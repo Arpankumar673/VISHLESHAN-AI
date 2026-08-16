@@ -10,3 +10,4 @@ export * from './LoadingSkeleton';
 export * from './EmptyState';
 export * from './SourceReference';
 export * from './Logo';
+export * from './GoogleIcon';

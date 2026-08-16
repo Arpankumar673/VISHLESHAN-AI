@@ -8,9 +8,11 @@ import { AuthLayout } from './layouts/AuthLayout';
 import {
   Landing,
   Login,
+  SignUp,
   Register,
   ForgotPassword,
   ResetPassword,
+  AuthCallback,
   Dashboard,
   Research,
   ResearchProgress,
@@ -32,13 +34,15 @@ function App() {
           <Route element={<PublicOnlyRoute />}>
             <Route element={<AuthLayout />}>
               <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
               <Route path="/register" element={<Register />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
             </Route>
           </Route>
 
-          {/* Password Reset Route (Supports Recovery Sessions and Public Links) */}
+          {/* OAuth Callback & Password Reset Routes */}
           <Route element={<AuthLayout />}>
+            <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/reset-password" element={<ResetPassword />} />
           </Route>
 

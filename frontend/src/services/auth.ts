@@ -14,6 +14,31 @@ export const authService = {
         data: {
           full_name: fullName,
         },
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+  },
+
+  async signInWithGoogle(redirectTo?: string) {
+    const defaultRedirect = `${window.location.origin}/auth/callback`;
+    return supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: redirectTo || defaultRedirect,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      },
+    });
+  },
+
+  async resendVerificationEmail(email: string) {
+    return supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
   },

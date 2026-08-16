@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import type { Profile, SignInPayload, SignUpPayload } from '../types';
-import { AuthContext } from './authContextValue';
+import { AuthContext, type SignUpResult } from './authContextValue';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -130,7 +130,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signUp = async ({ email, password, fullName }: SignUpPayload) => {
+  const signUp = async ({ email, password, fullName }: SignUpPayload): Promise<SignUpResult> => {
     setLoading(true);
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -140,6 +140,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           data: {
             full_name: fullName,
           },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 
@@ -156,15 +157,68 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             role: 'user',
           });
         } catch {
-          // Handled by DB trigger or RLS
+          // Handled by DB trigger
         }
       }
 
+      const needsEmailConfirmation = !data.session && !!data.user;
+
       setLoading(false);
-      return { error: null };
+      return {
+        error: null,
+        needsEmailConfirmation,
+        userEmail: data.user?.email || email,
+      };
     } catch (err: unknown) {
       setLoading(false);
       const msg = err instanceof Error ? err.message : 'An unexpected error occurred during registration';
+      return { error: msg };
+    }
+  };
+
+  const signInWithGoogle = async (redirectTo?: string) => {
+    setLoading(true);
+    try {
+      const defaultRedirect = `${window.location.origin}/auth/callback`;
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectTo || defaultRedirect,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        },
+      });
+
+      if (error) {
+        setLoading(false);
+        return { error: error.message };
+      }
+      return { error: null };
+    } catch (err: unknown) {
+      setLoading(false);
+      const msg = err instanceof Error ? err.message : 'Failed to initialize Google authentication';
+      return { error: msg };
+    }
+  };
+
+  const resendVerificationEmail = async (email: string) => {
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (error) {
+        return { error: error.message };
+      }
+      return { error: null };
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to resend verification email';
       return { error: msg };
     }
   };
@@ -222,6 +276,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         initialized,
         signIn,
         signUp,
+        signInWithGoogle,
+        resendVerificationEmail,
         signOut,
         resetPassword,
         updatePassword,
