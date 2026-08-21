@@ -27,6 +27,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -38,6 +39,9 @@ app.add_middleware(
 # ------------------------------------------------------------
 @app.middleware("http")
 async def log_and_time_requests(request: Request, call_next):
+    if request.method == "OPTIONS":
+        return await call_next(request)
+
     request_id = str(uuid4())
     start_time = time.perf_counter()
 

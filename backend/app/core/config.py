@@ -32,17 +32,22 @@ class Settings(BaseSettings):
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
+        origins: List[str] = []
         if isinstance(v, str):
             if v.startswith("[") and v.endswith("]"):
                 import json
                 try:
-                    return json.loads(v)
+                    parsed = json.loads(v)
+                    if isinstance(parsed, list):
+                        origins = [str(i).strip().rstrip("/") for i in parsed if i]
                 except Exception:
                     pass
-            return [i.strip() for i in v.split(",") if i.strip()]
+            if not origins:
+                origins = [i.strip().rstrip("/") for i in v.split(",") if i.strip()]
         elif isinstance(v, list):
-            return v
-        return [
+            origins = [str(i).strip().rstrip("/") for i in v if i]
+
+        default_origins = [
             "http://localhost:5173",
             "http://localhost:5174",
             "http://localhost:3000",
@@ -51,6 +56,11 @@ class Settings(BaseSettings):
             "http://127.0.0.1:3000",
             "https://vishleshan-ai.vercel.app",
         ]
+        for default_origin in default_origins:
+            if default_origin not in origins:
+                origins.append(default_origin)
+
+        return origins
 
     model_config = SettingsConfigDict(
         env_file=".env",
