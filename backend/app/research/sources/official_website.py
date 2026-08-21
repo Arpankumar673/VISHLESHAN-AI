@@ -1,4 +1,5 @@
-from typing import List, Optional
+import json
+from typing import Any, Dict, List, Optional
 from urllib.parse import urljoin, urlparse
 from bs4 import BeautifulSoup
 from app.core.logging import logger
@@ -53,12 +54,27 @@ class OfficialWebsiteAdapter(BaseSourceAdapter):
         h1 = soup.find("h1")
         h1_text = h1.get_text(strip=True) if h1 else ""
 
+        # Extract JSON-LD Organization metadata if present
+        json_ld_meta = self._extract_json_ld_org_metadata(soup)
+
         # Claim 1: Official Website & Domain Provenance
         evidence_body = f"Official website title: '{page_title}'."
         if meta_desc:
             evidence_body += f" Meta description: '{meta_desc}'."
         if h1_text:
             evidence_body += f" Primary header: '{h1_text}'."
+        if json_ld_meta.get("legal_name"):
+            evidence_body += f" Legal name: '{json_ld_meta['legal_name']}'."
+        if json_ld_meta.get("founding_date"):
+            evidence_body += f" Founding date: '{json_ld_meta['founding_date']}'."
+
+        raw_meta = {
+            "page_title": page_title,
+            "meta_description": meta_desc,
+            "primary_heading": h1_text,
+        }
+        if json_ld_meta:
+            raw_meta["json_ld"] = json_ld_meta
 
         findings.append(
             SourceFinding(
@@ -67,11 +83,7 @@ class OfficialWebsiteAdapter(BaseSourceAdapter):
                 source_url=base_url,
                 source_title=f"{company_name} — Official Homepage",
                 source_type=SourceType.OFFICIAL_COMPANY,
-                raw_metadata={
-                    "page_title": page_title,
-                    "meta_description": meta_desc,
-                    "primary_heading": h1_text,
-                },
+                raw_metadata=raw_meta,
             )
         )
 
@@ -132,3 +144,61 @@ class OfficialWebsiteAdapter(BaseSourceAdapter):
                 )
 
         return findings
+
+    @staticmethod
+    def _extract_json_ld_org_metadata(soup: BeautifulSoup) -> Dict[str, Any]:
+        """Safely extracts schema.org Organization metadata from JSON-LD script tags."""
+        extracted: Dict[str, Any] = {}
+        for script in soup.find_all("script", attrs={"type": "application/ld+json"}):
+            if not script.string:
+                continue
+            try:
+                data = json.loads(script.string)
+            except Exception:
+                continue
+
+            items = data if isinstance(data, list) else [data]
+            for item in items:
+                if not isinstance(item, dict):
+                    continue
+
+                item_type = str(item.get("@type", ""))
+                if any(t in item_type for t in ["Organization", "Corporation", "LocalBusiness", "Company"]):
+                    if item.get("legalName"):
+                        extracted["legal_name"] = str(item["legalName"]).strip()
+                    elif item.get("name"):
+                        extracted["name"] = str(item["name"]).strip()
+
+                    if item.get("foundingDate"):
+                        extracted["founding_date"] = str(item["foundingDate"]).strip()
+
+                    if item.get("url"):
+                        extracted["url"] = str(item["url"]).strip()
+
+                    if item.get("sameAs"):
+                        same_as = item["sameAs"]
+                        if isinstance(same_as, list):
+                            extracted["same_as"] = [str(s).strip() for s in same_as if s]
+                        elif isinstance(same_as, str):
+                            extracted["same_as"] = [same_as.strip()]
+
+                    if item.get("telephone"):
+                        extracted["telephone"] = str(item["telephone"]).strip()
+
+                    if item.get("address"):
+                        addr = item["address"]
+                        if isinstance(addr, dict):
+                            parts = [
+                                addr.get("streetAddress"),
+                                addr.get("addressLocality"),
+                                addr.get("addressRegion"),
+                                addr.get("postalCode"),
+                                addr.get("addressCountry"),
+                            ]
+                            clean_parts = [str(p).strip() for p in parts if p]
+                            if clean_parts:
+                                extracted["address"] = ", ".join(clean_parts)
+                        elif isinstance(addr, str):
+                            extracted["address"] = addr.strip()
+
+        return extracted

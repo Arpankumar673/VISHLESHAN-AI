@@ -56,7 +56,7 @@ class EvidenceNormalizer:
 
         content_hash = cls.compute_hash(norm_claim, norm_url, norm_text)
 
-        return NormalizedEvidence(
+        ev = NormalizedEvidence(
             claim=norm_claim,
             evidence_text=norm_text,
             source_url=norm_url,
@@ -70,3 +70,7 @@ class EvidenceNormalizer:
             agent_name="company_research_v1",
             content_hash=content_hash,
         )
+        if finding.raw_metadata:
+            for k, v in finding.raw_metadata.items():
+                ev.__dict__[k] = v
+        return ev

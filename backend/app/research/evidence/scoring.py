@@ -187,7 +187,7 @@ def calculate_evidence_strength(
     
     Formula:
     Base Strength = 0.30 * Quality + 0.25 * Verification + 0.25 * Independence + 0.20 * Freshness
-    Evidence Strength = Base Strength * Agreement * (1.0 - 0.5 * Contradiction)
+    Evidence Strength = Base Strength * Agreement
     """
     if not has_supporting:
         return 0.0
@@ -199,8 +199,7 @@ def calculate_evidence_strength(
         0.20 * freshness
     )
 
-    penalty = max(0.0, 1.0 - 0.5 * contradiction)
-    strength = base_strength * agreement * penalty
+    strength = base_strength * agreement
     return max(0.0, min(1.0, float(strength)))
 
 
@@ -208,12 +207,12 @@ def calculate_fused_confidence(evidence_strength: float, contradiction_score: fl
     """Calculates final fused confidence score bounded between 0.0 and 1.0.
     
     Formula:
-    Fused Confidence = Evidence Strength * (1.0 - 0.8 * Contradiction Score)
+    Fused Confidence = Evidence Strength * (1.0 - 0.5 * Contradiction Score)
     """
     if not has_supporting:
         return 0.0
 
-    penalty = max(0.0, 1.0 - 0.8 * contradiction_score)
+    penalty = max(0.0, 1.0 - 0.5 * contradiction_score)
     confidence = evidence_strength * penalty
     return max(0.0, min(1.0, float(confidence)))
 

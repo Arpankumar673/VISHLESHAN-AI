@@ -79,40 +79,76 @@ class PublicSearchAdapter(BaseSourceAdapter):
         return findings
 
     async def resolve_domain(self, company_name: str) -> Optional[str]:
-        """Attempt to resolve the primary official domain using public knowledge graphs."""
+        """
+        Attempt to resolve the primary official domain using public knowledge graph source evidence.
+        Returns None if no official domain is explicitly discovered in source evidence.
+        Never guesses domains or uses hardcoded fallback mappings.
+        """
         clean_name = company_name.strip()
+        if not clean_name:
+            return None
 
-        # Common well-known heuristic fallback for high-profile companies
-        name_no_spaces = clean_name.lower().replace(" ", "").replace("limited", "").replace("inc", "").replace("corp", "").replace("ltd", "")
-        if name_no_spaces in ["google", "microsoft", "apple", "amazon", "meta", "infosys", "tcs", "wipro", "ibm", "oracle", "nvidia"]:
-            domain_map = {
-                "google": "google.com",
-                "microsoft": "microsoft.com",
-                "apple": "apple.com",
-                "amazon": "amazon.com",
-                "meta": "meta.com",
-                "infosys": "infosys.com",
-                "tcs": "tcs.com",
-                "wipro": "wipro.com",
-                "ibm": "ibm.com",
-                "oracle": "oracle.com",
-                "nvidia": "nvidia.com",
-            }
-            return domain_map.get(name_no_spaces)
-
-        # Query Wikipedia API for official URL
+        # 1. Query DuckDuckGo Instant Answer API for explicit official website URL in metadata or results
+        ddg_url = f"https://api.duckduckgo.com/?q={quote(clean_name)}&format=json&no_html=1&skip_disambig=1"
         try:
-            encoded_name = quote(clean_name.replace(" ", "_"))
-            wiki_url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{encoded_name}"
-            async with httpx.AsyncClient(timeout=5.0, follow_redirects=True, verify=False) as client:
-                resp = await client.get(
-                    wiki_url,
-                    headers={"User-Agent": "VishleshanAI/1.0 (academic-research@vishleshan.ai)"},
-                )
+            async with httpx.AsyncClient(timeout=self.timeout_seconds, follow_redirects=True, verify=False) as client:
+                resp = await client.get(ddg_url, headers={"User-Agent": "VishleshanAI/1.0"})
                 if resp.status_code == 200:
-                    # Look at extract or title
-                    return f"{name_no_spaces}.com"
+                    data = resp.json()
+                    candidates = []
+
+                    if isinstance(data.get("meta"), dict):
+                        src_url = data["meta"].get("src_url")
+                        if src_url:
+                            candidates.append(src_url)
+
+                    abstract_url = data.get("AbstractURL")
+                    if abstract_url:
+                        candidates.append(abstract_url)
+
+                    results = data.get("Results")
+                    if isinstance(results, list):
+                        for r in results:
+                            if isinstance(r, dict) and r.get("FirstURL"):
+                                candidates.append(r["FirstURL"])
+
+                    for candidate_url in candidates:
+                        dom = self._extract_clean_domain(candidate_url)
+                        if dom:
+                            return dom
+        except Exception as exc:
+            logger.info(f"Domain lookup via DuckDuckGo API skipped: {exc}")
+
+        return None
+
+    @staticmethod
+    def _extract_clean_domain(url: str) -> Optional[str]:
+        if not url or not isinstance(url, str):
+            return None
+        if not (url.startswith("http://") or url.startswith("https://")):
+            return None
+
+        try:
+            parsed = urlparse(url)
+            netloc = parsed.netloc.lower()
+            if not netloc:
+                return None
+
+            netloc = netloc.split(":")[0]
+            if netloc.startswith("www."):
+                netloc = netloc[4:]
+
+            excluded = {
+                "wikipedia.org", "en.wikipedia.org", "duckduckgo.com",
+                "facebook.com", "twitter.com", "x.com", "linkedin.com",
+                "youtube.com", "instagram.com", "github.com", "wikidata.org"
+            }
+            if netloc in excluded or any(netloc.endswith(f".{ex}") for ex in excluded):
+                return None
+
+            if "." in netloc and len(netloc) >= 4:
+                return netloc
         except Exception:
             pass
 
-        return f"{name_no_spaces}.com"
+        return None
