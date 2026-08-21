@@ -53,25 +53,4 @@ async def get_research_status(
     return ApiResponse(data=response)
 
 
-@router.post(
-    "/callback",
-    response_model=ApiResponse[Dict[str, Any]],
-    summary="n8n Orchestration Webhook Callback",
-    description="Secure endpoint receiving asynchronous agent results from authenticated n8n workflow.",
-)
-async def n8n_callback(
-    payload: Dict[str, Any],
-    x_vishleshan_webhook_secret: Optional[str] = Header(None, alias="X-Vishleshan-Webhook-Secret"),
-    research_service: ResearchService = Depends(get_research_service),
-) -> ApiResponse[Dict[str, Any]]:
-    # Enforce webhook secret authentication
-    if not x_vishleshan_webhook_secret or x_vishleshan_webhook_secret != settings.N8N_WEBHOOK_SECRET:
-        logger.warning("Unauthorized n8n callback attempt: invalid or missing webhook secret header")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or missing X-Vishleshan-Webhook-Secret header",
-        )
 
-    logger.info(f"Received authenticated callback from n8n for run: {payload.get('research_run_id')}")
-    result = await research_service.handle_n8n_callback(payload)
-    return ApiResponse(data=result)

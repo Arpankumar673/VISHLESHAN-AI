@@ -4,7 +4,6 @@ from uuid import UUID
 from app.core.config import settings
 from app.core.errors import AuthorizationError, NotFoundError
 from app.core.logging import logger
-from app.integrations.n8n import N8nClient, get_n8n_client
 from app.repositories.research_repository import ResearchRepository
 from app.research.agents.orchestrator import MultiAgentOrchestrator
 from app.research.engine import ResearchEngine
@@ -25,13 +24,11 @@ class ResearchService:
         company_service: Optional[CompanyService] = None,
         multi_agent_orchestrator: Optional[MultiAgentOrchestrator] = None,
         fallback_engine: Optional[ResearchEngine] = None,
-        n8n_client: Optional[N8nClient] = None,
     ):
         self.research_repo = research_repo or ResearchRepository()
         self.company_service = company_service or CompanyService()
         self.orchestrator = multi_agent_orchestrator or MultiAgentOrchestrator()
         self.fallback_engine = fallback_engine or ResearchEngine()
-        self.n8n_client = n8n_client or get_n8n_client()
 
     def start_research(
         self,
@@ -77,24 +74,20 @@ class ResearchService:
     ):
         orchestrator_mode = settings.RESEARCH_ORCHESTRATOR_MODE.lower()
 
-        if orchestrator_mode == "n8n":
-            logger.info(f"Delegating research run {research_run_id} to n8n webhook...")
-            trigger_result = await self.n8n_client.trigger_orchestrator(
-                research_run_id=research_run_id,
-                company_id=company_id,
-                company_name=company_name,
-                company_url=company_url,
-            )
-
-            if trigger_result.success:
-                logger.info(f"n8n successfully accepted research run {research_run_id}")
+        if orchestrator_mode == "langgraph":
+            logger.info(f"Executing research run {research_run_id} via LangGraph orchestration engine...")
+            try:
+                await self.orchestrator.execute_langgraph_run(
+                    research_run_id=research_run_id,
+                    company_id=company_id,
+                    company_name=company_name,
+                    company_url=company_url,
+                )
                 return
+            except Exception as lg_exc:
+                logger.error(f"LangGraph execution failed for run {research_run_id}: {lg_exc}. Falling back to standard orchestrator...")
 
-            logger.warning(
-                f"n8n delegation failed ({trigger_result.error}). Falling back to internal MultiAgentOrchestrator."
-            )
-
-        # Local multi-agent execution (or fallback if n8n was unavailable)
+        # Local multi-agent execution (or fallback if langgraph was unavailable)
         try:
             await self.orchestrator.execute_run(
                 research_run_id=research_run_id,
@@ -115,23 +108,6 @@ class ResearchService:
                 )
             except Exception as fatal_exc:
                 logger.exception(f"Fatal failure in fallback engine for run {research_run_id}: {fatal_exc}")
-
-    async def handle_n8n_callback(self, payload: Dict[str, Any]) -> Dict[str, Any]:
-        """Processes completed research run payload posted back by n8n."""
-        run_id_str = payload.get("research_run_id")
-        if not run_id_str:
-            return {"status": "error", "message": "Missing research_run_id in payload"}
-
-        run_id = UUID(run_id_str)
-        status_val = payload.get("status", "completed")
-
-        self.research_repo.update_status(
-            run_id=run_id,
-            status=status_val,
-            error_message=payload.get("error_message"),
-        )
-
-        return {"status": "success", "research_run_id": str(run_id)}
 
     def get_research_status(self, run_id: UUID, user_id: UUID) -> ResearchRunResponse:
         run_data = self.research_repo.get_by_id(run_id)

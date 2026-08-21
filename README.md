@@ -24,7 +24,6 @@ VISHLESHAN AI/
 ├── algorithms/       # Deterministic Evidence Fusion, Trust & Risk Engines
 ├── database/         # Database utilities & seed scripts
 ├── supabase/         # Migrations and Supabase local configuration
-├── n8n/              # Orchestration workflows
 ├── tests/            # End-to-end and unit test suites
 └── docs/             # Technical specifications & roadmap documentation
 ```

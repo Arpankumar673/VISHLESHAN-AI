@@ -6,17 +6,17 @@ Vishleshan AI is an evidence-driven, explainable corporate intelligence and trus
 
 ```mermaid
 graph TD
-    Client["React Frontend (Vite + Tailwind v4)"]
+    Client["React Frontend (Vite + Tailwind)"]
     API["FastAPI Backend (/api/v1)"]
-    DB[(Supabase PostgreSQL + pgvector)]
-    Orchestration["n8n Workflow Engine (M5)"]
+    DB[(Supabase PostgreSQL)]
+    Orchestration["LangGraph Orchestration Engine"]
     Agents["Multi-Agent Swarm (M4+)"]
 
     Client -->|HTTP / Bearer JWT| API
     API -->|Service Role Client| DB
-    API -.->|Webhook Trigger| Orchestration
-    Orchestration -.->|Agent Executions| Agents
-    Agents -.->|Evidence & Claims| DB
+    API -->|State Graph| Orchestration
+    Orchestration -->|Parallel Fan-Out| Agents
+    Agents -->|Normalized Evidence & Reports| DB
 ```
 
 ---

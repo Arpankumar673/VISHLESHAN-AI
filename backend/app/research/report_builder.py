@@ -1,4 +1,6 @@
 from typing import Any, Dict, List
+from app.research.evidence.grouping import group_evidence
+from app.research.evidence.scoring import score_fusion_result
 from app.research.models import IdentityResult, NormalizedEvidence
 from app.schemas.evidence import SourceType, VerificationStatus
 
@@ -14,6 +16,15 @@ class ReportBuilder:
         # Tally verification statuses
         verified_count = sum(1 for e in evidence_items if e.verification_status == VerificationStatus.VERIFIED)
         total_evidence = len(evidence_items)
+
+        # Execute Evidence Fusion Engine for report-level claim analysis
+        claim_groups = group_evidence(evidence_items)
+        fusion_result = score_fusion_result(claim_groups)
+        avg_fused_confidence = (
+            sum(fc.fused_confidence for fc in fusion_result.fused_claims) / len(fusion_result.fused_claims)
+            if fusion_result.fused_claims
+            else 0.5
+        )
 
         # Baseline trust score calculation based on verified evidence ratio & source reliability
         avg_reliability = (
@@ -129,6 +140,23 @@ class ReportBuilder:
                         "severity": "low" if identity.official_domain else "medium",
                         "description": f"Domain {identity.official_domain} active and verified.",
                     }
+                ],
+            },
+            "evidence_fusion": {
+                "total_claim_groups": fusion_result.total_claim_groups,
+                "conflicted_claims_count": fusion_result.conflicted_claims,
+                "average_fused_confidence": round(avg_fused_confidence, 2),
+                "fused_claims_summary": [
+                    {
+                        "canonical_claim": fc.canonical_claim,
+                        "status": fc.status.value,
+                        "fused_confidence": round(fc.fused_confidence, 2),
+                        "independent_sources": fc.independent_source_count,
+                        "agreement_score": round(fc.agreement_score, 2),
+                        "contradiction_score": round(fc.contradiction_score, 2),
+                        "explanation": fc.explanation,
+                    }
+                    for fc in fusion_result.fused_claims
                 ],
             },
             "important_conclusions": [

@@ -15,12 +15,8 @@ class Settings(BaseSettings):
     SUPABASE_SERVICE_ROLE_KEY: str = ""
     SUPABASE_JWT_SECRET: str = ""
 
-    # Orchestrator & n8n settings (M5)
-    RESEARCH_ORCHESTRATOR_MODE: str = "local"  # "local" or "n8n"
-    N8N_BASE_URL: str = "http://localhost:5678"
-    N8N_WEBHOOK_PATH: str = "/webhook/vishleshan-research"
-    N8N_WEBHOOK_SECRET: str = "dev-vishleshan-secret-2026"
-    N8N_TIMEOUT_SECONDS: float = 30.0
+    # Orchestrator settings
+    RESEARCH_ORCHESTRATOR_MODE: str = "langgraph"  # "langgraph" (default) or "local"
 
     # CORS settings
     CORS_ORIGINS: List[str] = [

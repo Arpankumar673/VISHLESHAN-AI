@@ -268,3 +268,92 @@ class MultiAgentOrchestrator:
                 status="failed",
                 error_message=str(exc),
             )
+
+    async def execute_langgraph_run(
+        self,
+        research_run_id: UUID,
+        company_id: UUID,
+        company_name: str,
+        company_url: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+    ) -> ResearchEngineResult:
+        """
+        Executes multi-agent research workflow using compiled LangGraph StateGraph engine.
+        Supports state-driven parallel fan-out, fan-in aggregation, identity failure safety,
+        and database persistence.
+        """
+        from app.research.graph.workflow import research_graph
+
+        logger.info(f"[Orchestrator] Launching LangGraph research run {research_run_id} for '{company_name}'")
+
+        # 1. Update status to 'running'
+        now_str = utc_now().isoformat()
+        try:
+            self.supabase.table("research_runs").update(
+                {"status": "running", "started_at": now_str}
+            ).eq("id", str(research_run_id)).execute()
+        except Exception as exc:
+            logger.warning(f"Could not update status to running in DB: {exc}")
+
+        initial_state = {
+            "research_run_id": research_run_id,
+            "company_id": company_id,
+            "company_name": company_name,
+            "company_url": company_url,
+            "correlation_id": correlation_id or str(research_run_id),
+            "identity": None,
+            "identity_status": "unverified",
+            "agent_results": {},
+            "evidence": [],
+            "findings": [],
+            "trust_score": None,
+            "risk_summary": None,
+            "report_content": None,
+            "report_id": None,
+            "warnings": [],
+            "errors": [],
+            "status": "running",
+        }
+
+        try:
+            final_state = await research_graph.ainvoke(initial_state)
+
+            final_identity = final_state.get("identity") or IdentityResult(canonical_name=company_name)
+            final_evidence = final_state.get("evidence", [])
+            final_report_id = final_state.get("report_id")
+            final_status = final_state.get("status", "completed")
+
+            logger.info(f"[Orchestrator] LangGraph run {research_run_id} completed with status '{final_status}'")
+
+            return ResearchEngineResult(
+                research_run_id=research_run_id,
+                company_id=company_id,
+                identity=final_identity,
+                evidence_items=final_evidence,
+                report_id=final_report_id,
+                status=final_status,
+            )
+
+        except Exception as exc:
+            logger.exception(f"[Orchestrator] LangGraph run {research_run_id} failed fatally: {exc}")
+            failed_time = utc_now().isoformat()
+            try:
+                self.supabase.table("research_runs").update(
+                    {
+                        "status": "failed",
+                        "error_message": str(exc),
+                        "completed_at": failed_time,
+                    }
+                ).eq("id", str(research_run_id)).execute()
+            except Exception:
+                pass
+
+            return ResearchEngineResult(
+                research_run_id=research_run_id,
+                company_id=company_id,
+                identity=IdentityResult(canonical_name=company_name),
+                evidence_items=[],
+                status="failed",
+                error_message=str(exc),
+            )
+

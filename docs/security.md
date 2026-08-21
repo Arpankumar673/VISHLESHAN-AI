@@ -35,4 +35,3 @@ To prevent Insecure Direct Object References (IDOR):
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | `frontend/.env.local` | Yes (Public) |
 | `SUPABASE_SERVICE_ROLE_KEY` | `backend/.env` (Server only) | **NO** |
 | `SUPABASE_JWT_SECRET` | `backend/.env` (Server only) | **NO** |
-| `N8N_WEBHOOK_SECRET` | `backend/.env` (Server only) | **NO** |
