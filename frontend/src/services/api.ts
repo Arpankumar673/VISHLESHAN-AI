@@ -1,7 +1,8 @@
 import { supabase } from '../lib/supabase';
 
-const API_BASE_URL =
+const rawApiUrl =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
+const API_BASE_URL = rawApiUrl.endsWith('/') ? rawApiUrl.slice(0, -1) : rawApiUrl;
 
 export class ApiError extends Error {
   status: number;
