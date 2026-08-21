@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   RotateCcw,
 } from 'lucide-react';
+import type { Session, AuthChangeEvent } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/ui/Button';
@@ -108,7 +109,7 @@ export const ResetPassword: React.FC = () => {
 
     // Listen for auth state changes (especially PASSWORD_RECOVERY)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, newSession) => {
+      async (event: AuthChangeEvent, newSession: Session | null) => {
         if (!isMounted) return;
         if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && newSession)) {
           setIsInvalidLink(false);
@@ -121,7 +122,7 @@ export const ResetPassword: React.FC = () => {
 
     const timeout = setTimeout(() => {
       if (isMounted && isCheckingLink) {
-        supabase.auth.getSession().then(({ data: { session } }) => {
+        supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
           if (isMounted) {
             setIsInvalidLink(!session);
             setIsCheckingLink(false);

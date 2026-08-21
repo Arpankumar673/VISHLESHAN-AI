@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Loader2, AlertCircle, ArrowLeft, RefreshCw, CheckCircle2 } from 'lucide-react';
+import type { Session, AuthChangeEvent } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { Button } from '../components/ui/Button';
 
@@ -98,7 +99,7 @@ export const AuthCallback: React.FC = () => {
         // Listen for auth change if session is still processing
         const {
           data: { subscription },
-        } = supabase.auth.onAuthStateChange(async (event, newSession) => {
+        } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, newSession: Session | null) => {
           if (!isMounted) return;
 
           if (event === 'SIGNED_IN' && newSession?.user) {

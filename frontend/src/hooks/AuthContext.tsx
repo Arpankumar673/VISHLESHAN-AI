@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import type { Session, User } from '@supabase/supabase-js';
+import type { Session, User, AuthChangeEvent } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import type { Profile, SignInPayload, SignUpPayload } from '../types';
 import { AuthContext, type SignUpResult } from './authContextValue';
@@ -24,8 +24,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return null;
       }
       return data as Profile | null;
-    } catch (err) {
-      console.error('Unexpected error fetching profile:', err);
+    } catch {
       return null;
     }
   }, []);
@@ -40,7 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     let isMounted = true;
 
-    // Get initial session with fail-safe error handling and timeout
+    // Timeout safety fallback: don't spin indefinitely if Supabase auth hangs
     const initTimer = setTimeout(() => {
       if (isMounted) {
         setLoading(false);
@@ -50,7 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     supabase.auth
       .getSession()
-      .then(async ({ data: { session: initialSession } }) => {
+      .then(async ({ data: { session: initialSession } }: { data: { session: Session | null } }) => {
         if (!isMounted) return;
 
         setSession(initialSession);
@@ -74,7 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           clearTimeout(initTimer);
         }
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.warn('Could not initialize Supabase session:', err);
         if (isMounted) {
           setLoading(false);
@@ -85,7 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, newSession) => {
+      async (_event: AuthChangeEvent, newSession: Session | null) => {
         if (!isMounted) return;
 
         setSession(newSession);
