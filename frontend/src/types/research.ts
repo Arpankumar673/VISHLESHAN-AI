@@ -20,6 +20,7 @@ export interface ResearchRun {
   updated_at: string;
   company?: Company;
   trust_score?: TrustScore;
+  report_id?: string;
 }
 
 export interface ResearchAgentStep {

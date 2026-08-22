@@ -1337,8 +1337,8 @@ export const Dashboard: React.FC = () => {
 
                   <Link
                     to={
-                      activeRun.status === 'completed'
-                        ? `/reports/${activeRun.id}`
+                      activeRun.status === 'completed' && (activeRun.report_id || activeRun.id)
+                        ? `/reports/${activeRun.report_id || activeRun.id}`
                         : `/research/${activeRun.id}`
                     }
                     className="w-full sm:w-auto"

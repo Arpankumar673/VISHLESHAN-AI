@@ -128,6 +128,16 @@ class ResearchService:
             elif isinstance(trust_dict, dict):
                 trust_model = TrustScoreResponse.model_validate(trust_dict)
 
+        # Check if an associated report exists for this run
+        report_id = None
+        try:
+            from app.repositories.report_repository import ReportRepository
+            report_data = ReportRepository().get_by_research_run_id(run_id)
+            if report_data and "id" in report_data:
+                report_id = UUID(report_data["id"])
+        except Exception:
+            pass
+
         return ResearchRunResponse(
             research_run_id=UUID(run_data["id"]),
             company_id=UUID(run_data["company_id"]),
@@ -140,6 +150,7 @@ class ResearchService:
             updated_at=run_data["updated_at"],
             company=company_model,
             trust_score=trust_model,
+            report_id=report_id,
         )
 
 

@@ -195,9 +195,9 @@ export const ResearchProgress: React.FC = () => {
           showPercentage
         />
 
-        {run?.status === 'completed' && (
+        {run?.status === 'completed' && (run.report_id || run.id) && (
           <div className="pt-3 flex justify-end">
-            <Link to={`/reports/${run.id}`} className="w-full sm:w-auto">
+            <Link to={`/reports/${run.report_id || run.id}`} className="w-full sm:w-auto">
               <Button
                 variant="primary"
                 size="md"

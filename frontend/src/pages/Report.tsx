@@ -30,13 +30,14 @@ import { LoadingSkeleton } from '../components/ui/LoadingSkeleton';
 export const Report: React.FC = () => {
   const { reportId } = useParams<{ reportId: string }>();
 
+  const isInvalidId = !reportId || reportId === 'undefined' || reportId === 'null';
   const [report, setReport] = useState<ReportType | null>(null);
   const [run, setRun] = useState<ResearchRun | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!isInvalidId);
   const [activeTab, setActiveTab] = useState<'overview' | 'verification' | 'hiring' | 'risk' | 'evidence'>('overview');
 
   useEffect(() => {
-    if (!reportId) return;
+    if (isInvalidId) return;
 
     let isMounted = true;
     const loadReportData = async () => {
@@ -69,7 +70,7 @@ export const Report: React.FC = () => {
     return () => {
       isMounted = false;
     };
-  }, [reportId]);
+  }, [reportId, isInvalidId]);
 
   if (isLoading) {
     return (

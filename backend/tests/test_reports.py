@@ -72,3 +72,10 @@ def test_get_report_not_found(client: TestClient, mock_user: AuthenticatedUser):
         assert data["error"]["code"] == "NOT_FOUND"
     finally:
         app.dependency_overrides.pop(get_report_service, None)
+
+
+def test_get_report_invalid_uuid_string_rejected(client: TestClient):
+    response = client.get("/api/v1/reports/undefined")
+    assert response.status_code == 422
+    data = response.json()
+    assert data["error"]["code"] == "VALIDATION_ERROR"

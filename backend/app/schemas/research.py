@@ -38,5 +38,6 @@ class ResearchRunResponse(BaseModel):
     updated_at: datetime
     company: Optional[CompanyResponse] = None
     trust_score: Optional[TrustScoreResponse] = None
+    report_id: Optional[UUID] = None
 
     model_config = ConfigDict(from_attributes=True)

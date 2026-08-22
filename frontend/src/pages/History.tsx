@@ -220,8 +220,8 @@ export const History: React.FC = () => {
                       <td className="px-6 py-4 text-right">
                         <Link
                           to={
-                            run.status === 'completed'
-                              ? `/reports/${run.id}`
+                            run.status === 'completed' && (run.report_id || run.id)
+                              ? `/reports/${run.report_id || run.id}`
                               : `/research/${run.id}`
                           }
                         >
@@ -257,7 +257,7 @@ export const History: React.FC = () => {
                           {run.company?.name || 'Target Entity'}
                         </p>
                         <p className="text-[11px] text-slate-400 font-mono">
-                          # RUN-{run.id.slice(0, 8)}
+                          # RUN-{(run.id || '').slice(0, 8)}
                         </p>
                       </div>
                     </div>
@@ -295,7 +295,11 @@ export const History: React.FC = () => {
                       })}
                     </span>
                     <Link
-                      to={run.status === 'completed' ? `/reports/${run.id}` : `/research/${run.id}`}
+                      to={
+                        run.status === 'completed' && (run.report_id || run.id)
+                          ? `/reports/${run.report_id || run.id}`
+                          : `/research/${run.id}`
+                      }
                     >
                       <Button variant="secondary" size="sm" rightIcon={<ArrowRight className="h-3 w-3" />}>
                         {run.status === 'completed' ? 'View Report' : 'Track'}
