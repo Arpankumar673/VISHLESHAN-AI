@@ -5,6 +5,7 @@ from app.api.research import router as research_router
 from app.api.history import router as history_router
 from app.api.evidence import router as evidence_router
 from app.api.reports import router as reports_router
+from app.api.csv import router as csv_router
 
 api_router = APIRouter()
 
@@ -14,3 +15,4 @@ api_router.include_router(research_router)
 api_router.include_router(history_router)
 api_router.include_router(evidence_router)
 api_router.include_router(reports_router)
+api_router.include_router(csv_router, prefix="/csv", tags=["csv"])

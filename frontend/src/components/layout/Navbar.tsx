@@ -5,6 +5,7 @@ import {
   Search,
   History,
   MessageSquareText,
+  FileSpreadsheet,
   LogOut,
   User as UserIcon,
   Menu,
@@ -32,6 +33,7 @@ export const Navbar: React.FC = () => {
   const navItems = [
     { label: 'Overview', path: '/dashboard', icon: LayoutDashboard },
     { label: 'Research', path: '/research', icon: Search },
+    { label: 'Analyze CSV', path: '/csv-analysis', icon: FileSpreadsheet },
     { label: 'History', path: '/history', icon: History },
     { label: 'Ask AI', path: '/ask', icon: MessageSquareText },
   ];

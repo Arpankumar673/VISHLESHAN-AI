@@ -3,7 +3,7 @@ import { CheckCircle2, HelpCircle, AlertTriangle, XCircle } from 'lucide-react';
 import type { VerificationStatus } from '../../types';
 
 export interface StatusBadgeProps {
-  status: VerificationStatus;
+  status: VerificationStatus | string;
   size?: 'sm' | 'md';
   className?: string;
   showIcon?: boolean;
@@ -50,7 +50,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
     },
   };
 
-  const config = configMap[status] || configMap.unverified;
+  const config = (configMap as Record<string, any>)[status] || configMap.unverified;
   const Icon = config.icon;
 
   const sizeStyles = {

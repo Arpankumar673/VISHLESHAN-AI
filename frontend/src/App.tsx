@@ -20,6 +20,7 @@ import {
   History,
   EvidenceExplorer,
   AskAI,
+  CsvAnalysis,
 } from './pages';
 
 function App() {
@@ -56,6 +57,7 @@ function App() {
               <Route path="/history" element={<History />} />
               <Route path="/evidence/:id" element={<EvidenceExplorer />} />
               <Route path="/ask" element={<AskAI />} />
+              <Route path="/csv-analysis" element={<CsvAnalysis />} />
             </Route>
           </Route>
 
