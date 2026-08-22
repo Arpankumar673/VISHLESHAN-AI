@@ -68,32 +68,28 @@ export const Report: React.FC = () => {
     window.print();
   };
 
-  const handleExportJson = () => {
+  const handleExportJson = async () => {
     if (!report) return;
-    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Vishleshan_Report_${report.id}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+      await reportService.downloadReportJson(report.id);
+    } catch {
+      const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Vishleshan_Report_${report.id}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
   };
 
-  const handleExportCsv = () => {
+  const handleExportCsv = async () => {
     if (!report) return;
-    const content = report.content || {};
-    const evidenceList = content.evidence || [];
-    let csv = 'Index,Claim,Evidence Text,Source URL,Source Type,Reliability Score,Confidence Score,Verification Status\n';
-    evidenceList.forEach((e: any, i: number) => {
-      csv += `${i + 1},"${(e.claim || '').replace(/"/g, '""')}","${(e.evidence_text || '').replace(/"/g, '""')}","${e.source_url || ''}","${e.source_type || ''}",${e.reliability_score || ''},${e.confidence_score || ''},"${e.verification_status || ''}"\n`;
-    });
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Vishleshan_Report_Evidence_${report.id}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+      await reportService.downloadReportCsv(report.id);
+    } catch {
+      console.warn('Backend CSV endpoint fallback');
+    }
   };
 
   if (isLoading) {
