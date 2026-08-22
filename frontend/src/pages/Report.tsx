@@ -510,9 +510,11 @@ export const Report: React.FC = () => {
 
                   {isExpanded && (
                     <div className="pt-2 border-t border-slate-200 text-xs space-y-1 text-slate-500 font-mono">
-                      <p>Source URL: <a href={e.source_url} target="_blank" rel="noreferrer" className="text-[#5b5dfa] underline">{e.source_url}</a></p>
-                      <p>Source Type: {e.source_type}</p>
-                      <p>SHA-256 Hash: {e.content_hash}</p>
+                      <p>Source Title: <span className="text-slate-700 font-semibold">{e.source_title || 'N/A'}</span></p>
+                      <p>Source URL: {e.source_url ? <a href={e.source_url} target="_blank" rel="noopener noreferrer" className="text-[#5b5dfa] underline break-all">{e.source_url}</a> : <span className="text-slate-400">Null (Unverified Source URL)</span>}</p>
+                      <p>Source Type: <span className="text-slate-700">{e.source_type}</span></p>
+                      <p>Confidence: <span className="text-slate-700">{((e.confidence_score || 0.8) * 100).toFixed(0)}%</span></p>
+                      <p>SHA-256 Hash: <span className="text-slate-600 break-all">{e.content_hash || 'N/A'}</span></p>
                     </div>
                   )}
                 </div>

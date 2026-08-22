@@ -13,7 +13,7 @@ class SourceFinding(BaseModel):
     """Raw finding extracted from an external public source."""
     claim: str
     evidence_text: str
-    source_url: str
+    source_url: Optional[str] = None
     source_title: Optional[str] = None
     source_type: SourceType
     published_at: Optional[datetime] = None
@@ -36,7 +36,7 @@ class NormalizedEvidence(BaseModel):
     """Fully normalized and hashed evidence entity ready for persistence."""
     claim: str
     evidence_text: str
-    source_url: str
+    source_url: Optional[str] = ""
     source_title: Optional[str] = None
     source_type: SourceType
     published_at: Optional[datetime] = None

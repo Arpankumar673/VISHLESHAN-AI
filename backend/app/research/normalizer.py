@@ -32,24 +32,31 @@ class EvidenceNormalizer:
         return re.sub(r"\s+", " ", text).strip()
 
     @classmethod
-    def compute_hash(cls, claim: str, source_url: str, evidence_text: str) -> str:
+    def compute_hash(cls, claim: str, source_url: Optional[str], evidence_text: str) -> str:
         """
         Calculates SHA-256 hash of normalized evidence attributes for deterministic deduplication.
         """
-        payload = f"{cls.normalize_text(claim).lower()}|{source_url.strip().lower()}|{cls.normalize_text(evidence_text).lower()}"
+        url_str = source_url.strip().lower() if source_url else "null_source"
+        payload = f"{cls.normalize_text(claim).lower()}|{url_str}|{cls.normalize_text(evidence_text).lower()}"
         return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
     @classmethod
     def normalize_finding(cls, finding: SourceFinding) -> NormalizedEvidence:
         norm_claim = cls.normalize_text(finding.claim)
         norm_text = cls.normalize_text(finding.evidence_text)
-        norm_url = finding.source_url.strip()
+        
+        # Clean up source_url: replace placeholder/fake URLs with None
+        raw_url = finding.source_url.strip() if finding.source_url else None
+        if raw_url and any(bad in raw_url.lower() for bad in ["about:blank", "example.com", "placeholder"]):
+            norm_url = None
+        else:
+            norm_url = raw_url
 
         reliability = DEFAULT_RELIABILITY_TIERS.get(finding.source_type, 0.50)
         confidence = 0.95 if reliability >= 0.90 else (0.80 if reliability >= 0.70 else 0.60)
 
-        # Verification status derivation
-        if reliability >= 0.90:
+        # Verification status derivation: ONLY Tier 1 / Tier 2 official sources can yield VERIFIED
+        if reliability >= 0.88 and norm_url is not None:
             verification_status = VerificationStatus.VERIFIED
         else:
             verification_status = VerificationStatus.UNVERIFIED
@@ -59,8 +66,8 @@ class EvidenceNormalizer:
         ev = NormalizedEvidence(
             claim=norm_claim,
             evidence_text=norm_text,
-            source_url=norm_url,
-            source_title=finding.source_title or norm_url,
+            source_url=norm_url or "",
+            source_title=finding.source_title or (norm_url or "Unverified Record"),
             source_type=finding.source_type,
             published_at=finding.published_at,
             observed_at=finding.observed_at,

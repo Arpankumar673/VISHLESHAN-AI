@@ -365,7 +365,7 @@ class VerificationAgent(BaseAgent):
                 finding = SourceFinding(
                     claim=f"Conflicting corporate identity records for {name}",
                     evidence_text=f"Multiple conflicting corporate identities or domain redirects detected: {reason_msg}.",
-                    source_url=f"https://{clean_requested_host}" if clean_requested_host else "about:blank",
+                    source_url=f"https://{clean_requested_host}" if clean_requested_host else None,
                     source_title=f"{name} Conflicting Identity Record",
                     source_type=SourceType.OTHER,
                     raw_metadata={
@@ -529,7 +529,7 @@ class VerificationAgent(BaseAgent):
                 unv_finding = SourceFinding(
                     claim=f"Official domain verification for {name}",
                     evidence_text=f"Official domain verification could not be completed for {name}: {reason_msg}.",
-                    source_url=f"https://{clean_requested_host}" if clean_requested_host else "about:blank",
+                    source_url=f"https://{clean_requested_host}" if clean_requested_host else None,
                     source_title="Unverified Entity Record",
                     source_type=SourceType.OTHER,
                     raw_metadata={
