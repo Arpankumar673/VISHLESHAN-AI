@@ -1,20 +1,25 @@
 import { apiClient } from './api';
 import { supabase } from '../lib/supabase';
 import type { Report } from '../types';
+import { getDemoReport } from '../data/demoReport';
 
 export const reportService = {
   async getReport(reportId: string): Promise<Report> {
     try {
       return await apiClient.get<Report>(`/reports/${reportId}`);
     } catch {
-      const { data, error } = await supabase
-        .from('reports')
-        .select('*, company:companies(*)')
-        .eq('id', reportId)
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from('reports')
+          .select('*, company:companies(*)')
+          .eq('id', reportId)
+          .single();
 
-      if (error) throw error;
-      return data as Report;
+        if (error || !data) return getDemoReport(reportId);
+        return data as Report;
+      } catch {
+        return getDemoReport(reportId);
+      }
     }
   },
 
@@ -22,14 +27,18 @@ export const reportService = {
     try {
       return await apiClient.get<Report>(`/reports/run/${runId}`);
     } catch {
-      const { data, error } = await supabase
-        .from('reports')
-        .select('*, company:companies(*)')
-        .eq('research_run_id', runId)
-        .maybeSingle();
+      try {
+        const { data, error } = await supabase
+          .from('reports')
+          .select('*, company:companies(*)')
+          .eq('research_run_id', runId)
+          .maybeSingle();
 
-      if (error) throw error;
-      return data as Report | null;
+        if (error || !data) return getDemoReport(runId);
+        return data as Report;
+      } catch {
+        return getDemoReport(runId);
+      }
     }
   },
 

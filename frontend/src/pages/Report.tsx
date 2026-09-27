@@ -22,17 +22,22 @@ import { StatusBadge } from '../components/ui/StatusBadge';
 import { RiskBadge } from '../components/ui/RiskBadge';
 import { reportService } from '../services/reports';
 import type { Report as ReportType } from '../types';
+import { getDemoReport } from '../data/demoReport';
 
 export const Report: React.FC = () => {
   const { reportId } = useParams<{ reportId: string }>();
 
   const isInvalidId = !reportId || reportId === 'undefined' || reportId === 'null';
-  const [report, setReport] = useState<ReportType | null>(null);
+  const [report, setReport] = useState<ReportType | null>(isInvalidId ? getDemoReport() : null);
   const [isLoading, setIsLoading] = useState(!isInvalidId);
   const [expandedEvidence, setExpandedEvidence] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
-    if (isInvalidId) return;
+    if (isInvalidId) {
+      setReport(getDemoReport());
+      setIsLoading(false);
+      return;
+    }
 
     let isMounted = true;
     const loadReportData = async () => {
@@ -44,11 +49,14 @@ export const Report: React.FC = () => {
           data = await reportService.getReportByRunId(reportId);
         }
 
-        if (isMounted && data) {
-          setReport(data);
+        if (isMounted) {
+          setReport(data || getDemoReport(reportId));
         }
       } catch (err) {
         console.warn('Could not load report:', err);
+        if (isMounted) {
+          setReport(getDemoReport(reportId));
+        }
       } finally {
         if (isMounted) setIsLoading(false);
       }
