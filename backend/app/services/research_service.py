@@ -4,7 +4,6 @@ from uuid import UUID
 from app.core.config import settings
 from app.core.errors import AuthorizationError, NotFoundError
 from app.core.logging import logger
-from app.integrations.n8n import N8nClient, get_n8n_client
 from app.repositories.research_repository import ResearchRepository
 from app.research.agents.orchestrator import MultiAgentOrchestrator
 from app.research.engine import ResearchEngine
@@ -25,15 +24,43 @@ class ResearchService:
         company_service: Optional[CompanyService] = None,
         multi_agent_orchestrator: Optional[MultiAgentOrchestrator] = None,
         fallback_engine: Optional[ResearchEngine] = None,
-        n8n_client: Optional[N8nClient] = None,
     ):
         self.research_repo = research_repo or ResearchRepository()
         self.company_service = company_service or CompanyService()
         self.orchestrator = multi_agent_orchestrator or MultiAgentOrchestrator()
         self.fallback_engine = fallback_engine or ResearchEngine()
-        self.n8n_client = n8n_client or get_n8n_client()
 
-    def start_research(
+    async def enqueue_job(
+        self,
+        research_run_id: UUID,
+        company_name: str,
+        company_url: Optional[str] = None,
+    ) -> bool:
+        """
+        Enqueues research run job to Redis ARQ queue.
+        Returns True if enqueued successfully, False if Redis is offline/unavailable.
+        """
+        try:
+            from arq import create_pool
+            from arq.connections import RedisSettings
+
+            redis_url = settings.REDIS_URL or "redis://localhost:6379/0"
+            redis_pool = await create_pool(RedisSettings.from_dsn(redis_url))
+
+            await redis_pool.enqueue_job(
+                "run_research",
+                str(research_run_id),
+                company_name,
+                company_url,
+            )
+            await redis_pool.close()
+            logger.info(f"[ResearchService] Enqueued research job {research_run_id} to Redis ARQ queue.")
+            return True
+        except Exception as exc:
+            logger.debug(f"[ResearchService] Redis ARQ enqueue unavailable ({exc}); using fallback runner.")
+            return False
+
+    async def start_research(
         self,
         user_id: UUID,
         company_name: str,
@@ -52,21 +79,48 @@ class ResearchService:
 
         run_id = UUID(run_data["id"])
 
-        # Asynchronously trigger research pipeline
-        asyncio.create_task(
-            self._dispatch_research_run(
+        # Try async enqueue to Redis ARQ queue.
+        # If Redis worker is running, enqueue and return QUEUED status immediately.
+        # If Redis is unavailable (e.g., serverless Vercel deployment or single-process setup),
+        # await direct execution so container termination doesn't abort the research run midway.
+        enqueued = await self.enqueue_job(run_id, company_name, company_url)
+        if not enqueued:
+            await self._dispatch_research_run(
                 research_run_id=run_id,
                 company_id=company.id,
                 company_name=company_name,
                 company_url=company_url,
             )
-        )
+
+        # Retrieve current status after dispatch attempt
+        updated_run = self.research_repo.get_by_id(run_id)
+        current_status_str = updated_run.get("status") if updated_run else ResearchStatus.QUEUED.value
+        try:
+            current_status = ResearchStatus(current_status_str)
+        except ValueError:
+            current_status = ResearchStatus.QUEUED
 
         return StartResearchResponse(
             research_run_id=run_id,
             company_id=company.id,
-            status=ResearchStatus.QUEUED,
+            status=current_status,
         )
+
+    async def _start_research_async_dispatch(
+        self,
+        research_run_id: UUID,
+        company_id: UUID,
+        company_name: str,
+        company_url: Optional[str] = None,
+    ):
+        enqueued = await self.enqueue_job(research_run_id, company_name, company_url)
+        if not enqueued:
+            await self._dispatch_research_run(
+                research_run_id=research_run_id,
+                company_id=company_id,
+                company_name=company_name,
+                company_url=company_url,
+            )
 
     async def _dispatch_research_run(
         self,
@@ -76,23 +130,6 @@ class ResearchService:
         company_url: Optional[str] = None,
     ):
         orchestrator_mode = settings.RESEARCH_ORCHESTRATOR_MODE.lower()
-
-        if orchestrator_mode == "n8n":
-            logger.info(f"Delegating research run {research_run_id} to n8n webhook...")
-            trigger_result = await self.n8n_client.trigger_orchestrator(
-                research_run_id=research_run_id,
-                company_id=company_id,
-                company_name=company_name,
-                company_url=company_url,
-            )
-
-            if trigger_result.success:
-                logger.info(f"n8n successfully accepted research run {research_run_id}")
-                return
-
-            logger.warning(
-                f"n8n delegation failed ({trigger_result.error}). Falling back to internal MultiAgentOrchestrator."
-            )
 
         if orchestrator_mode == "langgraph":
             logger.info(f"Executing research run {research_run_id} via LangGraph orchestration engine...")
@@ -107,7 +144,7 @@ class ResearchService:
             except Exception as lg_exc:
                 logger.error(f"LangGraph execution failed for run {research_run_id}: {lg_exc}. Falling back to standard orchestrator...")
 
-        # Local multi-agent execution (or fallback if n8n/langgraph was unavailable)
+        # Local multi-agent execution (or fallback if langgraph was unavailable)
         try:
             await self.orchestrator.execute_run(
                 research_run_id=research_run_id,
@@ -129,23 +166,6 @@ class ResearchService:
             except Exception as fatal_exc:
                 logger.exception(f"Fatal failure in fallback engine for run {research_run_id}: {fatal_exc}")
 
-    async def handle_n8n_callback(self, payload: Dict[str, Any]) -> Dict[str, Any]:
-        """Processes completed research run payload posted back by n8n."""
-        run_id_str = payload.get("research_run_id")
-        if not run_id_str:
-            return {"status": "error", "message": "Missing research_run_id in payload"}
-
-        run_id = UUID(run_id_str)
-        status_val = payload.get("status", "completed")
-
-        self.research_repo.update_status(
-            run_id=run_id,
-            status=status_val,
-            error_message=payload.get("error_message"),
-        )
-
-        return {"status": "success", "research_run_id": str(run_id)}
-
     def get_research_status(self, run_id: UUID, user_id: UUID) -> ResearchRunResponse:
         run_data = self.research_repo.get_by_id(run_id)
         if not run_data:
@@ -165,6 +185,16 @@ class ResearchService:
             elif isinstance(trust_dict, dict):
                 trust_model = TrustScoreResponse.model_validate(trust_dict)
 
+        # Check if an associated report exists for this run
+        report_id = None
+        try:
+            from app.repositories.report_repository import ReportRepository
+            report_data = ReportRepository().get_by_research_run_id(run_id)
+            if report_data and "id" in report_data:
+                report_id = UUID(report_data["id"])
+        except Exception:
+            pass
+
         return ResearchRunResponse(
             research_run_id=UUID(run_data["id"]),
             company_id=UUID(run_data["company_id"]),
@@ -177,6 +207,7 @@ class ResearchService:
             updated_at=run_data["updated_at"],
             company=company_model,
             trust_score=trust_model,
+            report_id=report_id,
         )
 
 

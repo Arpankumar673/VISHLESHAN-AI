@@ -4,7 +4,12 @@ from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from slowapi.errors import RateLimitExceeded
+try:
+    from slowapi.errors import RateLimitExceeded
+except ImportError:
+    class RateLimitExceeded(Exception):
+        detail: str = "Rate limit exceeded"
+
 from app.api import api_router
 from app.core.config import settings
 from app.core.errors import AppException
@@ -85,7 +90,7 @@ async def handle_rate_limit_exceeded(_request: Request, exc: RateLimitExceeded):
         content={
             "error": {
                 "code": "HTTP_429",
-                "message": f"Rate limit exceeded: {exc.detail}",
+                "message": f"Rate limit exceeded: {getattr(exc, 'detail', 'Too many requests')}",
                 "details": None,
             }
         },

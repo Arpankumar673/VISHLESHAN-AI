@@ -4,7 +4,10 @@ import math
 import logging
 from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
-import joblib
+try:
+    import joblib
+except ImportError:
+    joblib = None
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +51,7 @@ class RecruitmentClassifier:
 
     def _load_model(self):
         try:
-            if os.path.exists(self.model_path):
+            if joblib is not None and os.path.exists(self.model_path):
                 artifact = joblib.load(self.model_path)
                 if isinstance(artifact, dict) and "vocab" in artifact and "weights" in artifact:
                     self.model_artifact = artifact
