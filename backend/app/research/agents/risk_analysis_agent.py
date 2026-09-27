@@ -8,10 +8,6 @@ from app.research.agents.base import (
     AgentStatus,
     BaseAgent,
 )
-from app.research.evidence.conflict import extract_official_domain_value
-from app.research.evidence.grouping import group_evidence
-from app.research.evidence.models import FusedClaimStatus
-from app.research.evidence.scoring import score_fusion_result
 from app.research.models import NormalizedEvidence, SourceFinding
 from app.research.normalizer import EvidenceNormalizer
 from app.schemas.evidence import SourceType, VerificationStatus
@@ -23,9 +19,6 @@ class RiskAnalysisAgent(BaseAgent):
     Responsible for:
     - Evidence-driven risk indicator identification and corporate anomaly classification
     - Evaluates domain provenance, recruitment spoofing risk, and evidence consistency
-    - Consumes Evidence Fusion Engine (Phase 2A + 2B) outputs for claim conflict analysis
-    - Proportional risk adjustment: Contradiction != Fraud. Critical identity collisions increase severity,
-      minor factual disagreements cause proportional low/medium penalties.
     - Explicitly separates LOW RISK from LOW CONFIDENCE (absence of data != fraud)
     - Preserves risk level ('low', 'medium', 'high') and score semantics (0-100 scale)
     """
@@ -33,7 +26,7 @@ class RiskAnalysisAgent(BaseAgent):
     def __init__(self):
         super().__init__(
             agent_name="risk_analysis",
-            agent_description="Collects preliminary risk indicators, evaluates evidence-backed risk signals, consumes Evidence Fusion outputs, and assesses corporate anomaly levels.",
+            agent_description="Collects preliminary risk indicators, evaluates evidence-backed risk signals, and assesses corporate anomaly levels.",
             agent_version="1.0",
         )
 
@@ -47,7 +40,7 @@ class RiskAnalysisAgent(BaseAgent):
         **kwargs: Any,
     ) -> AgentResult:
         """
-        Executes evidence-backed risk signal evaluation with Evidence Fusion integration.
+        Executes evidence-backed risk signal evaluation.
         Supports both modern AgentInput and backward-compatible positional signatures.
         """
         # 1. Normalize input into AgentInput contract
@@ -90,43 +83,16 @@ class RiskAnalysisAgent(BaseAgent):
         errors: List[str] = []
 
         try:
-            # Inspect previous evidence or context for conflicting domain signals
-            has_domain_conflict = False
+            # Inspect previous evidence or context for conflicting signals
+            has_conflict = False
             if agent_input.context and agent_input.context.get("conflicting_domain"):
-                has_domain_conflict = True
+                has_conflict = True
             for ev_item in agent_input.previous_evidence:
                 if ev_item.verification_status == VerificationStatus.CONFLICTING:
-                    has_domain_conflict = True
+                    has_conflict = True
 
-            # 2. Execute Evidence Fusion Engine (Phase 2A + Phase 2B) for claim-level conflict analysis
-            claim_groups = group_evidence(agent_input.previous_evidence)
-            fusion_result = score_fusion_result(claim_groups)
-
-            # Categorize claim-level contradictions by severity
-            critical_conflicts: List[str] = []
-            high_conflicts: List[str] = []
-            medium_conflicts: List[str] = []
-            minor_conflicts: List[str] = []
-
-            for fc in fusion_result.fused_claims:
-                if fc.status == FusedClaimStatus.CONFLICTED:
-                    claim_text_lower = fc.canonical_claim.lower()
-                    # Check if contradiction involves official identity / domain
-                    if "domain" in claim_text_lower or "website" in claim_text_lower or "official" in claim_text_lower or extract_official_domain_value(fc.canonical_claim):
-                        critical_conflicts.append(fc.canonical_claim)
-                    elif "ceo" in claim_text_lower or "headquarters" in claim_text_lower or "founder" in claim_text_lower:
-                        if fc.contradiction_score >= 0.40 and fc.source_quality_score >= 0.50:
-                            high_conflicts.append(fc.canonical_claim)
-                        else:
-                            medium_conflicts.append(fc.canonical_claim)
-                    else:
-                        if fc.agreement_score >= 0.70:
-                            minor_conflicts.append(fc.canonical_claim)
-                        else:
-                            medium_conflicts.append(fc.canonical_claim)
-
-            # 3. Risk Indicator 1: Domain Provenance Risk
-            if resolved_domain and not has_domain_conflict and not critical_conflicts:
+            # 2. Risk Indicator 1: Domain Provenance Risk
+            if resolved_domain:
                 clean_domain = resolved_domain.strip().lower()
                 ind_domain = {
                     "indicator_type": "domain_provenance",
@@ -144,25 +110,6 @@ class RiskAnalysisAgent(BaseAgent):
                     "confidence": 0.90,
                     "reason": f"Official domain {clean_domain} verified active.",
                     "evidence_references": [f"https://{clean_domain}"],
-                })
-            elif has_domain_conflict or critical_conflicts:
-                ind_domain = {
-                    "indicator_type": "domain_provenance",
-                    "severity": "high",
-                    "status": "conflicting_signal",
-                    "description": "Critical domain collision or official identity contradiction detected across sources.",
-                }
-                legacy_indicators.append(ind_domain)
-                warnings.append("High domain provenance risk due to identity collision.")
-
-                structured_findings.append({
-                    "category": "risk_indicator",
-                    "risk_type": "domain_provenance",
-                    "severity": "high",
-                    "status": "conflicting_signal",
-                    "confidence": 0.35,
-                    "reason": "Critical corporate domain or identity conflict detected.",
-                    "evidence_references": [],
                 })
             else:
                 ind_domain = {
@@ -184,9 +131,8 @@ class RiskAnalysisAgent(BaseAgent):
                     "evidence_references": [],
                 })
 
-            # 4. Risk Indicator 2: Recruitment Spoofing Risk
-            if resolved_domain and not has_domain_conflict and not critical_conflicts:
-                clean_domain = resolved_domain.strip().lower()
+            # 3. Risk Indicator 2: Recruitment Spoofing Risk
+            if resolved_domain and not has_conflict:
                 ind_hiring = {
                     "indicator_type": "recruitment_spoofing_risk",
                     "severity": "low",
@@ -207,28 +153,27 @@ class RiskAnalysisAgent(BaseAgent):
                     "reason": f"Recruitment presence aligned under primary domain {clean_domain}.",
                     "evidence_references": [f"https://{clean_domain}/careers"],
                 })
-            else:
+            elif has_conflict:
                 ind_hiring = {
                     "indicator_type": "recruitment_spoofing_risk",
-                    "severity": "high" if (has_domain_conflict or critical_conflicts) else "medium",
-                    "status": "conflicting_signal" if (has_domain_conflict or critical_conflicts) else "unverified",
-                    "description": "Conflicting digital identity or missing domain prevents recruitment channel verification.",
+                    "severity": "high",
+                    "status": "conflicting_signal",
+                    "description": "Conflicting digital identity or domain collision detected across sources.",
                 }
                 legacy_indicators.append(ind_hiring)
 
                 structured_findings.append({
                     "category": "risk_indicator",
                     "risk_type": "recruitment_spoofing_risk",
-                    "severity": "high" if (has_domain_conflict or critical_conflicts) else "medium",
-                    "status": "conflicting_signal" if (has_domain_conflict or critical_conflicts) else "unverified",
-                    "confidence": 0.35 if (has_domain_conflict or critical_conflicts) else 0.40,
-                    "reason": "Multiple conflicting corporate identities or missing domain detected.",
+                    "severity": "high",
+                    "status": "conflicting_signal",
+                    "confidence": 0.35,
+                    "reason": "Multiple conflicting corporate identities or domains detected.",
                     "evidence_references": [],
                 })
-                if has_domain_conflict or critical_conflicts:
-                    warnings.append("High recruitment risk due to identity collision.")
+                warnings.append("High recruitment risk due to identity collision.")
 
-            # 5. Risk Indicator 3: Evidence Sufficiency Evaluation
+            # 4. Risk Indicator 3: Evidence Sufficiency Evaluation
             ev_count = len(agent_input.previous_evidence)
             if ev_count > 0:
                 structured_findings.append({
@@ -251,21 +196,8 @@ class RiskAnalysisAgent(BaseAgent):
                     "evidence_references": [],
                 })
 
-            # 6. Risk Indicator 4: Evidence Fusion Contradiction Analysis
-            if fusion_result.conflicted_claims > 0:
-                structured_findings.append({
-                    "category": "risk_indicator",
-                    "risk_type": "evidence_contradiction",
-                    "severity": "high" if critical_conflicts else ("medium" if (high_conflicts or medium_conflicts) else "low"),
-                    "status": "conflicted_claims_detected",
-                    "confidence": round(max(0.30, 1.0 - 0.2 * fusion_result.conflicted_claims), 2),
-                    "reason": f"Detected {fusion_result.conflicted_claims} conflicted claim group(s). (Critical: {len(critical_conflicts)}, High: {len(high_conflicts)}, Medium: {len(medium_conflicts)}, Minor: {len(minor_conflicts)}).",
-                    "evidence_references": critical_conflicts + high_conflicts + medium_conflicts + minor_conflicts,
-                })
-
-            # 7. Risk Findings & Evidence Generation
-            if resolved_domain and not has_domain_conflict and not critical_conflicts:
-                clean_domain = resolved_domain.strip().lower()
+            # 5. Risk Findings & Evidence Generation
+            if resolved_domain and not has_conflict:
                 risk_finding = SourceFinding(
                     claim=f"Forensic risk assessment for {name} indicates low domain anomaly signals",
                     evidence_text=(
@@ -282,7 +214,7 @@ class RiskAnalysisAgent(BaseAgent):
                 ev.confidence_score = 0.90
                 ev.verification_status = VerificationStatus.VERIFIED
                 evidence_items.append(ev)
-            elif has_domain_conflict or critical_conflicts:
+            elif has_conflict:
                 risk_finding = SourceFinding(
                     claim=f"Forensic risk assessment for {name} indicates identity conflict risk",
                     evidence_text=f"Conflicting domain signals detected for {name}. Multiple unverified corporate identities.",
@@ -297,44 +229,19 @@ class RiskAnalysisAgent(BaseAgent):
                 ev.verification_status = VerificationStatus.CONFLICTING
                 evidence_items.append(ev)
 
-            # 8. Deterministic Proportional Risk Scoring (Bounded 0..100)
-            if has_domain_conflict or critical_conflicts:
-                base_risk = 75
-            elif resolved_domain:
-                base_risk = 15
-            else:
-                base_risk = 45  # Unverified domain -> medium risk / low confidence
-
-            # Proportional Contradiction Penalty Additions
-            contradiction_penalty = (
-                len(critical_conflicts) * 35
-                + len(high_conflicts) * 25
-                + len(medium_conflicts) * 15
-                + len(minor_conflicts) * 5
-            )
-
-            risk_score = min(100, max(0, base_risk + contradiction_penalty))
-
-            # Categorize Risk Level (low < 40, medium 40..69, high >= 70)
-            if risk_score >= 70:
+            # Calculate overall risk score and level
+            if has_conflict:
                 overall_risk_level = "high"
-            elif risk_score >= 40:
-                overall_risk_level = "medium"
-            else:
-                overall_risk_level = "low"
-
-            # Epistemic Confidence Calculation (Distinct from Risk)
-            if has_domain_conflict or critical_conflicts:
-                base_conf = 0.35
+                risk_score = 75
+                overall_confidence = 0.35
             elif resolved_domain:
-                base_conf = 0.90
+                overall_risk_level = "low"
+                risk_score = 15
+                overall_confidence = 0.90
             else:
-                base_conf = 0.40
-
-            overall_confidence = round(
-                max(0.20, min(0.95, base_conf - (fusion_result.conflicted_claims * 0.05 if fusion_result.conflicted_claims > 0 and not has_domain_conflict else 0.0))),
-                2,
-            )
+                overall_risk_level = "medium"
+                risk_score = 45
+                overall_confidence = 0.40
 
             status = AgentStatus.COMPLETED.value if len(structured_findings) > 0 else AgentStatus.PARTIAL.value
 
@@ -356,13 +263,6 @@ class RiskAnalysisAgent(BaseAgent):
                     "overall_confidence": overall_confidence,
                     "indicators_count": len(structured_findings),
                     "evidence_count": len(evidence_items),
-                    # Evidence Fusion decision layer metadata
-                    "fusion_result": fusion_result.model_dump(),
-                    "conflicted_claims_count": fusion_result.conflicted_claims,
-                    "critical_conflicts_count": len(critical_conflicts),
-                    "high_conflicts_count": len(high_conflicts),
-                    "medium_conflicts_count": len(medium_conflicts),
-                    "minor_conflicts_count": len(minor_conflicts),
                 },
             )
 
@@ -375,4 +275,3 @@ class RiskAnalysisAgent(BaseAgent):
                 research_run_id=run_id,
                 errors=[str(exc)],
             )
-

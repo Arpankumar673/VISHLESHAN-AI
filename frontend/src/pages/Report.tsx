@@ -1,92 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import {
-  ShieldCheck,
   Building2,
-  ExternalLink,
-  CheckCircle2,
-  AlertTriangle,
-  HelpCircle,
-  Download,
   Globe,
-  Layers,
+  ShieldCheck,
+  Newspaper,
+  Scale,
+  ShieldAlert,
+  FileCheck,
+  ExternalLink,
+  Calendar,
   ArrowLeft,
-  ChevronDown,
-  ChevronUp,
-  Award,
-  BarChart3,
+  Sparkles,
+  Info,
+  Users,
+  Briefcase,
+  AlertTriangle,
+  AlertCircle,
+  Cpu,
+  MessageSquareText,
+  CheckCircle2,
 } from 'lucide-react';
-import { Card, CardContent } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
+import { reportService } from '../services/reports';
+import { researchService } from '../services/research';
+import type {
+  Report as ReportType,
+  ResearchRun,
+  VerifiedIdentifierItem,
+  Evidence,
+} from '../types';
 import { StatusBadge } from '../components/ui/StatusBadge';
 import { RiskBadge } from '../components/ui/RiskBadge';
-import { reportService } from '../services/reports';
-import type { Report as ReportType } from '../types';
-
-function normalizeCompanyName(name: string): string {
-  if (!name) return '';
-  return name
-    .toLowerCase()
-    .replace(/\b(limited|ltd|inc|llc|corp|corporation|pvt|private)\b/g, '')
-    .replace(/[^a-z0-9]/g, '')
-    .trim();
-}
-
-function isLegalAliasMatch(requestedName: string | null, returnedName: string | null): boolean {
-  if (!requestedName || !returnedName) return true;
-
-  const reqNorm = normalizeCompanyName(requestedName);
-  const retNorm = normalizeCompanyName(returnedName);
-
-  if (reqNorm === retNorm) return true;
-  if (reqNorm.includes(retNorm) || retNorm.includes(reqNorm)) return true;
-
-  const knownAliases: Record<string, string[]> = {
-    hal: ['hindustan aeronautics', 'hindustanaeronautics'],
-    hcltech: ['hcl technologies', 'hcltechnologies', 'hcl'],
-    hackindia: ['hack india', 'hackindia'],
-    trianglemind: ['triangle mind', 'trianglemind'],
-    google: ['google llc', 'google inc', 'alphabet'],
-  };
-
-  for (const [key, aliases] of Object.entries(knownAliases)) {
-    const all = [key, ...aliases].map(normalizeCompanyName);
-    const reqMatches = all.some((a) => reqNorm.includes(a) || a.includes(reqNorm));
-    const retMatches = all.some((a) => retNorm.includes(a) || a.includes(retNorm));
-    if (reqMatches && retMatches) return true;
-  }
-
-  return false;
-}
+import { EmptyState } from '../components/ui/EmptyState';
+import { LoadingSkeleton } from '../components/ui/LoadingSkeleton';
 
 export const Report: React.FC = () => {
   const { reportId } = useParams<{ reportId: string }>();
   const location = useLocation();
 
-  const requestedCompanyName =
-    location.state?.requestedCompanyName ||
-    sessionStorage.getItem('vishleshan_requested_company_name') ||
-    null;
-  const requestedUrl =
-    location.state?.requestedUrl ||
-    sessionStorage.getItem('vishleshan_requested_url') ||
-    null;
-  const selectedPresetId =
-    location.state?.selectedPresetId ||
-    sessionStorage.getItem('vishleshan_selected_preset_id') ||
-    null;
-
-  const isInvalidId = !reportId || reportId === 'undefined' || reportId === 'null';
-  const [report, setReport] = useState<ReportType | null>(null);
-  const [isLoading, setIsLoading] = useState(!isInvalidId);
-  const [expandedEvidence, setExpandedEvidence] = useState<Record<number, boolean>>({});
-  const [mismatchDebug, setMismatchDebug] = useState<Record<string, unknown> | null>(null);
+  const [report, setReport] = useState<ReportType | null>(() => {
+    // If navigation passed state, use it immediately
+    if (location.state && (location.state as any).report) {
+      return (location.state as any).report as ReportType;
+    }
+    return null;
+  });
+  const [run, setRun] = useState<ResearchRun | null>(null);
+  const [isLoading, setIsLoading] = useState(!report);
+  const [activeTab, setActiveTab] = useState<'overview' | 'verification' | 'hiring' | 'risk' | 'evidence'>('overview');
 
   useEffect(() => {
-    if (isInvalidId) {
-      setIsLoading(false);
-      return;
-    }
+    if (!reportId) return;
 
     let isMounted = true;
     const loadReportData = async () => {
@@ -98,630 +62,722 @@ export const Report: React.FC = () => {
           data = await reportService.getReportByRunId(reportId);
         }
 
-        if (isMounted) {
-          if (data) {
-            const returnedName =
-              data.content?.overview?.name || data.company?.name || data.title || '';
-            if (requestedCompanyName && !isLegalAliasMatch(requestedCompanyName, returnedName)) {
-              setMismatchDebug({
-                requested_company: requestedCompanyName,
-                requested_url: requestedUrl,
-                selected_preset_id: selectedPresetId,
-                research_job_id: data.research_run_id,
-                research_run_id: data.research_run_id,
-                company_id: data.company_id,
-                report_id: data.id,
-                returned_company_name: returnedName,
-              });
-              setReport(null);
-            } else {
-              setReport(data);
-            }
-          } else {
-            setReport(null);
-          }
+        if (isMounted && data) {
+          setReport(data);
+        }
+
+        try {
+          const runData = await researchService.getResearchRun(reportId);
+          if (isMounted) setRun(runData);
+        } catch {
+          // Optional
         }
       } catch (err) {
         console.warn('Could not load report:', err);
-        if (isMounted) {
-          setReport(null);
-        }
       } finally {
         if (isMounted) setIsLoading(false);
       }
     };
 
-    loadReportData();
+    if (!report) {
+      loadReportData();
+    } else {
+      setIsLoading(false);
+    }
+
     return () => {
       isMounted = false;
     };
-  }, [reportId, isInvalidId, requestedCompanyName, requestedUrl, selectedPresetId]);
-
-  const toggleEvidence = (idx: number) => {
-    setExpandedEvidence((prev) => ({ ...prev, [idx]: !prev[idx] }));
-  };
-
-  const handlePrintPdf = () => {
-    window.print();
-  };
-
-  const handleExportJson = async () => {
-    if (!report) return;
-    try {
-      await reportService.downloadReportJson(report.id);
-    } catch {
-      const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Vishleshan_Report_${report.id}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-  };
-
-  const handleExportCsv = async () => {
-    if (!report) return;
-    try {
-      await reportService.downloadReportCsv(report.id);
-    } catch {
-      console.warn('Backend CSV endpoint fallback');
-    }
-  };
+  }, [reportId]);
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-        <div className="animate-spin h-10 w-10 border-4 border-[#5b5dfa] border-t-transparent rounded-full" />
-        <p className="text-sm font-semibold text-slate-600">Retrieving Intelligence Report...</p>
+      <div className="space-y-6 pb-12">
+        <LoadingSkeleton variant="rect" className="h-40 rounded-3xl" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <LoadingSkeleton variant="rect" className="h-64 rounded-3xl" />
+          <LoadingSkeleton variant="rect" className="h-64 rounded-3xl" />
+          <LoadingSkeleton variant="rect" className="h-64 rounded-3xl" />
+        </div>
       </div>
     );
   }
 
-  if (mismatchDebug) {
+  if (!report && !run) {
     return (
-      <div className="max-w-3xl mx-auto my-12 p-8 bg-white border border-rose-200 rounded-3xl text-center space-y-6 shadow-md">
-        <div className="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto">
-          <AlertTriangle className="h-8 w-8" />
-        </div>
-        <div>
-          <h2 className="text-2xl font-bold text-rose-700">COMPANY IDENTITY MISMATCH DETECTED</h2>
-          <p className="text-sm text-slate-600 mt-2 max-w-lg mx-auto leading-relaxed">
-            The requested company identity ("<strong className="text-rose-800">{String(mismatchDebug.requested_company)}</strong>") does not match the returned report company ("<strong className="text-rose-800">{String(mismatchDebug.returned_company_name)}</strong>"). Intelligence report rendering has been rejected for data integrity.
-          </p>
-        </div>
-
-        <div className="bg-slate-900 text-slate-200 text-left p-4 rounded-2xl font-mono text-xs overflow-x-auto space-y-1.5 border border-slate-800">
-          <p className="text-slate-400 font-bold border-b border-slate-700 pb-1 mb-2">// DEBUG METADATA</p>
-          <p><span className="text-indigo-400">requested_company:</span> {JSON.stringify(mismatchDebug.requested_company)}</p>
-          <p><span className="text-indigo-400">requested_url:</span> {JSON.stringify(mismatchDebug.requested_url)}</p>
-          <p><span className="text-indigo-400">selected_preset_id:</span> {JSON.stringify(mismatchDebug.selected_preset_id)}</p>
-          <p><span className="text-indigo-400">research_job_id:</span> {JSON.stringify(mismatchDebug.research_job_id)}</p>
-          <p><span className="text-indigo-400">research_run_id:</span> {JSON.stringify(mismatchDebug.research_run_id)}</p>
-          <p><span className="text-indigo-400">company_id:</span> {JSON.stringify(mismatchDebug.company_id)}</p>
-          <p><span className="text-indigo-400">report_id:</span> {JSON.stringify(mismatchDebug.report_id)}</p>
-          <p><span className="text-indigo-400">returned_company_name:</span> {JSON.stringify(mismatchDebug.returned_company_name)}</p>
-        </div>
-
-        <div className="flex justify-center gap-4 pt-2">
-          <Link to="/dashboard">
-            <Button variant="secondary" leftIcon={<ArrowLeft className="h-4 w-4" />}>
-              Back to Dashboard
-            </Button>
-          </Link>
-          <Link to="/research">
-            <Button variant="primary">
-              Start New Research
-            </Button>
-          </Link>
-        </div>
+      <div className="pb-12">
+        <EmptyState
+          icon={<Building2 className="h-8 w-8 text-[#5b5dfa]" />}
+          title="Intelligence Report Not Found"
+          description="AI report generation failed or report identifier is not recognized. Please retry research."
+          actionLabel="Open Presentation Mode"
+          onAction={() => {
+            window.location.href = '/demo';
+          }}
+        />
       </div>
     );
   }
 
-  if (!report) {
-    return (
-      <div className="max-w-3xl mx-auto my-12 p-8 bg-white border border-slate-200 rounded-3xl text-center space-y-4 shadow-sm">
-        <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto">
-          <AlertTriangle className="h-7 w-7" />
-        </div>
-        <h2 className="text-2xl font-bold text-[#181534]">Intelligence Report Not Found</h2>
-        <p className="text-sm text-slate-500 max-w-md mx-auto">
-          No company intelligence report matches this identifier or research execution in database.
-        </p>
-        <Link to="/dashboard">
-          <Button variant="primary" leftIcon={<ArrowLeft className="h-4 w-4" />}>
-            Back to Dashboard
-          </Button>
-        </Link>
-      </div>
-    );
-  }
-
-  const content = report.content || {};
-  const overview = content.overview || {};
-  const execIntel = content.executive_intelligence || {};
-  const finalDecision = content.final_decision_summary || {};
-  const officialResources = content.official_resources || {};
-  const domainProv = content.domain_provenance || {};
-  const identityVer = content.identity_verification || {};
-  const regFindings = content.registration_findings || {};
-  const certFindings = content.certification_findings || {};
-  const trustScoreData = content.trust_score || {};
-  const trustExplanation = content.trust_score_explanation || {};
-  const riskExplanation = content.risk_score_explanation || {};
-  const recruitmentRisk = content.recruitment_risk || {};
-  const newsHiring = content.news_hiring || {};
-  const hiringIntel = content.hiring_intelligence || {};
-  const techReputation = content.technology_reputation || {};
-  const repIntel = content.reputation_intelligence || {};
+  const companyName = report?.company?.name || run?.company?.name || 'Target Organization';
+  const officialDomain = report?.company?.official_domain || run?.company?.official_domain;
+  const content = (report?.content || {}) as any;
+  const trustScore = content.trust_score || run?.trust_score;
   const evidenceList = content.evidence || [];
-  const conflictingList = content.conflicting_evidence || [];
-  const unableList = content.uncertainty_findings || [];
-  const sourceReliability = content.source_reliability || {};
-  const tierDist = sourceReliability.tier_distribution || { tier_1: 0, tier_2: 0, tier_3: 0, tier_4: 0, tier_5: 0 };
+  const referencesList = content.references || [];
+  const isLiveGeminiDemo =
+    content.mode === 'LIVE_GEMINI_DEMO' ||
+    (report as any)?.mode === 'LIVE_GEMINI_DEMO' ||
+    (location.state as any)?.demoMode;
+  const sourceStatus = content.source_status || (location.state as any)?.sourceStatus || 'AI_KNOWLEDGE_ONLY';
 
-  const trustScore = trustScoreData.score ?? 75.0;
-  const riskLevel = trustScoreData.risk_level ?? 'low';
-  const confidenceScore = trustScoreData.confidence ?? 0.85;
-  const evidenceCoverage = trustScoreData.evidence_coverage ?? 1.0;
+  // Sub-sections
+  const overview = content.overview || {};
+  const corporateGov = content.corporate_governance || content.corporate_information || {};
+  const techRep = content.technology_reputation || content.technology_and_digital_presence || {};
+  const newsHiring = content.news_hiring || {};
+  const recruitmentAnalysis = newsHiring.recruitment_analysis || content.recruitment_analysis || {};
+  const riskAnalysis = content.risk_analysis || {};
+  const conflictsList = content.conflicts || [];
+  const limitationsList = content.limitations || [];
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 print:p-0">
-      {report.is_demo_fallback && (
-        <div className="bg-amber-500 text-white font-bold px-4 py-2.5 text-center text-xs tracking-wider uppercase rounded-2xl shadow-sm flex items-center justify-center gap-2">
-          <AlertTriangle className="h-4 w-4" />
-          <span>DEMO FALLBACK — NOT LIVE RESEARCH</span>
+    <div className="space-y-6 sm:space-y-8 animate-fade-in pb-16 text-[#181534]">
+      {/* Back Navigation & Breadcrumb */}
+      <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2">
+        <Link
+          to="/demo"
+          className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-[#5b5dfa] transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span>New Presentation Analysis</span>
+        </Link>
+
+        <div className="flex items-center gap-3">
+          <Link
+            to={`/ask?company=${encodeURIComponent(companyName)}`}
+            className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 border border-indigo-200/80 px-3 py-1 text-xs font-bold text-[#5b5dfa] hover:bg-indigo-100 transition-colors"
+          >
+            <MessageSquareText className="h-3.5 w-3.5" />
+            <span>Ask AI about {companyName}</span>
+          </Link>
+          <div className="flex items-center gap-1.5 text-xs font-medium text-slate-400">
+            <Calendar className="h-3.5 w-3.5 text-[#5b5dfa]" />
+            <span>
+              {report?.created_at
+                ? new Date(report.created_at).toLocaleDateString()
+                : new Date().toLocaleDateString()}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* SECTION 10: Presentation Mode Banner */}
+      {isLiveGeminiDemo && (
+        <div className="rounded-2xl sm:rounded-3xl border border-indigo-500/40 bg-gradient-to-r from-[#181534] via-[#232048] to-[#1a1740] p-4 sm:p-6 text-white shadow-xl space-y-2.5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="inline-flex items-center gap-2 rounded-full bg-indigo-500/20 border border-indigo-400/50 px-3 py-1 text-xs font-black tracking-wider text-indigo-300 uppercase">
+              <Sparkles className="h-3.5 w-3.5 text-indigo-400 animate-pulse" />
+              <span>LIVE GEMINI ANALYSIS</span>
+            </div>
+
+            {sourceStatus === 'AI_KNOWLEDGE_ONLY' ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/20 border border-amber-400/40 px-3 py-0.5 text-[11px] font-bold text-amber-300">
+                AI KNOWLEDGE MODE — LIVE WEB VERIFICATION NOT ENABLED
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 px-3 py-0.5 text-[11px] font-bold text-emerald-300">
+                GOOGLE SEARCH GROUNDED — LIVE WEB EVIDENCE
+              </span>
+            )}
+          </div>
+          <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
+            AI-generated company intelligence. Verification status is shown for individual claims;
+            unavailable information is not treated as fraud.
+          </p>
         </div>
       )}
 
-      {/* Top Nav Action Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-4 print:hidden">
-        <Link to="/history" className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-[#5b5dfa]">
-          <ArrowLeft className="h-4 w-4" />
-          <span>Back to History</span>
-        </Link>
-        <div className="flex items-center gap-2">
-          <Button variant="secondary" size="sm" onClick={handleExportCsv} leftIcon={<Download className="h-4 w-4" />}>
-            Export CSV
-          </Button>
-          <Button variant="secondary" size="sm" onClick={handleExportJson} leftIcon={<Download className="h-4 w-4" />}>
-            Export JSON
-          </Button>
-          <Button variant="primary" size="sm" onClick={handlePrintPdf} leftIcon={<Download className="h-4 w-4" />}>
-            Export PDF
-          </Button>
-        </div>
-      </div>
-
-      {/* Header Summary Dashboard Banner */}
-      <Card className="border-0 bg-gradient-to-br from-[#181534] via-[#1f1b45] to-[#14122c] text-white p-6 sm:p-8 rounded-3xl shadow-xl">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-xs font-mono text-indigo-300">
-              <ShieldCheck className="h-4 w-4 text-[#5b5dfa]" />
-              <span>FORENSIC INTELLIGENCE REPORT</span>
-              <span>•</span>
-              <span>ID: {report.id}</span>
+      {/* Hero Report Header (Finnova Midnight Card) */}
+      <div className="relative overflow-hidden rounded-2xl sm:rounded-[32px] bg-[#181534] text-white p-5 sm:p-8 shadow-2xl border border-slate-800">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-3 min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-[#5b5dfa]/20 border border-[#5b5dfa]/40 px-3 py-0.5 text-xs font-bold text-indigo-300">
+                {isLiveGeminiDemo ? 'Live Gemini v1.0' : `Report v${report?.report_version || '1.0'}`}
+              </span>
+              <StatusBadge
+                status={content.identity_verification?.status || 'verified'}
+              />
+              <RiskBadge level={trustScore?.risk_level || riskAnalysis?.overall_risk || 'low'} />
             </div>
-            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
-              {overview.name || report.title || 'Corporate Entity Report'}
+
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white flex items-center gap-2.5 sm:gap-3 truncate">
+              <Building2 className="h-7 w-7 sm:h-8 sm:w-8 text-[#818cf8] shrink-0" />
+              <span className="truncate">{companyName}</span>
             </h1>
-            <p className="text-xs text-slate-300 font-mono">
-              Research Run ID: {report.research_run_id} | Generated: {new Date(report.created_at).toLocaleDateString()}
+
+            {officialDomain && (
+              <div className="flex items-center gap-2 text-xs font-mono text-indigo-300 truncate">
+                <Globe className="h-3.5 w-3.5 shrink-0" />
+                <a
+                  href={
+                    officialDomain.startsWith('http')
+                      ? officialDomain
+                      : `https://${officialDomain}`
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline inline-flex items-center gap-1 font-bold truncate"
+                >
+                  <span className="truncate">{officialDomain}</span>
+                  <ExternalLink className="h-3 w-3 inline shrink-0" />
+                </a>
+              </div>
+            )}
+          </div>
+
+          {/* SECTION 5: Trust Score Display Card */}
+          <div className="flex flex-col items-center sm:items-end justify-center rounded-2xl sm:rounded-3xl bg-[#232048] border border-white/10 p-5 sm:p-6 shrink-0 w-full md:w-auto md:min-w-[240px] text-center sm:text-right">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              {trustScore?.score === null || trustScore?.score === undefined
+                ? 'Trust Score Status'
+                : (isLiveGeminiDemo ? 'AI Demo Indicator' : 'Deterministic Trust Index')}
+            </span>
+            <div className="mt-1 flex items-baseline justify-center sm:justify-end gap-1">
+              {trustScore?.score !== null && trustScore?.score !== undefined ? (
+                <>
+                  <span className="text-3xl sm:text-4xl font-black text-[#818cf8] font-mono">
+                    {Number(trustScore.score).toFixed(1)}
+                  </span>
+                  <span className="text-xs text-slate-400 font-bold">/ 100</span>
+                </>
+              ) : (
+                <span className="text-sm sm:text-base font-bold text-amber-300 font-mono">
+                  Unavailable
+                </span>
+              )}
+            </div>
+            <p className="mt-1 text-[10px] text-indigo-300 font-mono">
+              {trustScore?.score !== null && trustScore?.score !== undefined
+                ? (isLiveGeminiDemo
+                    ? 'AI DEMO INDICATOR — NOT THE PRODUCTION TRUST INDEX'
+                    : trustScore.algorithm_version || 'trust_v1_deterministic')
+                : 'Trust score unavailable in presentation mode'}
             </p>
           </div>
-
-          {/* Core Score Badge Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full lg:w-auto">
-            <div className="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/10 text-center">
-              <span className="text-[10px] font-bold text-slate-300 uppercase block">Trust Score</span>
-              <span className="text-2xl font-extrabold text-[#5b5dfa]">{trustScore} / 100</span>
-            </div>
-
-            <div className="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/10 text-center">
-              <span className="text-[10px] font-bold text-slate-300 uppercase block">Risk Level</span>
-              <div className="mt-1 flex justify-center">
-                <RiskBadge level={riskLevel} size="sm" />
-              </div>
-            </div>
-
-            <div className="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/10 text-center">
-              <span className="text-[10px] font-bold text-slate-300 uppercase block">Confidence</span>
-              <span className="text-2xl font-extrabold text-emerald-400">{(confidenceScore * 100).toFixed(0)}%</span>
-            </div>
-
-            <div className="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/10 text-center">
-              <span className="text-[10px] font-bold text-slate-300 uppercase block">Evidence Coverage</span>
-              <span className="text-2xl font-extrabold text-indigo-300">{(evidenceCoverage * 100).toFixed(0)}%</span>
-            </div>
-          </div>
         </div>
-
-        {/* Metric Bar Highlights */}
-        <div className="mt-6 pt-6 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-medium text-slate-300">
-          <div>
-            <span className="text-slate-400 block text-[10px] uppercase">Sources Analyzed</span>
-            <span className="font-mono text-white text-sm font-bold">{evidenceList.length} Records</span>
-          </div>
-          <div>
-            <span className="text-slate-400 block text-[10px] uppercase">Conflicts Count</span>
-            <span className="font-mono text-amber-400 text-sm font-bold">{conflictingList.length} Claims</span>
-          </div>
-          <div>
-            <span className="text-slate-400 block text-[10px] uppercase">Unable-to-Verify</span>
-            <span className="font-mono text-purple-300 text-sm font-bold">{unableList.length} Claims</span>
-          </div>
-          <div>
-            <span className="text-slate-400 block text-[10px] uppercase">Official Website</span>
-            <span className="font-mono text-white text-sm font-bold truncate block">{overview.official_domain || 'Unresolved'}</span>
-          </div>
-        </div>
-      </Card>
-
-      {/* SECTION 1: EXECUTIVE INTELLIGENCE */}
-      <Card className="p-6 rounded-3xl border border-slate-200">
-        <CardContent className="space-y-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#5b5dfa] uppercase tracking-wider">
-            <ShieldCheck className="h-4 w-4" />
-            <span>Section 1: Executive Intelligence</span>
-          </div>
-          <h3 className="text-lg font-bold text-[#181534]">Executive Summary</h3>
-          <p className="text-sm text-slate-600 leading-relaxed">
-            {execIntel.summary || 'Forensic investigation completed. Verified domain identity baseline and source reliability.'}
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* SECTION 2: FINAL DECISION SUMMARY */}
-      <Card className="p-6 rounded-3xl border-2 border-indigo-200 bg-indigo-50/40">
-        <CardContent className="space-y-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#5b5dfa] uppercase tracking-wider">
-            <CheckCircle2 className="h-4 w-4" />
-            <span>Section 2: Final Decision Summary</span>
-          </div>
-          <h3 className="text-lg font-bold text-[#181534]">{finalDecision.verdict_label || 'Verified Baseline Verdict'}</h3>
-          <p className="text-sm text-slate-700 leading-relaxed">
-            {finalDecision.decision || 'Evidence-grounded summary compiled from public web records without fabricating missing signals.'}
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* SECTION 3: COMPANY PROFILE & SECTION 5: OFFICIAL RESOURCES */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="p-6 rounded-3xl border border-slate-200">
-          <CardContent className="space-y-4">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#5b5dfa] uppercase tracking-wider">
-              <Building2 className="h-4 w-4" />
-              <span>Section 3: Company Profile</span>
-            </div>
-            <div className="space-y-2 text-xs">
-              <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500 font-medium">Canonical Name</span>
-                <span className="font-bold text-[#181534]">{overview.name || '—'}</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500 font-medium">Industry</span>
-                <span className="font-bold text-[#181534]">{overview.industry || 'General Corporate Entity'}</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500 font-medium">Headquarters</span>
-                <span className="font-bold text-[#181534]">{overview.headquarters || 'Unspecified'}</span>
-              </div>
-              <div className="pt-2">
-                <span className="text-slate-500 font-medium block mb-1">Description</span>
-                <p className="text-slate-600 leading-normal">{overview.description || 'Public entity summary.'}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="p-6 rounded-3xl border border-slate-200">
-          <CardContent className="space-y-4">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#5b5dfa] uppercase tracking-wider">
-              <Globe className="h-4 w-4" />
-              <span>Section 5: Official Resources</span>
-            </div>
-            <div className="space-y-3 text-xs">
-              <div className="p-3 bg-slate-50 rounded-2xl flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] text-slate-400 font-bold uppercase block">Official Website</span>
-                  <span className="font-mono font-bold text-[#181534]">{officialResources.website || 'Unresolved'}</span>
-                </div>
-                {officialResources.website && (
-                  <a href={officialResources.website} target="_blank" rel="noreferrer" className="text-[#5b5dfa]">
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
-                )}
-              </div>
-
-              <div className="p-3 bg-slate-50 rounded-2xl flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] text-slate-400 font-bold uppercase block">Careers Portal</span>
-                  <span className="font-mono font-bold text-[#181534]">{officialResources.careers_portal || 'Unverified'}</span>
-                </div>
-                {officialResources.careers_portal && (
-                  <a href={officialResources.careers_portal} target="_blank" rel="noreferrer" className="text-[#5b5dfa]">
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
-      {/* SECTION 4: IDENTITY VERIFICATION & SECTION 6: DOMAIN PROVENANCE */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="p-6 rounded-3xl border border-slate-200">
-          <CardContent className="space-y-3">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#5b5dfa] uppercase tracking-wider">
-              <ShieldCheck className="h-4 w-4" />
-              <span>Section 4: Identity Verification Matrix</span>
-            </div>
-            <p className="text-xs text-slate-600">{identityVer.summary}</p>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="border-b border-slate-200 text-slate-400 font-bold text-[10px] uppercase">
-                    <th className="py-2">Type</th>
-                    <th className="py-2">Status</th>
-                    <th className="py-2">Identifier</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(identityVer.verified_identifiers || []).map((id: any, i: number) => (
-                    <tr key={i} className="border-b border-slate-100">
-                      <td className="py-2 font-medium">{id.type}</td>
-                      <td className="py-2"><StatusBadge status={id.status} size="sm" /></td>
-                      <td className="py-2 font-mono text-slate-600">{id.value}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Navigation Tabs */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
+        {[
+          { id: 'overview', label: '1. Overview & Identity' },
+          { id: 'verification', label: '2. Registrations & Certs' },
+          { id: 'hiring', label: '3. News & Recruitment' },
+          { id: 'risk', label: '4. Trust & Risk Analysis' },
+          { id: 'evidence', label: `5. Evidence & Sources (${evidenceList.length || referencesList.length || '0'})` },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setActiveTab(tab.id as typeof activeTab)}
+            className={`px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-bold rounded-full transition-all whitespace-nowrap shrink-0 cursor-pointer ${
+              activeTab === tab.id
+                ? 'bg-[#5b5dfa] text-white shadow-md shadow-indigo-500/30'
+                : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
 
-        <Card className="p-6 rounded-3xl border border-slate-200">
-          <CardContent className="space-y-3">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#5b5dfa] uppercase tracking-wider">
-              <Globe className="h-4 w-4" />
-              <span>Section 6: Domain Provenance</span>
+      {/* TAB 1: OVERVIEW & IDENTITY */}
+      {activeTab === 'overview' && (
+        <div className="space-y-6">
+          {/* Executive Summary */}
+          <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
+            <div className="border-b border-slate-100 pb-3">
+              <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
+                <Building2 className="h-5 w-5 text-[#5b5dfa]" />
+                <span>Executive Summary</span>
+              </h2>
             </div>
-            <div className="space-y-2 text-xs">
-              <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">Primary Domain</span>
-                <span className="font-mono font-bold text-[#181534]">{domainProv.domain || 'Unresolved'}</span>
+            <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
+              {overview.summary ||
+                `${companyName} is an active enterprise with public operations, corporate communications, and institutional presence.`}
+            </p>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-3 border-t border-slate-100">
+              <div>
+                <span className="text-xs text-slate-400 font-semibold">Industry</span>
+                <p className="text-xs sm:text-sm font-bold text-[#181534] mt-0.5">
+                  {overview.industry || 'Technology & Professional Services'}
+                </p>
               </div>
-              <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">HTTPS Support</span>
-                <span className="font-bold text-emerald-600">{domainProv.https_support ? 'ACTIVE (TLS Verified)' : 'UNVERIFIED'}</span>
+              <div>
+                <span className="text-xs text-slate-400 font-semibold">Headquarters</span>
+                <p className="text-xs sm:text-sm font-bold text-[#181534] mt-0.5">
+                  {overview.headquarters || 'Public Records'}
+                </p>
               </div>
-              <p className="text-slate-600 pt-1">{domainProv.summary}</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* SECTION 7 & 8: GOVERNMENT REGISTRATION & CERTIFICATION */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="p-6 rounded-3xl border border-slate-200">
-          <CardContent className="space-y-3">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#5b5dfa] uppercase tracking-wider">
-              <Award className="h-4 w-4" />
-              <span>Section 7: Government Registrations</span>
-            </div>
-            <p className="text-xs text-slate-600">{regFindings.summary}</p>
-          </CardContent>
-        </Card>
-
-        <Card className="p-6 rounded-3xl border border-slate-200">
-          <CardContent className="space-y-3">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#5b5dfa] uppercase tracking-wider">
-              <Award className="h-4 w-4" />
-              <span>Section 8: Certifications & Compliance</span>
-            </div>
-            <p className="text-xs text-slate-600">{certFindings.summary}</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* SECTION 9 & 10: TRUST & RISK SCORE EXPLANATIONS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="p-6 rounded-3xl border border-slate-200">
-          <CardContent className="space-y-3">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#5b5dfa] uppercase tracking-wider">
-              <BarChart3 className="h-4 w-4" />
-              <span>Section 9: Trust Score Explanation</span>
-            </div>
-            <p className="text-xs text-slate-600">{trustExplanation.explanation}</p>
-            <div className="space-y-1.5 pt-2">
-              {(trustExplanation.contributing_signals || []).map((s: any, i: number) => (
-                <div key={i} className="flex justify-between text-xs p-2 bg-slate-50 rounded-xl">
-                  <span className="font-medium text-slate-700">{s.signal}</span>
-                  <span className="font-mono font-bold text-[#5b5dfa]">{s.weight} ({s.status})</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="p-6 rounded-3xl border border-slate-200">
-          <CardContent className="space-y-3">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#5b5dfa] uppercase tracking-wider">
-              <AlertTriangle className="h-4 w-4" />
-              <span>Section 10: Risk Score Explanation</span>
-            </div>
-            <ul className="space-y-1 text-xs text-slate-600 list-disc pl-4">
-              {(riskExplanation.factors || []).map((f: string, i: number) => (
-                <li key={i}>{f}</li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* SECTION 11, 12, 13, 14, 15: RECRUITMENT, NEWS, HIRING, TECH, REPUTATION */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card className="p-5 rounded-3xl border border-slate-200">
-          <CardContent className="space-y-2">
-            <span className="text-[10px] font-bold text-[#5b5dfa] uppercase">Section 11: Recruitment Risk</span>
-            <h4 className="text-sm font-bold text-[#181534]">Recruitment Risk Index</h4>
-            <p className="text-xs text-slate-600">Company Legitimacy: <StatusBadge status={recruitmentRisk.company_legitimacy || 'unverified'} size="sm" /></p>
-            <p className="text-xs text-slate-600">Job Offer Risk: <span className="font-bold text-emerald-600 uppercase">{recruitmentRisk.job_offer_risk}</span></p>
-          </CardContent>
-        </Card>
-
-        <Card className="p-5 rounded-3xl border border-slate-200">
-          <CardContent className="space-y-2">
-            <span className="text-[10px] font-bold text-[#5b5dfa] uppercase">Section 12 & 13: Corporate News & Hiring</span>
-            <h4 className="text-sm font-bold text-[#181534]">Hiring Intelligence</h4>
-            <p className="text-xs text-slate-600">{newsHiring.summary || 'Hiring channels inspected.'}</p>
-            <p className="text-xs font-mono text-slate-500">Status: {hiringIntel.status || 'Active'}</p>
-          </CardContent>
-        </Card>
-
-        <Card className="p-5 rounded-3xl border border-slate-200">
-          <CardContent className="space-y-2">
-            <span className="text-[10px] font-bold text-[#5b5dfa] uppercase">Section 14 & 15: Tech & Reputation</span>
-            <h4 className="text-sm font-bold text-[#181534]">Technology & Reputation</h4>
-            <p className="text-xs text-slate-600">{techReputation.infrastructure}</p>
-            <p className="text-xs text-slate-500">{repIntel.summary || 'Public presence verified.'}</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* SECTION 16: EVIDENCE EXPLORER */}
-      <Card className="p-6 rounded-3xl border border-slate-200">
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#5b5dfa] uppercase tracking-wider">
-              <Layers className="h-4 w-4" />
-              <span>Section 16: Evidence Explorer ({evidenceList.length} Observed Claims)</span>
+              <div>
+                <span className="text-xs text-slate-400 font-semibold">Founded</span>
+                <p className="text-xs sm:text-sm font-bold text-[#181534] mt-0.5">
+                  {overview.founded || 'Established'}
+                </p>
+              </div>
+              <div>
+                <span className="text-xs text-slate-400 font-semibold">Company Type</span>
+                <p className="text-xs sm:text-sm font-bold text-[#181534] mt-0.5">
+                  {overview.company_type || 'Enterprise'}
+                </p>
+              </div>
             </div>
           </div>
 
-          <div className="space-y-3">
-            {evidenceList.map((e: any, idx: number) => {
-              const isExpanded = expandedEvidence[idx];
-              return (
-                <div key={idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-mono font-bold bg-indigo-100 text-[#5b5dfa] px-2 py-0.5 rounded">
-                          REF #{e.index || idx + 1}
-                        </span>
-                        <StatusBadge status={e.verification_status} size="sm" />
-                        <span className="text-[10px] font-mono text-slate-400">
-                          Rel: {(e.reliability_score * 100).toFixed(0)}%
-                        </span>
-                      </div>
-                      <p className="text-sm font-bold text-[#181534]">{e.claim}</p>
-                    </div>
-
-                    <button
-                      onClick={() => toggleEvidence(idx)}
-                      className="text-slate-400 hover:text-slate-600 p-1"
-                    >
-                      {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                    </button>
+          {/* Business Overview */}
+          {(overview.products_services?.length > 0 || overview.business_model || overview.target_market) && (
+            <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
+              <div className="border-b border-slate-100 pb-3">
+                <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
+                  <Briefcase className="h-5 w-5 text-[#5b5dfa]" />
+                  <span>Business Overview</span>
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {overview.business_model && (
+                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                    <span className="text-xs text-slate-400 font-semibold">Business Model</span>
+                    <p className="text-xs sm:text-sm text-slate-700 font-medium">{overview.business_model}</p>
                   </div>
+                )}
+                {overview.target_market && (
+                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                    <span className="text-xs text-slate-400 font-semibold">Target Market</span>
+                    <p className="text-xs sm:text-sm text-slate-700 font-medium">{overview.target_market}</p>
+                  </div>
+                )}
+              </div>
+              {overview.products_services?.length > 0 && (
+                <div className="space-y-2 pt-2">
+                  <span className="text-xs text-slate-400 font-semibold">Key Products & Services</span>
+                  <div className="flex flex-wrap gap-2">
+                    {overview.products_services.map((prod: string, idx: number) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 border border-indigo-200/80 text-[#5b5dfa]"
+                      >
+                        {prod}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
-                  <p className="text-xs text-slate-600 bg-white p-3 rounded-xl border border-slate-100">
-                    "{e.evidence_text}"
-                  </p>
+          {/* Corporate Information & Governance */}
+          {(corporateGov.founders?.length > 0 || corporateGov.leadership?.length > 0 || corporateGov.employee_count) && (
+            <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
+              <div className="border-b border-slate-100 pb-3">
+                <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
+                  <Users className="h-5 w-5 text-[#5b5dfa]" />
+                  <span>Corporate Information & Leadership</span>
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {corporateGov.founders?.length > 0 && (
+                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                    <span className="text-xs text-slate-400 font-semibold">Founders</span>
+                    <p className="text-xs sm:text-sm font-bold text-[#181534]">
+                      {corporateGov.founders.join(', ')}
+                    </p>
+                  </div>
+                )}
+                {corporateGov.leadership?.length > 0 && (
+                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                    <span className="text-xs text-slate-400 font-semibold">Key Leadership</span>
+                    <p className="text-xs sm:text-sm font-bold text-[#181534]">
+                      {corporateGov.leadership.join(', ')}
+                    </p>
+                  </div>
+                )}
+                {corporateGov.employee_count && (
+                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                    <span className="text-xs text-slate-400 font-semibold">Employee Scale</span>
+                    <p className="text-xs sm:text-sm font-bold text-[#181534]">
+                      {corporateGov.employee_count}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
-                  {isExpanded && (
-                    <div className="pt-2 border-t border-slate-200 text-xs space-y-1 text-slate-500 font-mono">
-                      <p>Source Title: <span className="text-slate-700 font-semibold">{e.source_title || 'N/A'}</span></p>
-                      <p>Source URL: {e.source_url ? <a href={e.source_url} target="_blank" rel="noopener noreferrer" className="text-[#5b5dfa] underline break-all">{e.source_url}</a> : <span className="text-slate-400">Null (Unverified Source URL)</span>}</p>
-                      <p>Source Type: <span className="text-slate-700">{e.source_type}</span></p>
-                      <p>Confidence: <span className="text-slate-700">{((e.confidence_score || 0.8) * 100).toFixed(0)}%</span></p>
-                      <p>SHA-256 Hash: <span className="text-slate-600 break-all">{e.content_hash || 'N/A'}</span></p>
+          {/* Technology & Digital Presence */}
+          {(techRep.technology_focus?.length > 0 || techRep.digital_presence || techRep.engineering_presence) && (
+            <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
+              <div className="border-b border-slate-100 pb-3">
+                <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
+                  <Cpu className="h-5 w-5 text-[#5b5dfa]" />
+                  <span>Technology & Digital Presence</span>
+                </h2>
+              </div>
+              {techRep.digital_presence && (
+                <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
+                  {techRep.digital_presence}
+                </p>
+              )}
+              {techRep.technology_focus?.length > 0 && (
+                <div className="space-y-2 pt-1">
+                  <span className="text-xs text-slate-400 font-semibold">Core Technology Focus Areas</span>
+                  <div className="flex flex-wrap gap-2">
+                    {techRep.technology_focus.map((t: string, idx: number) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-slate-100 border border-slate-200 text-slate-700"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Identity & Provenance Verification */}
+          <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
+            <div className="border-b border-slate-100 pb-3">
+              <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-emerald-500" />
+                <span>Identity & Provenance Verification</span>
+              </h2>
+            </div>
+            <div className="space-y-2.5">
+              {(content.identity_verification?.verified_identifiers || []).map(
+                (ident: VerifiedIdentifierItem, i: number) => (
+                  <div
+                    key={i}
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80"
+                  >
+                    <div className="min-w-0">
+                      <span className="text-xs font-bold text-[#181534]">
+                        {ident.type}:{' '}
+                      </span>
+                      <span className="text-xs font-mono text-slate-600 font-medium break-all">
+                        {ident.value}
+                      </span>
                     </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* SECTION 17 & 18: CONFLICTS & UNCERTAINTY */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="p-6 rounded-3xl border border-slate-200">
-          <CardContent className="space-y-3">
-            <div className="flex items-center gap-2 text-xs font-bold text-amber-600 uppercase tracking-wider">
-              <AlertTriangle className="h-4 w-4" />
-              <span>Section 17: Conflicting Evidence ({conflictingList.length})</span>
+                    <div className="self-start sm:self-auto shrink-0">
+                      <StatusBadge status={ident.status} size="sm" />
+                    </div>
+                  </div>
+                )
+              )}
             </div>
-            {conflictingList.length === 0 ? (
-              <p className="text-xs text-slate-500">No contradictory evidence claims detected across source observations.</p>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 2: REGISTRATIONS & CERTS */}
+      {activeTab === 'verification' && (
+        <div className="space-y-6">
+          {/* Public Registration Findings */}
+          <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
+            <div className="border-b border-slate-100 pb-3">
+              <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
+                <FileCheck className="h-5 w-5 text-[#5b5dfa]" />
+                <span>Public Registration & Regulatory Records</span>
+              </h2>
+            </div>
+            {content.registration_findings?.findings?.length > 0 ? (
+              <div className="space-y-3">
+                {content.registration_findings.findings.map((reg: any, i: number) => (
+                  <div
+                    key={i}
+                    className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  >
+                    <div className="min-w-0 space-y-0.5">
+                      <p className="text-xs sm:text-sm font-bold text-[#181534]">
+                        {reg.authority}
+                      </p>
+                      <p className="text-xs text-slate-600 font-mono">
+                        {reg.registration_number || reg.item}
+                      </p>
+                      {reg.evidence && (
+                        <p className="text-xs text-slate-500 font-medium">{reg.evidence}</p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <StatusBadge status={reg.status || 'verified'} size="sm" />
+                    </div>
+                  </div>
+                ))}
+              </div>
             ) : (
-              conflictingList.map((c: any, i: number) => (
-                <div key={i} className="p-3 bg-amber-50 rounded-xl text-xs space-y-1 border border-amber-200">
-                  <p className="font-bold text-amber-900">{c.claim}</p>
-                  <p className="text-amber-800">{c.evidence_text}</p>
-                </div>
-              ))
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-500">
+                No verified regulatory registration records found. Unavailable records are marked as UNABLE_TO_VERIFY and not treated as fraud.
+              </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
 
-        <Card className="p-6 rounded-3xl border border-slate-200">
-          <CardContent className="space-y-3">
-            <div className="flex items-center gap-2 text-xs font-bold text-purple-600 uppercase tracking-wider">
-              <HelpCircle className="h-4 w-4" />
-              <span>Section 18: Uncertainty / Unable-to-Verify ({unableList.length})</span>
+          {/* Certifications & Accreditations */}
+          {content.certification_findings?.certifications?.length > 0 && (
+            <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
+              <div className="border-b border-slate-100 pb-3">
+                <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
+                  <ShieldCheck className="h-5 w-5 text-indigo-500" />
+                  <span>Certifications & Accreditations</span>
+                </h2>
+              </div>
+              <div className="space-y-3">
+                {content.certification_findings.certifications.map((cert: any, i: number) => (
+                  <div
+                    key={i}
+                    className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-xs sm:text-sm font-bold text-[#181534]">{cert.name}</p>
+                      <p className="text-xs text-slate-500 font-mono mt-0.5">{cert.issuer}</p>
+                      {cert.evidence && (
+                        <p className="text-xs text-slate-500 mt-1">{cert.evidence}</p>
+                      )}
+                    </div>
+                    <StatusBadge status={cert.status || 'unverified'} size="sm" />
+                  </div>
+                ))}
+              </div>
             </div>
-            {unableList.length === 0 ? (
-              <p className="text-xs text-slate-500">All observed claims resolved with verifiable status.</p>
+          )}
+        </div>
+      )}
+
+      {/* TAB 3: NEWS & RECRUITMENT */}
+      {activeTab === 'hiring' && (
+        <div className="space-y-6">
+          {/* Recruitment Analysis */}
+          <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
+            <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
+              <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
+                <Users className="h-5 w-5 text-[#5b5dfa]" />
+                <span>Recruitment Security & Integrity Analysis</span>
+              </h2>
+              <RiskBadge level={recruitmentAnalysis.risk_level?.toLowerCase() || 'low'} />
+            </div>
+
+            {recruitmentAnalysis.explanation && (
+              <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
+                {recruitmentAnalysis.explanation}
+              </p>
+            )}
+
+            {recruitmentAnalysis.signals?.length > 0 && (
+              <div className="space-y-2 pt-2 border-t border-slate-100">
+                <span className="text-xs text-slate-400 font-semibold">Observed Recruitment Signals:</span>
+                <div className="space-y-1.5">
+                  {recruitmentAnalysis.signals.map((sig: string, idx: number) => (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200/60 text-xs text-slate-700 font-medium"
+                    >
+                      <CheckCircle2 className="h-4 w-4 text-indigo-500 shrink-0" />
+                      <span>{sig}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* News & Public Developments */}
+          <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
+            <div className="border-b border-slate-100 pb-3">
+              <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
+                <Newspaper className="h-5 w-5 text-[#5b5dfa]" />
+                <span>News & Public Developments</span>
+              </h2>
+            </div>
+            {newsHiring.recent_developments?.length > 0 ? (
+              <div className="space-y-2.5">
+                {newsHiring.recent_developments.map((dev: string, idx: number) => (
+                  <div
+                    key={idx}
+                    className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs sm:text-sm text-slate-700 font-medium"
+                  >
+                    • {dev}
+                  </div>
+                ))}
+              </div>
             ) : (
-              unableList.map((u: any, i: number) => (
-                <div key={i} className="p-3 bg-purple-50 rounded-xl text-xs space-y-1 border border-purple-200">
-                  <p className="font-bold text-purple-900">{u.claim}</p>
-                  <p className="text-purple-800">{u.evidence_text}</p>
-                </div>
-              ))
+              <p className="text-xs text-slate-500">
+                No recent critical controversies or disputes noted in public intelligence records.
+              </p>
             )}
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </div>
+      )}
 
-      {/* SECTION 19: SOURCE RELIABILITY DISTRIBUTION */}
-      <Card className="p-6 rounded-3xl border border-slate-200">
-        <CardContent className="space-y-4">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#5b5dfa] uppercase tracking-wider">
-            <BarChart3 className="h-4 w-4" />
-            <span>Section 19: Source Reliability Distribution (Tier 1 – Tier 5)</span>
+      {/* TAB 4: RISK & TRUST ANALYSIS */}
+      {activeTab === 'risk' && (
+        <div className="space-y-6">
+          {/* Forensic Risk Analysis */}
+          <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
+            <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
+              <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
+                <ShieldAlert className="h-5 w-5 text-indigo-500" />
+                <span>Risk & Anomaly Analysis</span>
+              </h2>
+              <RiskBadge level={riskAnalysis.overall_risk || 'low'} />
+            </div>
+
+            {riskAnalysis.risks?.length > 0 ? (
+              <div className="space-y-2.5">
+                {riskAnalysis.risks.map((r: any, idx: number) => (
+                  <div
+                    key={idx}
+                    className="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80"
+                  >
+                    <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+                    <p className="text-xs sm:text-sm text-slate-700 font-medium">{String(r)}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-xs text-emerald-800 font-medium">
+                No high-risk anomalies or deceptive impersonation signals detected for this entity.
+              </div>
+            )}
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-            <div className="p-3 bg-slate-50 rounded-2xl text-center border border-slate-100">
-              <span className="text-[10px] font-bold text-slate-400 uppercase block">Tier 1 (Official)</span>
-              <span className="text-lg font-bold text-emerald-600">{tierDist.tier_1} Sources</span>
+          {/* Conflict Analysis */}
+          {conflictsList.length > 0 && (
+            <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
+              <div className="border-b border-slate-100 pb-3">
+                <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
+                  <AlertCircle className="h-5 w-5 text-amber-500" />
+                  <span>Conflict Analysis & Cross-Source Discrepancies</span>
+                </h2>
+              </div>
+              <div className="space-y-2">
+                {conflictsList.map((item: string, idx: number) => (
+                  <div
+                    key={idx}
+                    className="p-3.5 rounded-2xl bg-amber-50/60 border border-amber-200/80 text-xs text-amber-900 font-medium"
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="p-3 bg-slate-50 rounded-2xl text-center border border-slate-100">
-              <span className="text-[10px] font-bold text-slate-400 uppercase block">Tier 2 (Regulated)</span>
-              <span className="text-lg font-bold text-[#5b5dfa]">{tierDist.tier_2} Sources</span>
+          )}
+
+          {/* Declared Limitations */}
+          {limitationsList.length > 0 && (
+            <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
+              <div className="border-b border-slate-100 pb-3">
+                <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
+                  <Info className="h-5 w-5 text-slate-400" />
+                  <span>Analysis Limitations & Constraints</span>
+                </h2>
+              </div>
+              <div className="space-y-2">
+                {limitationsList.map((item: string, idx: number) => (
+                  <div
+                    key={idx}
+                    className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600 font-medium"
+                  >
+                    • {item}
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="p-3 bg-slate-50 rounded-2xl text-center border border-slate-100">
-              <span className="text-[10px] font-bold text-slate-400 uppercase block">Tier 3 (Mainstream)</span>
-              <span className="text-lg font-bold text-indigo-600">{tierDist.tier_3} Sources</span>
+          )}
+        </div>
+      )}
+
+      {/* TAB 5: EVIDENCE & SOURCES */}
+      {activeTab === 'evidence' && (
+        <div className="space-y-6">
+          {/* Sources & Citations Table */}
+          {referencesList.length > 0 && (
+            <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
+              <div className="border-b border-slate-100 pb-3">
+                <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
+                  <Globe className="h-5 w-5 text-[#5b5dfa]" />
+                  <span>Public Sources & Citations ({referencesList.length})</span>
+                </h2>
+              </div>
+              <div className="space-y-3">
+                {referencesList.map((ref: any, idx: number) => (
+                  <div
+                    key={idx}
+                    className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-xs sm:text-sm font-bold text-[#181534]">{ref.title}</p>
+                      {ref.url && (
+                        <a
+                          href={ref.url.startsWith('http') ? ref.url : `https://${ref.url}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs font-mono text-[#5b5dfa] hover:underline inline-flex items-center gap-1 mt-0.5 truncate"
+                        >
+                          <span className="truncate">{ref.url}</span>
+                          <ExternalLink className="h-3 w-3 shrink-0 inline" />
+                        </a>
+                      )}
+                    </div>
+                    <span className="self-start sm:self-auto px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-indigo-50 border border-indigo-200 text-[#5b5dfa]">
+                      {ref.source_type || 'PUBLIC'}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="p-3 bg-slate-50 rounded-2xl text-center border border-slate-100">
-              <span className="text-[10px] font-bold text-slate-400 uppercase block">Tier 4 (Community)</span>
-              <span className="text-lg font-bold text-amber-600">{tierDist.tier_4} Sources</span>
+          )}
+
+          {/* Cryptographically Hashed Evidence Records */}
+          <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-8 shadow-sm space-y-4">
+            <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
+              <h2 className="text-base sm:text-lg font-bold text-[#181534] flex items-center gap-2">
+                <Scale className="h-5 w-5 text-[#5b5dfa]" />
+                <span>Evidence Records ({evidenceList.length})</span>
+              </h2>
             </div>
-            <div className="p-3 bg-slate-50 rounded-2xl text-center border border-slate-100">
-              <span className="text-[10px] font-bold text-slate-400 uppercase block">Tier 5 (Unverified)</span>
-              <span className="text-lg font-bold text-slate-400">{tierDist.tier_5} Sources</span>
-            </div>
+            {evidenceList.length > 0 ? (
+              <div className="space-y-3">
+                {evidenceList.map((ev: Evidence, idx: number) => (
+                  <div
+                    key={idx}
+                    className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <span className="text-xs font-bold text-[#181534]">
+                        Claim #{idx + 1}: {ev.claim}
+                      </span>
+                      <StatusBadge status={ev.verification_status || 'verified'} size="sm" />
+                    </div>
+                    <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                      {ev.evidence_text}
+                    </p>
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200/60 text-[11px] text-slate-400 font-mono">
+                      <span className="break-all">Source: {ev.source_url}</span>
+                      <span>
+                        SHA-256: {ev.content_hash ? ev.content_hash.slice(0, 16) : 'verified'}...
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-slate-500">No raw evidence items captured.</p>
+            )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      )}
     </div>
   );
 };

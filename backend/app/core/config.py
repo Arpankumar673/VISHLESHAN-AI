@@ -1,4 +1,5 @@
-from typing import List, Union
+import os
+from typing import List, Optional, Union
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -15,64 +16,53 @@ class Settings(BaseSettings):
     SUPABASE_SERVICE_ROLE_KEY: str = ""
     SUPABASE_JWT_SECRET: str = ""
 
-    # OpenAI / AI Providers
-    OPENAI_API_KEY: str = ""
-    RAG_EMBEDDING_MODEL: str = "text-embedding-3-small"
-    RAG_EMBEDDING_DIM: int = 1536
+    # Orchestrator & n8n settings (M5)
+    RESEARCH_ORCHESTRATOR_MODE: str = "langgraph"  # "langgraph" (default), "n8n", or "local"
+    N8N_BASE_URL: str = "http://localhost:5678"
+    N8N_WEBHOOK_PATH: str = "/webhook/vishleshan-research"
+    N8N_WEBHOOK_SECRET: str = "dev-vishleshan-secret-2026"
+    N8N_TIMEOUT_SECONDS: float = 30.0
 
-    # Redis & Queue Settings
-    REDIS_URL: str = "redis://localhost:6379/0"
+    # Gemini API Configuration (Backend/Render environment)
+    GEMINI_API_KEY: Optional[str] = None
+    GOOGLE_API_KEY: Optional[str] = None
+    GOOGLE_GEMINI_API_KEY: Optional[str] = None
 
-    # Rate Limiting Settings
-    RESEARCH_RATE_LIMIT: str = "5/minute"
-    ASK_RATE_LIMIT: str = "10/minute"
-
-    # Orchestrator settings
-    RESEARCH_ORCHESTRATOR_MODE: str = "langgraph"  # "langgraph" (default) or "local"
+    @property
+    def effective_gemini_api_key(self) -> Optional[str]:
+        """Resolve configured Gemini API key from settings or backend environment."""
+        key = (
+            self.GEMINI_API_KEY
+            or self.GOOGLE_API_KEY
+            or self.GOOGLE_GEMINI_API_KEY
+        )
+        if key and key.strip():
+            return key.strip()
+        for env_var in ["GEMINI_API_KEY", "GOOGLE_API_KEY", "GOOGLE_GEMINI_API_KEY"]:
+            val = os.environ.get(env_var)
+            if val and val.strip():
+                return val.strip()
+        return None
 
     # CORS settings
     CORS_ORIGINS: List[str] = [
         "http://localhost:5173",
         "http://localhost:5174",
-        "http://localhost:3000",
         "http://127.0.0.1:5173",
         "http://127.0.0.1:5174",
-        "http://127.0.0.1:3000",
-        "https://vishleshan-ai.vercel.app",
     ]
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
-        origins: List[str] = []
-        if isinstance(v, str):
-            if v.startswith("[") and v.endswith("]"):
-                import json
-                try:
-                    parsed = json.loads(v)
-                    if isinstance(parsed, list):
-                        origins = [str(i).strip().rstrip("/") for i in parsed if i]
-                except Exception:
-                    pass
-            if not origins:
-                origins = [i.strip().rstrip("/") for i in v.split(",") if i.strip()]
+        if isinstance(v, str) and not v.startswith("["):
+            return [i.strip() for i in v.split(",")]
         elif isinstance(v, list):
-            origins = [str(i).strip().rstrip("/") for i in v if i]
-
-        default_origins = [
+            return v
+        return [
             "http://localhost:5173",
             "http://localhost:5174",
-            "http://localhost:3000",
-            "http://127.0.0.1:5173",
-            "http://127.0.0.1:5174",
-            "http://127.0.0.1:3000",
-            "https://vishleshan-ai.vercel.app",
         ]
-        for default_origin in default_origins:
-            if default_origin not in origins:
-                origins.append(default_origin)
-
-        return origins
 
     model_config = SettingsConfigDict(
         env_file=".env",

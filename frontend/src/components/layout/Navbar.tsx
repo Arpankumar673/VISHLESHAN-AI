@@ -31,6 +31,7 @@ export const Navbar: React.FC = () => {
 
   const navItems = [
     { label: 'Overview', path: '/dashboard', icon: LayoutDashboard },
+    { label: 'Live Demo', path: '/demo', icon: Sparkles },
     { label: 'Research', path: '/research', icon: Search },
     { label: 'History', path: '/history', icon: History },
     { label: 'Ask AI', path: '/ask', icon: MessageSquareText },

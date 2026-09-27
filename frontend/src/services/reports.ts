@@ -1,77 +1,104 @@
 import { apiClient } from './api';
 import { supabase } from '../lib/supabase';
 import type { Report } from '../types';
-import { getDemoReport } from '../data/demoReport';
+
+export interface DemoCompanyReportResponse {
+  mode: string;
+  company: {
+    name: string;
+    official_website: string;
+  };
+  report: Report;
+  source_status: string;
+  generated_at: string;
+}
 
 export const reportService = {
   async getReport(reportId: string): Promise<Report> {
-    if (reportId === 'demo-google-report-id' || reportId === 'offline-demo-fallback') {
-      return getDemoReport(reportId);
+    // 1. Check local session storage (instant for live demo runs)
+    const cached = sessionStorage.getItem(`demo_report_${reportId}`);
+    if (cached) {
+      try {
+        return JSON.parse(cached) as Report;
+      } catch {
+        // Fall through
+      }
     }
 
+    // 2. Try FastAPI /reports/:reportId
     try {
       return await apiClient.get<Report>(`/reports/${reportId}`);
     } catch {
+      // 3. Try FastAPI /demo/reports/:reportId
+      try {
+        const demoRes = await apiClient.get<Report>(`/demo/reports/${reportId}`);
+        if (demoRes) return demoRes;
+      } catch {
+        // Fall through to Supabase
+      }
+
+      // 4. Try Supabase direct lookup
       const { data, error } = await supabase
         .from('reports')
         .select('*, company:companies(*)')
         .eq('id', reportId)
         .single();
 
-      if (error || !data) throw new Error(`Report ${reportId} not found in database.`);
+      if (error) throw error;
       return data as Report;
     }
   },
 
   async getReportByRunId(runId: string): Promise<Report | null> {
-    if (runId === 'demo-google-run-id' || runId === 'offline-demo-fallback') {
-      return getDemoReport(runId);
+    const cached = sessionStorage.getItem(`demo_report_${runId}`);
+    if (cached) {
+      try {
+        return JSON.parse(cached) as Report;
+      } catch {
+        // Fall through
+      }
     }
 
     try {
       return await apiClient.get<Report>(`/reports/run/${runId}`);
     } catch {
+      try {
+        const demoRes = await apiClient.get<Report>(`/demo/reports/${runId}`);
+        if (demoRes) return demoRes;
+      } catch {
+        // Fall through
+      }
+
       const { data, error } = await supabase
         .from('reports')
         .select('*, company:companies(*)')
         .eq('research_run_id', runId)
         .maybeSingle();
 
-      if (error || !data) return null;
-      return data as Report;
+      if (error) throw error;
+      return data as Report | null;
     }
   },
 
-  async downloadReportCsv(reportId: string): Promise<void> {
-    const { data: sessionData } = await supabase.auth.getSession();
-    const token = sessionData.session?.access_token;
-    const rawApiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
-    const baseUrl = rawApiUrl.endsWith('/') ? rawApiUrl.slice(0, -1) : rawApiUrl;
+  async generateDemoCompanyReport(
+    companyName: string,
+    officialUrl?: string
+  ): Promise<DemoCompanyReportResponse> {
+    const res = await apiClient.post<DemoCompanyReportResponse>(
+      '/demo/company-report',
+      {
+        company_name: companyName,
+        official_url: officialUrl || undefined,
+      }
+    );
 
-    const res = await fetch(`${baseUrl}/reports/${reportId}/export/csv`, {
-      headers: {
-        Authorization: token ? `Bearer ${token}` : '',
-      },
-    });
+    if (res?.report?.id) {
+      sessionStorage.setItem(`demo_report_${res.report.id}`, JSON.stringify(res.report));
+      if (res.report.research_run_id) {
+        sessionStorage.setItem(`demo_report_${res.report.research_run_id}`, JSON.stringify(res.report));
+      }
+    }
 
-    if (!res.ok) throw new Error('Failed to export CSV report');
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `vishleshan_report_${reportId}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-  },
-
-  async downloadReportJson(reportId: string): Promise<void> {
-    const reportData = await this.getReport(reportId);
-    const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `vishleshan_report_${reportId}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    return res;
   },
 };

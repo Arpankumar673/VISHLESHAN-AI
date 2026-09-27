@@ -1,7 +1,5 @@
-import asyncio
 from typing import Any, Dict, List, Optional, Union
 from uuid import UUID
-from app.core.llm_security import sanitize_input_text, wrap_untrusted_content
 from app.core.logging import logger
 from app.research.agents.base import (
     AgentInput,
@@ -11,12 +9,10 @@ from app.research.agents.base import (
     BaseAgent,
 )
 from app.research.agents.errors import AgentSourceError
-from app.research.models import NormalizedEvidence, SourceFinding
+from app.research.models import NormalizedEvidence
 from app.research.normalizer import EvidenceNormalizer
 from app.research.sources.official_website import OfficialWebsiteAdapter
 from app.research.sources.search import PublicSearchAdapter
-from app.schemas.evidence import SourceType
-
 
 
 class CompanyResearchAgent(BaseAgent):
@@ -52,7 +48,7 @@ class CompanyResearchAgent(BaseAgent):
         **kwargs: Any,
     ) -> AgentResult:
         """
-        Executes company intelligence research across public search and official corporate website concurrently.
+        Executes company intelligence research.
         Supports both modern AgentInput and backward-compatible parameter signatures.
         """
         # 1. Normalize input into AgentInput contract
@@ -62,20 +58,20 @@ class CompanyResearchAgent(BaseAgent):
             agent_input = AgentInput.model_validate(input_data)
         else:
             # Handle legacy positional/keyword parameters
-            run_id = input_data if isinstance(input_data, UUID) else kwargs.get("research_run_id") or UUID("00000000-0000-0000-0000-000000000000")
-            c_id = company_id or kwargs.get("company_id") or UUID("00000000-0000-0000-0000-000000000000")
+            run_id = input_data or kwargs.get("research_run_id")
+            c_id = company_id or kwargs.get("company_id")
             c_name = company_name or kwargs.get("company_name", "")
             c_url = domain or kwargs.get("company_url") or kwargs.get("domain")
             c_ctx = context or kwargs.get("context") or {}
 
-            if not c_name:
-                raise ValueError("Either agent_input or company_name must be provided to CompanyResearchAgent.")
+            if not run_id or not c_id or not c_name:
+                raise ValueError("Missing required fields for CompanyResearchAgent: research_run_id, company_id, company_name")
 
             agent_input = AgentInput(
                 research_run_id=run_id,
                 company_id=c_id,
                 company_name=c_name,
-                company_url=f"https://{c_url}" if c_url and not c_url.startswith("http") else c_url,
+                company_url=c_url,
                 context=c_ctx,
             )
 
@@ -98,24 +94,12 @@ class CompanyResearchAgent(BaseAgent):
         search_failed = False
         website_failed = False
 
-        # 2. Concurrent Adapter Execution
-        tasks = [self.search_adapter.collect(name, resolved_domain)]
-        if resolved_domain:
-            tasks.append(self.official_adapter.collect(name, resolved_domain))
-        else:
-            warnings.append(f"Official corporate domain for '{name}' was not provided; skipping direct website crawl.")
-
-        results = await asyncio.gather(*tasks, return_exceptions=True)
-
-        # Process PublicSearchAdapter results
-        search_res = results[0]
-        if isinstance(search_res, Exception):
-            search_failed = True
-            logger.warning(f"[{self.agent_name}] Public search source query failed: {search_res}")
-            warnings.append(f"Public search query encountered error: {search_res}")
-        elif isinstance(search_res, list):
+        # 2. Query Public Knowledge Graph (Wikipedia / Open Public APIs)
+        try:
+            search_findings = await self.search_adapter.collect(name, resolved_domain)
             sources_queried.append("PublicSearchAdapter")
-            for f in search_res:
+
+            for f in search_findings:
                 ev = EvidenceNormalizer.normalize_finding(f)
                 ev.agent_name = self.agent_name
                 evidence_items.append(ev)
@@ -126,27 +110,20 @@ class CompanyResearchAgent(BaseAgent):
                     "title": f.source_title,
                     "metadata": f.raw_metadata,
                 })
+        except Exception as exc:
+            search_failed = True
+            logger.warning(f"[{self.agent_name}] Public search source query failed: {exc}")
+            warnings.append(f"Public search query encountered error: {exc}")
 
-        # Process OfficialWebsiteAdapter results if domain was provided
+        # 3. Query Official Website if a verified domain is provided
         if resolved_domain:
-            site_res = results[1]
-            if isinstance(site_res, Exception):
-                website_failed = True
-                logger.warning(f"[{self.agent_name}] Official website collection failed: {site_res}")
-                warnings.append(f"Official website collection failed for {resolved_domain}: {site_res}")
-            elif isinstance(site_res, list):
+            try:
+                site_findings = await self.official_adapter.collect(name, resolved_domain)
                 sources_queried.append("OfficialWebsiteAdapter")
-                for f in site_res:
-                    if "operates official domain" in f.claim:
-                        f.raw_metadata.update({
-                            "claim_key": "official_domain",
-                            "claim_value": resolved_domain,
-                            "category": "website",
-                        })
 
+                for f in site_findings:
                     ev = EvidenceNormalizer.normalize_finding(f)
                     ev.agent_name = self.agent_name
-
                     evidence_items.append(ev)
                     structured_findings.append({
                         "source": "official_website",
@@ -155,89 +132,12 @@ class CompanyResearchAgent(BaseAgent):
                         "title": f.source_title,
                         "metadata": f.raw_metadata,
                     })
-
-                    # Extract atomic claims from JSON-LD metadata if present
-                    json_ld = f.raw_metadata.get("json_ld") if f.raw_metadata else None
-                    if json_ld and isinstance(json_ld, dict):
-                        # Atomic Claim: legal_name
-                        if json_ld.get("legal_name"):
-                            legal_name_val = json_ld["legal_name"]
-                            atom_finding = SourceFinding(
-                                claim=f"{name} official legal entity name is {legal_name_val}",
-                                evidence_text=f"Official legal entity name extracted from JSON-LD schema: '{legal_name_val}'",
-                                source_url=f.source_url,
-                                source_title=f.source_title,
-                                source_type=SourceType.OFFICIAL_COMPANY,
-                                raw_metadata={
-                                    "claim_key": "legal_name",
-                                    "claim_value": legal_name_val,
-                                    "category": "identity",
-                                    "json_ld": json_ld,
-                                },
-                            )
-                            atom_ev = EvidenceNormalizer.normalize_finding(atom_finding)
-                            atom_ev.agent_name = self.agent_name
-                            evidence_items.append(atom_ev)
-
-                        # Atomic Claim: founding_year
-                        if json_ld.get("founding_date"):
-                            founding_val = json_ld["founding_date"]
-                            atom_finding = SourceFinding(
-                                claim=f"{name} was founded on {founding_val}",
-                                evidence_text=f"Official founding date extracted from JSON-LD schema: '{founding_val}'",
-                                source_url=f.source_url,
-                                source_title=f.source_title,
-                                source_type=SourceType.OFFICIAL_COMPANY,
-                                raw_metadata={
-                                    "claim_key": "founding_year",
-                                    "claim_value": founding_val,
-                                    "category": "registration",
-                                    "json_ld": json_ld,
-                                },
-                            )
-                            atom_ev = EvidenceNormalizer.normalize_finding(atom_finding)
-                            atom_ev.agent_name = self.agent_name
-                            evidence_items.append(atom_ev)
-
-                        # Atomic Claim: headquarters
-                        if json_ld.get("address"):
-                            addr_val = json_ld["address"]
-                            atom_finding = SourceFinding(
-                                claim=f"{name} official corporate address is {addr_val}",
-                                evidence_text=f"Official corporate address extracted from JSON-LD schema: '{addr_val}'",
-                                source_url=f.source_url,
-                                source_title=f.source_title,
-                                source_type=SourceType.OFFICIAL_COMPANY,
-                                raw_metadata={
-                                    "claim_key": "headquarters",
-                                    "claim_value": addr_val,
-                                    "category": "identity",
-                                    "json_ld": json_ld,
-                                },
-                            )
-                            atom_ev = EvidenceNormalizer.normalize_finding(atom_finding)
-                            atom_ev.agent_name = self.agent_name
-                            evidence_items.append(atom_ev)
-
-                        # Atomic Claim: corporate_reference (sameAs)
-                        if json_ld.get("same_as") and isinstance(json_ld["same_as"], list):
-                            for ref_url in json_ld["same_as"]:
-                                atom_finding = SourceFinding(
-                                    claim=f"{name} verified corporate reference at {ref_url}",
-                                    evidence_text=f"Verified corporate reference URL extracted from JSON-LD schema: '{ref_url}'",
-                                    source_url=f.source_url,
-                                    source_title=f.source_title,
-                                    source_type=SourceType.OFFICIAL_COMPANY,
-                                    raw_metadata={
-                                        "claim_key": "corporate_reference",
-                                        "claim_value": ref_url,
-                                        "category": "identity",
-                                        "json_ld": json_ld,
-                                    },
-                                )
-                                atom_ev = EvidenceNormalizer.normalize_finding(atom_finding)
-                                atom_ev.agent_name = self.agent_name
-                                evidence_items.append(atom_ev)
+            except Exception as exc:
+                website_failed = True
+                logger.warning(f"[{self.agent_name}] Official website collection failed: {exc}")
+                warnings.append(f"Official website collection failed for {resolved_domain}: {exc}")
+        else:
+            warnings.append(f"Official corporate domain for '{name}' was not provided; skipping direct website crawl.")
 
         # 4. Status Determination
         if len(evidence_items) > 0:

@@ -74,3 +74,7 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# Archives & Large Datasets
+*.zip
+backend/data/

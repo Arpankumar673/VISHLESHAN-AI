@@ -20,6 +20,7 @@ import {
   History,
   EvidenceExplorer,
   AskAI,
+  PresentationDemo,
 } from './pages';
 
 function App() {
@@ -27,8 +28,10 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Public Landing Page */}
+          {/* Public Landing Page & Demo Routes */}
           <Route path="/" element={<Landing />} />
+          <Route path="/demo" element={<AppLayout><PresentationDemo /></AppLayout>} />
+          <Route path="/presentation" element={<AppLayout><PresentationDemo /></AppLayout>} />
 
           {/* Authentication Routes (Public Only) */}
           <Route element={<PublicOnlyRoute />}>

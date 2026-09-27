@@ -217,7 +217,7 @@ async def test_langgraph_branch_failure_isolation():
 
 
 # ------------------------------------------------------------
-# 6. Orchestrator Mode Dispatch Verification (langgraph, local)
+# 6. Orchestrator Mode Dispatch Verification (langgraph, n8n, local)
 # ------------------------------------------------------------
 @pytest.mark.asyncio
 async def test_orchestrator_mode_dispatch():
@@ -233,8 +233,15 @@ async def test_orchestrator_mode_dispatch():
     mock_orchestrator.execute_run = MagicMock(return_value=asyncio.Future())
     mock_orchestrator.execute_run.return_value.set_result(None)
 
+    mock_n8n = MagicMock()
+    mock_n8n.trigger_orchestrator = MagicMock(return_value=asyncio.Future())
+    trigger_success = MagicMock()
+    trigger_success.success = True
+    mock_n8n.trigger_orchestrator.return_value.set_result(trigger_success)
+
     service = ResearchService(
         multi_agent_orchestrator=mock_orchestrator,
+        n8n_client=mock_n8n,
     )
 
     run_id = uuid4()
@@ -247,10 +254,19 @@ async def test_orchestrator_mode_dispatch():
 
     mock_orchestrator.reset_mock()
 
+    # Test explicit n8n mode
+    with patch.object(settings, "RESEARCH_ORCHESTRATOR_MODE", "n8n"):
+        await service._dispatch_research_run(run_id, company_id, "Google LLC", "https://google.com")
+        mock_n8n.trigger_orchestrator.assert_called_once()
+        mock_orchestrator.execute_langgraph_run.assert_not_called()
+
+    mock_orchestrator.reset_mock()
+    mock_n8n.reset_mock()
+
     # Test explicit local mode
     with patch.object(settings, "RESEARCH_ORCHESTRATOR_MODE", "local"):
         await service._dispatch_research_run(run_id, company_id, "Google LLC", "https://google.com")
         mock_orchestrator.execute_run.assert_called_once()
         mock_orchestrator.execute_langgraph_run.assert_not_called()
-
+        mock_n8n.trigger_orchestrator.assert_not_called()
 

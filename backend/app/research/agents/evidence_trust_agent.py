@@ -9,8 +9,6 @@ from app.research.agents.base import (
     BaseAgent,
 )
 from app.research.deduplicator import EvidenceDeduplicator
-from app.research.evidence.grouping import group_evidence
-from app.research.evidence.scoring import score_fusion_result
 from app.research.models import NormalizedEvidence
 from app.research.normalizer import EvidenceNormalizer
 from app.schemas.evidence import VerificationStatus
@@ -23,14 +21,13 @@ class EvidenceTrustAgent(BaseAgent):
     - Aggregating evidence across all specialized research agents
     - Enforcing SHA-256 content hash deduplication
     - Preserving exact evidence provenance and source reliability scores
-    - Executing Evidence Fusion Engine (Phase 2A + 2B claim grouping, independence, conflict, scoring)
-    - Computing preliminary trust scores and risk levels from deduplicated and fused evidence
+    - Computing preliminary trust scores and risk levels from deduplicated evidence
     """
 
     def __init__(self):
         super().__init__(
             agent_name="evidence_trust",
-            agent_description="Aggregates evidence across all agent branches, enforces SHA-256 deduplication, executes Evidence Fusion Engine, evaluates source diversity, and prepares structured findings for report building.",
+            agent_description="Aggregates evidence across all agent branches, enforces SHA-256 deduplication, evaluates source diversity, and prepares structured findings for report building.",
             agent_version="1.0",
         )
 
@@ -44,7 +41,7 @@ class EvidenceTrustAgent(BaseAgent):
         **kwargs: Any,
     ) -> AgentResult:
         """
-        Executes evidence aggregation, SHA-256 deduplication, Evidence Fusion Engine processing, and trust metric calculation.
+        Executes evidence aggregation, SHA-256 deduplication, and trust metric calculation.
         Supports both modern AgentInput and backward-compatible positional signatures.
         """
         # 1. Normalize input into AgentInput contract
@@ -105,20 +102,7 @@ class EvidenceTrustAgent(BaseAgent):
         # 4. Enforce SHA-256 Content Hash Deduplication
         unique_evidence = EvidenceDeduplicator.deduplicate(raw_evidence_list)
 
-        # 5. Execute Evidence Fusion Engine (Phase 2A + Phase 2B)
-        claim_groups = group_evidence(unique_evidence)
-        fusion_result = score_fusion_result(claim_groups)
-
-        if fusion_result.warnings:
-            warnings.extend(fusion_result.warnings)
-
-        avg_fused_confidence = (
-            sum(fc.fused_confidence for fc in fusion_result.fused_claims) / len(fusion_result.fused_claims)
-            if fusion_result.fused_claims
-            else 0.5
-        )
-
-        # 6. Execute Deterministic Vishleshan AI v2 Trust Engine
+        # 5. Calculate Existing Trust & Reliability Metrics
         total_items = len(unique_evidence)
         verified_count = sum(1 for e in unique_evidence if e.verification_status == VerificationStatus.VERIFIED)
         avg_reliability = (
@@ -131,21 +115,8 @@ class EvidenceTrustAgent(BaseAgent):
             if total_items > 0
             else 0.5
         )
-        legacy_trust_score_val = round(min(100.0, max(20.0, avg_reliability * 100.0)), 1)
-        legacy_risk_level = "low" if legacy_trust_score_val >= 80.0 else ("medium" if legacy_trust_score_val >= 60.0 else "high")
-
-        from app.services.trust_engine import TrustEngine
-        trust_engine = TrustEngine()
-        trust_index_res = trust_engine.compute_trust_index(
-            evidence_items=unique_evidence,
-            target_name=name,
-            target_domain=agent_input.domain or (agent_input.context.get("domain") if agent_input.context else None),
-        )
-
-        trust_score_val = trust_index_res.trust_index
-        risk_level = trust_index_res.risk_level
-
-
+        trust_score_val = round(min(100.0, max(20.0, avg_reliability * 100.0)), 1)
+        risk_level = "low" if trust_score_val >= 75.0 else ("medium" if trust_score_val >= 50.0 else "high")
 
         structured_findings = [
             {
@@ -158,21 +129,12 @@ class EvidenceTrustAgent(BaseAgent):
                 "avg_confidence": round(avg_confidence, 2),
                 "trust_score": trust_score_val,
                 "risk_level": risk_level,
-            },
-            {
-                "category": "evidence_fusion",
-                "total_claim_groups": fusion_result.total_claim_groups,
-                "conflicted_claims": fusion_result.conflicted_claims,
-                "avg_fused_confidence": round(avg_fused_confidence, 2),
-                "fused_claims": [fc.model_dump() for fc in fusion_result.fused_claims],
-            },
+            }
         ]
 
         status = AgentStatus.COMPLETED.value if total_items > 0 else AgentStatus.PARTIAL.value
         if total_items == 0:
             warnings.append("No evidence items were provided for aggregation and trust scoring.")
-
-        fused_trust_candidate = round(min(100.0, max(20.0, avg_fused_confidence * 100.0)), 1)
 
         return AgentResult(
             agent_name=self.agent_name,
@@ -189,23 +151,10 @@ class EvidenceTrustAgent(BaseAgent):
                 "raw_evidence_count": len(raw_evidence_list),
                 "verified_count": verified_count,
                 "avg_reliability": round(avg_reliability, 2),
-                "preliminary_trust_score": legacy_trust_score_val,
-                "preliminary_risk_level": legacy_risk_level,
-                "trust_index": trust_score_val,
-                "risk_level": risk_level,
-                "overall_confidence": trust_index_res.confidence,
-                "verification_status": trust_index_res.verification_status.value,
-                "trust_index_result": trust_index_res.model_dump(),
+                "preliminary_trust_score": trust_score_val,
+                "preliminary_risk_level": risk_level,
+                "overall_confidence": round(avg_confidence, 2),
                 "findings_count": len(structured_findings),
                 "evidence_count": len(unique_evidence),
-
-                # Evidence Fusion Engine metadata integration
-                "fusion_result": fusion_result.model_dump(),
-                "total_claim_groups": fusion_result.total_claim_groups,
-                "conflicted_claims": fusion_result.conflicted_claims,
-                "avg_fused_confidence": round(avg_fused_confidence, 2),
-                # Diagnostic candidate trust metric (non-authoritative)
-                "fused_trust_candidate": fused_trust_candidate,
-                "fused_trust_candidate_label": "diagnostic_experimental",
             },
         )

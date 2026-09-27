@@ -174,6 +174,31 @@ export const Research: React.FC = () => {
           </p>
         </div>
 
+        {/* Presentation Mode Callout */}
+        <div className="rounded-2xl border border-indigo-200 bg-gradient-to-r from-indigo-50/90 via-purple-50/50 to-indigo-50/90 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="rounded-full bg-[#5b5dfa] px-2.5 py-0.5 text-[10px] font-black uppercase text-white tracking-wider">
+                Presentation Mode
+              </span>
+              <span className="text-xs font-bold text-[#181534]">
+                Live Gemini Company Report
+              </span>
+            </div>
+            <p className="text-xs text-slate-600 font-medium">
+              Instant, live-grounded company intelligence for any enterprise (HackIndia, HCLTech, HAL, Google, etc.).
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => navigate('/demo')}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#5b5dfa] px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-[#4b4ce6] transition-all shrink-0 cursor-pointer"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>Launch Presentation Mode</span>
+          </button>
+        </div>
+
         {error && (
           <div className="flex items-start gap-2.5 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-xs font-semibold text-rose-700">
             <AlertCircle className="h-4 w-4 text-rose-500 shrink-0 mt-0.5" />
