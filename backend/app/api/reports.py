@@ -10,6 +10,24 @@ router = APIRouter(prefix="/reports", tags=["Reports"])
 
 
 @router.get(
+    "/run/{run_id}",
+    response_model=ApiResponse[ReportResponse],
+    summary="Get Report by Research Run ID",
+    description="Retrieve a complete Company Intelligence Report using its associated research run ID.",
+)
+async def get_report_by_run_id(
+    run_id: UUID,
+    current_user: AuthenticatedUser = Depends(get_current_user),
+    report_service: ReportService = Depends(get_report_service),
+) -> ApiResponse[ReportResponse]:
+    report = report_service.get_report(
+        report_id=run_id,
+        user_id=current_user.id,
+    )
+    return ApiResponse(data=report)
+
+
+@router.get(
     "/{report_id}",
     response_model=ApiResponse[ReportResponse],
     summary="Get Company Intelligence Report",
