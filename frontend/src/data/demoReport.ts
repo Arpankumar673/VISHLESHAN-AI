@@ -8,6 +8,7 @@ export const DEMO_GOOGLE_REPORT: Report = {
   report_version: '1.0',
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
+  is_demo_fallback: true,
   company: {
     id: 'demo-google-company-id',
     name: 'Google LLC',
@@ -36,7 +37,7 @@ export const DEMO_GOOGLE_REPORT: Report = {
     },
     executive_intelligence: {
       summary:
-        'High-confidence verification completed across corporate registry, domain provenance, engineering footprint, and public sentiment. Zero recruitment fraud risk detected.',
+        'DEMO FALLBACK — NOT LIVE RESEARCH. High-confidence verification completed across corporate registry, domain provenance, engineering footprint, and public sentiment. Zero recruitment fraud risk detected.',
       company_name: 'Google LLC',
       official_domain: 'google.com',
       trust_score: 96,

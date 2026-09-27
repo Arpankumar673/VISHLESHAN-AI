@@ -209,4 +209,5 @@ export interface Report {
   created_at: string;
   updated_at: string;
   company?: Company;
+  is_demo_fallback?: boolean;
 }

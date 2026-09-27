@@ -10,8 +10,10 @@ import {
   ArrowRight,
   Info,
   CheckCircle2,
+  Zap,
 } from 'lucide-react';
 import { researchService } from '../services/research';
+import { DEMO_PRESETS, DemoPreset } from '../data/demoPresets';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 
@@ -23,6 +25,44 @@ export const Research: React.FC = () => {
   const [deepVerification, setDeepVerification] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleSelectPreset = async (preset: DemoPreset) => {
+    setCompanyName(preset.company_name);
+    setCompanyUrl(preset.official_url || '');
+    setError(null);
+    setIsLoading(true);
+
+    sessionStorage.setItem('vishleshan_selected_preset_id', preset.id);
+    sessionStorage.setItem('vishleshan_requested_company_name', preset.company_name);
+    if (preset.official_url) {
+      sessionStorage.setItem('vishleshan_requested_url', preset.official_url);
+    } else {
+      sessionStorage.removeItem('vishleshan_requested_url');
+    }
+
+    try {
+      const response = await researchService.startResearch({
+        company_name: preset.company_name,
+        company_url: preset.official_url || undefined,
+        deep_verification: true,
+      });
+
+      navigate(`/research/${response.research_run_id}`, {
+        state: {
+          requestedCompanyName: preset.company_name,
+          requestedUrl: preset.official_url || undefined,
+          selectedPresetId: preset.id,
+        },
+      });
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : 'Failed to start demo company research. Please check connection.';
+      setError(msg);
+      setIsLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,6 +88,15 @@ export const Research: React.FC = () => {
     }
 
     setIsLoading(true);
+
+    sessionStorage.setItem('vishleshan_requested_company_name', trimmedName);
+    if (trimmedUrl) {
+      sessionStorage.setItem('vishleshan_requested_url', trimmedUrl);
+    } else {
+      sessionStorage.removeItem('vishleshan_requested_url');
+    }
+    sessionStorage.removeItem('vishleshan_selected_preset_id');
+
     try {
       const response = await researchService.startResearch({
         company_name: trimmedName,
@@ -55,7 +104,12 @@ export const Research: React.FC = () => {
         deep_verification: deepVerification,
       });
 
-      navigate(`/research/${response.research_run_id}`);
+      navigate(`/research/${response.research_run_id}`, {
+        state: {
+          requestedCompanyName: trimmedName,
+          requestedUrl: trimmedUrl || undefined,
+        },
+      });
     } catch (err: unknown) {
       const msg =
         err instanceof Error
@@ -81,6 +135,31 @@ export const Research: React.FC = () => {
           Launch multi-agent forensic verification across government registers, official domains,
           news archives, and recruitment signals.
         </p>
+      </div>
+
+      {/* Quick Demo Presets Toolbar */}
+      <div className="rounded-2xl bg-gradient-to-r from-indigo-50/80 to-purple-50/50 border border-indigo-100 p-4 space-y-2.5">
+        <div className="flex items-center gap-2 text-xs font-bold text-[#5b5dfa] uppercase tracking-wider">
+          <Zap className="h-4 w-4" />
+          <span>HackIndia Real-World Demo Presets</span>
+        </div>
+        <p className="text-xs text-slate-600 font-medium">
+          Select a verified organization preset below to trigger live multi-agent research input:
+        </p>
+        <div className="flex flex-wrap gap-2.5 pt-1">
+          {DEMO_PRESETS.map((preset) => (
+            <button
+              key={preset.id}
+              type="button"
+              onClick={() => handleSelectPreset(preset)}
+              disabled={isLoading}
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-white text-[#181534] border border-slate-200 hover:border-[#5b5dfa] hover:bg-indigo-50/60 shadow-2xs transition-all cursor-pointer disabled:opacity-50"
+            >
+              <Building2 className="h-3.5 w-3.5 text-[#5b5dfa]" />
+              <span>{preset.display_name}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Main Form Card (2-Column Grid on Desktop / 1-Column on Mobile) */}

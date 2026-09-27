@@ -5,40 +5,40 @@ import { getDemoReport } from '../data/demoReport';
 
 export const reportService = {
   async getReport(reportId: string): Promise<Report> {
+    if (reportId === 'demo-google-report-id' || reportId === 'offline-demo-fallback') {
+      return getDemoReport(reportId);
+    }
+
     try {
       return await apiClient.get<Report>(`/reports/${reportId}`);
     } catch {
-      try {
-        const { data, error } = await supabase
-          .from('reports')
-          .select('*, company:companies(*)')
-          .eq('id', reportId)
-          .single();
+      const { data, error } = await supabase
+        .from('reports')
+        .select('*, company:companies(*)')
+        .eq('id', reportId)
+        .single();
 
-        if (error || !data) return getDemoReport(reportId);
-        return data as Report;
-      } catch {
-        return getDemoReport(reportId);
-      }
+      if (error || !data) throw new Error(`Report ${reportId} not found in database.`);
+      return data as Report;
     }
   },
 
   async getReportByRunId(runId: string): Promise<Report | null> {
+    if (runId === 'demo-google-run-id' || runId === 'offline-demo-fallback') {
+      return getDemoReport(runId);
+    }
+
     try {
       return await apiClient.get<Report>(`/reports/run/${runId}`);
     } catch {
-      try {
-        const { data, error } = await supabase
-          .from('reports')
-          .select('*, company:companies(*)')
-          .eq('research_run_id', runId)
-          .maybeSingle();
+      const { data, error } = await supabase
+        .from('reports')
+        .select('*, company:companies(*)')
+        .eq('research_run_id', runId)
+        .maybeSingle();
 
-        if (error || !data) return getDemoReport(runId);
-        return data as Report;
-      } catch {
-        return getDemoReport(runId);
-      }
+      if (error || !data) return null;
+      return data as Report;
     }
   },
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import {
   Loader2,
   CheckCircle2,
@@ -20,8 +20,23 @@ import { RiskBadge } from '../components/ui/RiskBadge';
 
 export const ResearchProgress: React.FC = () => {
   const { runId } = useParams<{ runId: string }>();
+  const location = useLocation();
 
   const [run, setRun] = useState<ResearchRun | null>(null);
+
+  const requestedCompanyName =
+    location.state?.requestedCompanyName ||
+    sessionStorage.getItem('vishleshan_requested_company_name') ||
+    run?.company?.name ||
+    null;
+  const requestedUrl =
+    location.state?.requestedUrl ||
+    sessionStorage.getItem('vishleshan_requested_url') ||
+    null;
+  const selectedPresetId =
+    location.state?.selectedPresetId ||
+    sessionStorage.getItem('vishleshan_selected_preset_id') ||
+    null;
 
   const initialSteps: ResearchAgentStep[] = [
     {
@@ -204,7 +219,11 @@ export const ResearchProgress: React.FC = () => {
 
         {(run?.status === 'completed' || run?.status === 'partial') && (run.report_id || run.id) && (
           <div className="pt-3 flex justify-end">
-            <Link to={`/reports/${run.report_id || run.id}`} className="w-full sm:w-auto">
+            <Link
+              to={`/reports/${run.report_id || run.id}`}
+              state={{ requestedCompanyName, requestedUrl, selectedPresetId }}
+              className="w-full sm:w-auto"
+            >
               <Button
                 variant="primary"
                 size="md"

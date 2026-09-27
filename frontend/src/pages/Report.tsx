@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import {
   ShieldCheck,
   Building2,
@@ -22,19 +22,68 @@ import { StatusBadge } from '../components/ui/StatusBadge';
 import { RiskBadge } from '../components/ui/RiskBadge';
 import { reportService } from '../services/reports';
 import type { Report as ReportType } from '../types';
-import { getDemoReport } from '../data/demoReport';
+
+function normalizeCompanyName(name: string): string {
+  if (!name) return '';
+  return name
+    .toLowerCase()
+    .replace(/\b(limited|ltd|inc|llc|corp|corporation|pvt|private)\b/g, '')
+    .replace(/[^a-z0-9]/g, '')
+    .trim();
+}
+
+function isLegalAliasMatch(requestedName: string | null, returnedName: string | null): boolean {
+  if (!requestedName || !returnedName) return true;
+
+  const reqNorm = normalizeCompanyName(requestedName);
+  const retNorm = normalizeCompanyName(returnedName);
+
+  if (reqNorm === retNorm) return true;
+  if (reqNorm.includes(retNorm) || retNorm.includes(reqNorm)) return true;
+
+  const knownAliases: Record<string, string[]> = {
+    hal: ['hindustan aeronautics', 'hindustanaeronautics'],
+    hcltech: ['hcl technologies', 'hcltechnologies', 'hcl'],
+    hackindia: ['hack india', 'hackindia'],
+    trianglemind: ['triangle mind', 'trianglemind'],
+    google: ['google llc', 'google inc', 'alphabet'],
+  };
+
+  for (const [key, aliases] of Object.entries(knownAliases)) {
+    const all = [key, ...aliases].map(normalizeCompanyName);
+    const reqMatches = all.some((a) => reqNorm.includes(a) || a.includes(reqNorm));
+    const retMatches = all.some((a) => retNorm.includes(a) || a.includes(retNorm));
+    if (reqMatches && retMatches) return true;
+  }
+
+  return false;
+}
 
 export const Report: React.FC = () => {
   const { reportId } = useParams<{ reportId: string }>();
+  const location = useLocation();
+
+  const requestedCompanyName =
+    location.state?.requestedCompanyName ||
+    sessionStorage.getItem('vishleshan_requested_company_name') ||
+    null;
+  const requestedUrl =
+    location.state?.requestedUrl ||
+    sessionStorage.getItem('vishleshan_requested_url') ||
+    null;
+  const selectedPresetId =
+    location.state?.selectedPresetId ||
+    sessionStorage.getItem('vishleshan_selected_preset_id') ||
+    null;
 
   const isInvalidId = !reportId || reportId === 'undefined' || reportId === 'null';
-  const [report, setReport] = useState<ReportType | null>(isInvalidId ? getDemoReport() : null);
+  const [report, setReport] = useState<ReportType | null>(null);
   const [isLoading, setIsLoading] = useState(!isInvalidId);
   const [expandedEvidence, setExpandedEvidence] = useState<Record<number, boolean>>({});
+  const [mismatchDebug, setMismatchDebug] = useState<Record<string, unknown> | null>(null);
 
   useEffect(() => {
     if (isInvalidId) {
-      setReport(getDemoReport());
       setIsLoading(false);
       return;
     }
@@ -50,12 +99,32 @@ export const Report: React.FC = () => {
         }
 
         if (isMounted) {
-          setReport(data || getDemoReport(reportId));
+          if (data) {
+            const returnedName =
+              data.content?.overview?.name || data.company?.name || data.title || '';
+            if (requestedCompanyName && !isLegalAliasMatch(requestedCompanyName, returnedName)) {
+              setMismatchDebug({
+                requested_company: requestedCompanyName,
+                requested_url: requestedUrl,
+                selected_preset_id: selectedPresetId,
+                research_job_id: data.research_run_id,
+                research_run_id: data.research_run_id,
+                company_id: data.company_id,
+                report_id: data.id,
+                returned_company_name: returnedName,
+              });
+              setReport(null);
+            } else {
+              setReport(data);
+            }
+          } else {
+            setReport(null);
+          }
         }
       } catch (err) {
         console.warn('Could not load report:', err);
         if (isMounted) {
-          setReport(getDemoReport(reportId));
+          setReport(null);
         }
       } finally {
         if (isMounted) setIsLoading(false);
@@ -66,7 +135,7 @@ export const Report: React.FC = () => {
     return () => {
       isMounted = false;
     };
-  }, [reportId, isInvalidId]);
+  }, [reportId, isInvalidId, requestedCompanyName, requestedUrl, selectedPresetId]);
 
   const toggleEvidence = (idx: number) => {
     setExpandedEvidence((prev) => ({ ...prev, [idx]: !prev[idx] }));
@@ -105,6 +174,47 @@ export const Report: React.FC = () => {
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
         <div className="animate-spin h-10 w-10 border-4 border-[#5b5dfa] border-t-transparent rounded-full" />
         <p className="text-sm font-semibold text-slate-600">Retrieving Intelligence Report...</p>
+      </div>
+    );
+  }
+
+  if (mismatchDebug) {
+    return (
+      <div className="max-w-3xl mx-auto my-12 p-8 bg-white border border-rose-200 rounded-3xl text-center space-y-6 shadow-md">
+        <div className="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto">
+          <AlertTriangle className="h-8 w-8" />
+        </div>
+        <div>
+          <h2 className="text-2xl font-bold text-rose-700">COMPANY IDENTITY MISMATCH DETECTED</h2>
+          <p className="text-sm text-slate-600 mt-2 max-w-lg mx-auto leading-relaxed">
+            The requested company identity ("<strong className="text-rose-800">{String(mismatchDebug.requested_company)}</strong>") does not match the returned report company ("<strong className="text-rose-800">{String(mismatchDebug.returned_company_name)}</strong>"). Intelligence report rendering has been rejected for data integrity.
+          </p>
+        </div>
+
+        <div className="bg-slate-900 text-slate-200 text-left p-4 rounded-2xl font-mono text-xs overflow-x-auto space-y-1.5 border border-slate-800">
+          <p className="text-slate-400 font-bold border-b border-slate-700 pb-1 mb-2">// DEBUG METADATA</p>
+          <p><span className="text-indigo-400">requested_company:</span> {JSON.stringify(mismatchDebug.requested_company)}</p>
+          <p><span className="text-indigo-400">requested_url:</span> {JSON.stringify(mismatchDebug.requested_url)}</p>
+          <p><span className="text-indigo-400">selected_preset_id:</span> {JSON.stringify(mismatchDebug.selected_preset_id)}</p>
+          <p><span className="text-indigo-400">research_job_id:</span> {JSON.stringify(mismatchDebug.research_job_id)}</p>
+          <p><span className="text-indigo-400">research_run_id:</span> {JSON.stringify(mismatchDebug.research_run_id)}</p>
+          <p><span className="text-indigo-400">company_id:</span> {JSON.stringify(mismatchDebug.company_id)}</p>
+          <p><span className="text-indigo-400">report_id:</span> {JSON.stringify(mismatchDebug.report_id)}</p>
+          <p><span className="text-indigo-400">returned_company_name:</span> {JSON.stringify(mismatchDebug.returned_company_name)}</p>
+        </div>
+
+        <div className="flex justify-center gap-4 pt-2">
+          <Link to="/dashboard">
+            <Button variant="secondary" leftIcon={<ArrowLeft className="h-4 w-4" />}>
+              Back to Dashboard
+            </Button>
+          </Link>
+          <Link to="/research">
+            <Button variant="primary">
+              Start New Research
+            </Button>
+          </Link>
+        </div>
       </div>
     );
   }
@@ -158,6 +268,13 @@ export const Report: React.FC = () => {
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 print:p-0">
+      {report.is_demo_fallback && (
+        <div className="bg-amber-500 text-white font-bold px-4 py-2.5 text-center text-xs tracking-wider uppercase rounded-2xl shadow-sm flex items-center justify-center gap-2">
+          <AlertTriangle className="h-4 w-4" />
+          <span>DEMO FALLBACK — NOT LIVE RESEARCH</span>
+        </div>
+      )}
+
       {/* Top Nav Action Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-4 print:hidden">
         <Link to="/history" className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-[#5b5dfa]">

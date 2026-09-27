@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import {
   Search,
   Clock,
@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { researchService } from '../services/research';
 import type { ResearchRun } from '../types';
+import { DEMO_PRESETS, DemoPreset } from '../data/demoPresets';
 import { Button } from '../components/ui/Button';
 import { StatCard } from '../components/ui/StatCard';
 import { LoadingSkeleton } from '../components/ui/LoadingSkeleton';
@@ -220,7 +221,37 @@ const BASELINE_RESEARCH_RUNS: ResearchRun[] = [
 ];
 
 export const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const handleLaunchPreset = async (preset: DemoPreset) => {
+    sessionStorage.setItem('vishleshan_selected_preset_id', preset.id);
+    sessionStorage.setItem('vishleshan_requested_company_name', preset.company_name);
+    if (preset.official_url) {
+      sessionStorage.setItem('vishleshan_requested_url', preset.official_url);
+    } else {
+      sessionStorage.removeItem('vishleshan_requested_url');
+    }
+
+    try {
+      const response = await researchService.startResearch({
+        company_name: preset.company_name,
+        company_url: preset.official_url || undefined,
+        deep_verification: true,
+      });
+
+      navigate(`/research/${response.research_run_id}`, {
+        state: {
+          requestedCompanyName: preset.company_name,
+          requestedUrl: preset.official_url || undefined,
+          selectedPresetId: preset.id,
+        },
+      });
+    } catch (err) {
+      console.error('Failed to launch demo preset:', err);
+      navigate('/research');
+    }
+  };
 
   // 1. Centralized Filter States initialized from URL params where available
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
@@ -715,6 +746,30 @@ export const Dashboard: React.FC = () => {
           chartType="cards"
           className="min-h-[170px] sm:min-h-[190px]"
         />
+      </div>
+
+      {/* Quick Demo Presets Bar */}
+      <div className="rounded-2xl bg-gradient-to-r from-indigo-50/80 to-purple-50/50 border border-indigo-100 p-4 space-y-2.5">
+        <div className="flex items-center gap-2 text-xs font-bold text-[#5b5dfa] uppercase tracking-wider">
+          <Zap className="h-4 w-4" />
+          <span>HackIndia Real-World Demo Presets</span>
+        </div>
+        <p className="text-xs text-slate-600 font-medium">
+          Click any organization preset to launch dynamic multi-agent forensic research:
+        </p>
+        <div className="flex flex-wrap gap-2.5 pt-1">
+          {DEMO_PRESETS.map((preset) => (
+            <button
+              key={preset.id}
+              type="button"
+              onClick={() => handleLaunchPreset(preset)}
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-white text-[#181534] border border-slate-200 hover:border-[#5b5dfa] hover:bg-indigo-50/60 shadow-2xs transition-all cursor-pointer"
+            >
+              <Building2 className="h-3.5 w-3.5 text-[#5b5dfa]" />
+              <span>{preset.display_name}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* 3. Active Filters Bar (Responsive Stacking & Sizing) */}
