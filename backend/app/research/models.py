@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
-from uuid import UUID
+from uuid import UUID, uuid4
 from pydantic import BaseModel, Field
 from app.schemas.evidence import SourceType, VerificationStatus
 
@@ -34,6 +34,7 @@ class IdentityResult(BaseModel):
 
 class NormalizedEvidence(BaseModel):
     """Fully normalized and hashed evidence entity ready for persistence."""
+    id: UUID = Field(default_factory=uuid4)
     claim: str
     evidence_text: str
     source_url: Optional[str] = ""

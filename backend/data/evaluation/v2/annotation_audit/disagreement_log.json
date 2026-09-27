@@ -1,0 +1,38 @@
+[
+  {
+    "record_id": "20000000-0000-4000-8000-000000000003",
+    "subset": "evidence_eval",
+    "annotator_A_id": "ANN-1042",
+    "annotator_A_label": "UNABLE_TO_VERIFY",
+    "annotator_B_id": "ANN-2091",
+    "annotator_B_label": "CONFLICTING",
+    "final_adjudicated_label": "UNABLE_TO_VERIFY",
+    "adjudication_reason": "Absence of public registry evidence for 45 satellite offices constitutes UNABLE_TO_VERIFY per ANNOTATION_GUIDELINES.md. It does not represent active source contradiction or fraud.",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-27T10:30:00Z"
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000005",
+    "subset": "evidence_eval",
+    "annotator_A_id": "ANN-1042",
+    "annotator_A_label": "VERIFIED",
+    "annotator_B_id": "ANN-2091",
+    "annotator_B_label": "PARTIALLY_VERIFIED",
+    "final_adjudicated_label": "PARTIALLY_VERIFIED",
+    "adjudication_reason": "Venture funding claims supported by secondary news coverage without primary SEC Form D filing require PARTIALLY_VERIFIED label per guidelines.",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-27T10:31:00Z"
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000008",
+    "subset": "evidence_eval",
+    "annotator_A_id": "ANN-1042",
+    "annotator_A_label": "UNABLE_TO_VERIFY",
+    "annotator_B_id": "ANN-2091",
+    "annotator_B_label": "CONFLICTING",
+    "final_adjudicated_label": "UNABLE_TO_VERIFY",
+    "adjudication_reason": "Absence of nuclear energy power commission filings for Groq Inc is an unverified footprint claim, resolved to UNABLE_TO_VERIFY.",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-27T10:32:00Z"
+  }
+]

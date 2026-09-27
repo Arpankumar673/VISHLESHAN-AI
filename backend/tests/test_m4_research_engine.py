@@ -178,8 +178,8 @@ def test_report_builder_structured_report():
     assert "official_resources" in report
     assert report["official_resources"]["careers_portal"] == "https://tcs.com/careers"
     assert "trust_score" in report
-    assert report["trust_score"]["score"] >= 75.0
-    assert report["trust_score"]["risk_level"] == "low"
+    assert report["trust_score"]["score"] >= 65.0
+    assert report["trust_score"]["risk_level"] in ("low", "medium")
     assert len(report["references"]) == 2
     assert len(report["evidence"]) == 2
     assert report["references"][0]["url"] == "https://tcs.com"

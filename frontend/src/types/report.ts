@@ -1,6 +1,7 @@
 import type { Company } from './company';
 import type { Evidence, SourceType, VerificationStatus } from './evidence';
-import type { TrustScore } from './trust';
+import type { RiskLevel, TrustScore } from './trust';
+
 import type { RiskAnalysisResult } from './risk';
 
 export interface VerifiedIdentifierItem {
@@ -19,7 +20,42 @@ export interface RegistrationItem {
   date?: string;
 }
 
+export interface TrustDimensionScore {
+  name: string;
+  score: number;
+  confidence: number;
+  weight: number;
+  weighted_score: number;
+  verification_status: VerificationStatus | string;
+  evidence_count: number;
+  evidence_ids: string[];
+  details?: Record<string, any>;
+}
+
+export interface TrustIndexDetails {
+  trust_index: number;
+  confidence: number;
+  verification_status: VerificationStatus | string;
+  risk_level: RiskLevel | string;
+  model_version: string;
+  calculated_at?: string;
+  dimension_scores: Record<string, TrustDimensionScore>;
+  risk_adjustment?: {
+    company_legitimacy_penalty?: number;
+    recruitment_scam_risk?: number;
+    recruitment_risk_level?: string;
+    risk_factors?: string[];
+  };
+  conflict_summary?: {
+    conflict_level?: string;
+    conflict_count?: number;
+    confidence_penalty?: number;
+  };
+  explanation?: string;
+}
+
 export interface CertificationItem {
+
   name: string;
   issuer: string;
   validity?: string;

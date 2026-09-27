@@ -1,0 +1,23 @@
+{
+  "model_version": "recruitment_scam_v1",
+  "training_dataset_identifier": "EMSCAD_Kaggle_Real_v1",
+  "created_date": "2026-09-24",
+  "metrics": {
+    "samples": 2693,
+    "threshold": 0.3,
+    "confusion_matrix": {
+      "tp": 18,
+      "fp": 1,
+      "tn": 2562,
+      "fn": 112
+    },
+    "precision": 0.9474,
+    "recall": 0.1385,
+    "f1_score": 0.2416,
+    "pr_auc": 0.3481,
+    "roc_auc": 0.6411,
+    "brier_score": 0.0417
+  },
+  "vocab_size": 5000,
+  "optimal_threshold": 0.3
+}

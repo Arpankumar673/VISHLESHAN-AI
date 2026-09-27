@@ -33,14 +33,18 @@ class ReportBuilder:
             else 0.5
         )
 
-        # 3. Calculate Trust Metrics & Reliability
-        avg_reliability = (
-            sum(e.reliability_score for e in unique_evidence) / total_evidence
-            if total_evidence > 0
-            else 0.5
+        # 3. Calculate Trust Metrics via Deterministic Trust Engine
+        from app.services.trust_engine import TrustEngine
+        trust_engine = TrustEngine()
+        trust_res = trust_engine.compute_trust_index(
+            evidence_items=unique_evidence,
+            target_name=identity.canonical_name,
+            target_domain=identity.official_domain,
         )
-        trust_score_val = round(min(100.0, max(20.0, avg_reliability * 100.0)), 1)
-        risk_level = "low" if trust_score_val >= 75.0 else ("medium" if trust_score_val >= 50.0 else "high")
+        trust_score_val = trust_res.trust_index
+        risk_level = trust_res.risk_level
+        avg_reliability = trust_res.confidence
+
 
         # 4. Extract Category Specific Evidence Items
         careers_ev = [e for e in unique_evidence if e.source_type == SourceType.OFFICIAL_CAREERS]
@@ -60,6 +64,7 @@ class ReportBuilder:
                 seen_urls.add(url)
                 references.append(
                     {
+                        "evidence_id": str(getattr(e, "id", "")),
                         "index": len(references) + 1,
                         "url": url,
                         "title": e.source_title or url,
@@ -75,6 +80,7 @@ class ReportBuilder:
             url = e.source_url if e.source_url and not any(bad in e.source_url.lower() for bad in ["example.com", "about:blank"]) else None
             evidence_summary.append(
                 {
+                    "evidence_id": str(getattr(e, "id", "")),
                     "index": idx,
                     "claim": e.claim,
                     "evidence_text": e.evidence_text,
@@ -87,6 +93,7 @@ class ReportBuilder:
                     "content_hash": e.content_hash,
                 }
             )
+
 
         # 7. Tally Source Tiers (Tier 1 to 5)
         tier_distribution = {"tier_1": 0, "tier_2": 0, "tier_3": 0, "tier_4": 0, "tier_5": 0}
@@ -239,23 +246,30 @@ class ReportBuilder:
             },
             "trust_score": {
                 "score": trust_score_val,
-                "confidence": round(avg_reliability, 2),
+                "trust_index": trust_score_val,
+                "confidence": trust_res.confidence,
                 "risk_level": risk_level,
+                "verification_status": trust_res.verification_status.value,
                 "evidence_coverage": round(min(1.0, total_evidence / 5.0), 2),
-                "algorithm_version": "v1.0-deterministic-m4",
-                "explanation": (
-                    f"Preliminary deterministic evaluation based on {total_evidence} source record(s) "
-                    f"with average source reliability of {(avg_reliability * 100):.0f}%."
-                ),
+                "algorithm_version": trust_res.model_version,
+                "explanation": trust_res.explanation,
+                "dimension_scores": {k: v.model_dump() for k, v in trust_res.dimension_scores.items()},
+                "risk_adjustment": trust_res.risk_adjustment.model_dump(),
+                "conflict_summary": trust_res.conflict_summary.model_dump(),
+                "evidence_references": trust_res.evidence_references,
             },
+            "trust_index_details": trust_res.model_dump(),
             "trust_score_explanation": {
                 "contributing_signals": [
-                    {"signal": "Verified Source Evidence", "weight": "+40%", "status": "Positive" if verified_count > 0 else "Neutral"},
-                    {"signal": "HTTPS Domain Reachability", "weight": "+35%", "status": "Positive" if identity.official_domain else "Neutral"},
-                    {"signal": "Source Tier Reliability", "weight": "+25%", "status": "Positive" if avg_reliability >= 0.7 else "Neutral"},
+                    {"signal": "Entity Identity", "weight": "20%", "status": trust_res.dimension_scores["identity"].verification_status.value.title()},
+                    {"signal": "Technical Provenance", "weight": "20%", "status": trust_res.dimension_scores["technical_provenance"].verification_status.value.title()},
+                    {"signal": "Regulatory Compliance", "weight": "25%", "status": trust_res.dimension_scores["regulatory"].verification_status.value.title()},
+                    {"signal": "Evidence Fusion", "weight": "20%", "status": trust_res.dimension_scores["evidence"].verification_status.value.title()},
+                    {"signal": "Risk Adjustment", "weight": "15%", "status": trust_res.dimension_scores["risk"].verification_status.value.title()},
                 ],
-                "explanation": f"Trust index computed at {trust_score_val}/100 using deterministic source reliability and claim corroboration.",
+                "explanation": trust_res.explanation,
             },
+
             "confidence": {
                 "score": round(avg_reliability, 2),
                 "level": "high" if avg_reliability >= 0.85 else ("medium" if avg_reliability >= 0.65 else "low"),

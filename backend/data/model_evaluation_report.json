@@ -1,0 +1,44 @@
+{
+  "model_name": "RecruitmentScamClassifier_v1",
+  "training_dataset_identifier": "EMSCAD_Kaggle_Real_v1",
+  "vectorizer": "TfidfVectorizer(ngram_range=(1,2), max_features=5000, sublinear_tf=True)",
+  "classifier": "Calibrated_Linear_Logistic_Odds",
+  "optimal_threshold": 0.3,
+  "validation_metrics": {
+    "samples": 2715,
+    "threshold": 0.3,
+    "confusion_matrix": {
+      "tp": 34,
+      "fp": 3,
+      "tn": 2560,
+      "fn": 118
+    },
+    "precision": 0.9189,
+    "recall": 0.2237,
+    "f1_score": 0.3598,
+    "pr_auc": 0.4225,
+    "roc_auc": 0.7036,
+    "brier_score": 0.044
+  },
+  "test_metrics": {
+    "samples": 2693,
+    "threshold": 0.3,
+    "confusion_matrix": {
+      "tp": 18,
+      "fp": 1,
+      "tn": 2562,
+      "fn": 112
+    },
+    "precision": 0.9474,
+    "recall": 0.1385,
+    "f1_score": 0.2416,
+    "pr_auc": 0.3481,
+    "roc_auc": 0.6411,
+    "brier_score": 0.0417
+  },
+  "comparison_with_keyword_baseline": {
+    "ml_model_test_f1": 0.2416,
+    "ml_model_test_pr_auc": 0.3481,
+    "status": "PASS"
+  }
+}

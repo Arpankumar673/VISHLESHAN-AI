@@ -1,6 +1,7 @@
 import asyncio
 from typing import Any, Dict, List, Optional, Union
 from uuid import UUID
+from app.core.llm_security import sanitize_input_text, wrap_untrusted_content
 from app.core.logging import logger
 from app.research.agents.base import (
     AgentInput,
@@ -15,6 +16,7 @@ from app.research.normalizer import EvidenceNormalizer
 from app.research.sources.official_website import OfficialWebsiteAdapter
 from app.research.sources.search import PublicSearchAdapter
 from app.schemas.evidence import SourceType
+
 
 
 class CompanyResearchAgent(BaseAgent):

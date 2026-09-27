@@ -1,0 +1,450 @@
+[
+  {
+    "scenario_id": "40000000-0000-4000-8000-000000000001",
+    "scenario_name": "Verified Public Company Full Evidence",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000001",
+    "evidence_state": {
+      "identity": "VERIFIED_FULL",
+      "regulatory": "VERIFIED_FULL"
+    },
+    "expected_dimension_behavior": {
+      "identity": "VERIFIED_FULL",
+      "technical_provenance": "VERIFIED_FULL",
+      "regulatory": "VERIFIED_FULL",
+      "evidence": "VERIFIED_FULL",
+      "risk": "LOW_RISK"
+    },
+    "expected_verification_state": "VERIFIED",
+    "expected_conflict_state": "NO_CONFLICT",
+    "expected_confidence_behavior": "HIGH_CONFIDENCE",
+    "expected_score_behavior": {
+      "overall_trust_index": 0.95,
+      "conflict_penalty_applied": 0.0,
+      "missing_evidence_penalty_applied": 0.0
+    },
+    "provenance_references": ["https://www.sec.gov/edgar/browse/?CIK=0000789019"],
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotator_id": "ANN-1042",
+    "is_synthetic": false
+  },
+  {
+    "scenario_id": "40000000-0000-4000-8000-000000000002",
+    "scenario_name": "Low Evidence Missing Footprint Penalty",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000014",
+    "evidence_state": {
+      "identity": "VERIFIED_PARTIAL",
+      "regulatory": "UNABLE_TO_VERIFY"
+    },
+    "expected_dimension_behavior": {
+      "identity": "VERIFIED_PARTIAL",
+      "technical_provenance": "UNABLE_TO_VERIFY",
+      "regulatory": "UNABLE_TO_VERIFY",
+      "evidence": "LOW_DENSITY",
+      "risk": "UNKNOWN_RISK"
+    },
+    "expected_verification_state": "UNABLE_TO_VERIFY",
+    "expected_conflict_state": "NO_CONFLICT",
+    "expected_confidence_behavior": "LOW_CONFIDENCE",
+    "expected_score_behavior": {
+      "overall_trust_index": 0.50,
+      "conflict_penalty_applied": 0.0,
+      "missing_evidence_penalty_applied": 0.20
+    },
+    "provenance_references": ["https://modal.com/about"],
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotator_id": "ANN-2091",
+    "is_synthetic": false
+  },
+  {
+    "scenario_id": "40000000-0000-4000-8000-000000000003",
+    "scenario_name": "High Risk Insolvent Entity Penalty",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000018",
+    "evidence_state": {
+      "identity": "VERIFIED_FULL",
+      "regulatory": "CONFLICTING"
+    },
+    "expected_dimension_behavior": {
+      "identity": "VERIFIED_FULL",
+      "technical_provenance": "VERIFIED_FULL",
+      "regulatory": "CONFLICTING",
+      "evidence": "CONFLICTING",
+      "risk": "SEVERE_RISK"
+    },
+    "expected_verification_state": "CONFLICTING",
+    "expected_conflict_state": "SEVERE_CONFLICT",
+    "expected_confidence_behavior": "HIGH_CONFIDENCE_OF_RISK",
+    "expected_score_behavior": {
+      "overall_trust_index": 0.15,
+      "conflict_penalty_applied": 0.40,
+      "missing_evidence_penalty_applied": 0.0
+    },
+    "provenance_references": ["https://www.bafin.de"],
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotator_id": "ANN-1042",
+    "is_synthetic": false
+  },
+  {
+    "scenario_id": "40000000-0000-4000-8000-000000000004",
+    "scenario_name": "Securities Fraud Penalty Execution",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000028",
+    "evidence_state": {
+      "identity": "VERIFIED_FULL",
+      "regulatory": "CONFLICTING"
+    },
+    "expected_dimension_behavior": {
+      "identity": "VERIFIED_FULL",
+      "technical_provenance": "VERIFIED_FULL",
+      "regulatory": "CONFLICTING",
+      "evidence": "CONFLICTING",
+      "risk": "HIGH_RISK"
+    },
+    "expected_verification_state": "CONFLICTING",
+    "expected_conflict_state": "CRITICAL_CONFLICT",
+    "expected_confidence_behavior": "HIGH_CONFIDENCE_OF_RISK",
+    "expected_score_behavior": {
+      "overall_trust_index": 0.20,
+      "conflict_penalty_applied": 0.35,
+      "missing_evidence_penalty_applied": 0.0
+    },
+    "provenance_references": ["https://www.sec.gov/news/press-release/2020-319"],
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotator_id": "ANN-2091",
+    "is_synthetic": false
+  },
+  {
+    "scenario_id": "40000000-0000-4000-8000-000000000005",
+    "scenario_name": "Apple Inc Full Regulatory Verification",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000003",
+    "evidence_state": {
+      "identity": "VERIFIED_FULL",
+      "regulatory": "VERIFIED_FULL"
+    },
+    "expected_dimension_behavior": {
+      "identity": "VERIFIED_FULL",
+      "technical_provenance": "VERIFIED_FULL",
+      "regulatory": "VERIFIED_FULL",
+      "evidence": "VERIFIED_FULL",
+      "risk": "LOW_RISK"
+    },
+    "expected_verification_state": "VERIFIED",
+    "expected_conflict_state": "NO_CONFLICT",
+    "expected_confidence_behavior": "HIGH_CONFIDENCE",
+    "expected_score_behavior": {
+      "overall_trust_index": 0.96,
+      "conflict_penalty_applied": 0.0,
+      "missing_evidence_penalty_applied": 0.0
+    },
+    "provenance_references": ["https://www.sec.gov/edgar/browse/?CIK=0000320193"],
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotator_id": "ANN-1042",
+    "is_synthetic": false
+  },
+  {
+    "scenario_id": "40000000-0000-4000-8000-000000000006",
+    "scenario_name": "Alphabet Inc Parent Holding Verification",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000004",
+    "evidence_state": {
+      "identity": "VERIFIED_FULL",
+      "regulatory": "VERIFIED_FULL"
+    },
+    "expected_dimension_behavior": {
+      "identity": "VERIFIED_FULL",
+      "technical_provenance": "VERIFIED_FULL",
+      "regulatory": "VERIFIED_FULL",
+      "evidence": "VERIFIED_FULL",
+      "risk": "LOW_RISK"
+    },
+    "expected_verification_state": "VERIFIED",
+    "expected_conflict_state": "NO_CONFLICT",
+    "expected_confidence_behavior": "HIGH_CONFIDENCE",
+    "expected_score_behavior": {
+      "overall_trust_index": 0.95,
+      "conflict_penalty_applied": 0.0,
+      "missing_evidence_penalty_applied": 0.0
+    },
+    "provenance_references": ["https://www.sec.gov/edgar/browse/?CIK=0001652044"],
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotator_id": "ANN-2091",
+    "is_synthetic": false
+  },
+  {
+    "scenario_id": "40000000-0000-4000-8000-000000000007",
+    "scenario_name": "Tesla Inc Operational Clean Verification",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000005",
+    "evidence_state": {
+      "identity": "VERIFIED_FULL",
+      "regulatory": "VERIFIED_FULL"
+    },
+    "expected_dimension_behavior": {
+      "identity": "VERIFIED_FULL",
+      "technical_provenance": "VERIFIED_FULL",
+      "regulatory": "VERIFIED_FULL",
+      "evidence": "VERIFIED_FULL",
+      "risk": "LOW_RISK"
+    },
+    "expected_verification_state": "VERIFIED",
+    "expected_conflict_state": "NO_CONFLICT",
+    "expected_confidence_behavior": "HIGH_CONFIDENCE",
+    "expected_score_behavior": {
+      "overall_trust_index": 0.94,
+      "conflict_penalty_applied": 0.0,
+      "missing_evidence_penalty_applied": 0.0
+    },
+    "provenance_references": ["https://www.sec.gov/edgar/browse/?CIK=0001318605"],
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotator_id": "ANN-1042",
+    "is_synthetic": false
+  },
+  {
+    "scenario_id": "40000000-0000-4000-8000-000000000008",
+    "scenario_name": "Theranos Massive Fraud Severe Penalty",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000030",
+    "evidence_state": {
+      "identity": "VERIFIED_FULL",
+      "regulatory": "CONFLICTING"
+    },
+    "expected_dimension_behavior": {
+      "identity": "VERIFIED_FULL",
+      "technical_provenance": "UNABLE_TO_VERIFY",
+      "regulatory": "CONFLICTING",
+      "evidence": "CONFLICTING",
+      "risk": "SEVERE_RISK"
+    },
+    "expected_verification_state": "CONFLICTING",
+    "expected_conflict_state": "CRITICAL_CONFLICT",
+    "expected_confidence_behavior": "HIGH_CONFIDENCE_OF_RISK",
+    "expected_score_behavior": {
+      "overall_trust_index": 0.10,
+      "conflict_penalty_applied": 0.45,
+      "missing_evidence_penalty_applied": 0.10
+    },
+    "provenance_references": ["https://www.sec.gov/news/press-release/2018-41"],
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotator_id": "ANN-2091",
+    "is_synthetic": false
+  },
+  {
+    "scenario_id": "40000000-0000-4000-8000-000000000009",
+    "scenario_name": "Enron Corp Accounting Fraud Penalty",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000031",
+    "evidence_state": {
+      "identity": "VERIFIED_FULL",
+      "regulatory": "CONFLICTING"
+    },
+    "expected_dimension_behavior": {
+      "identity": "VERIFIED_FULL",
+      "technical_provenance": "VERIFIED_FULL",
+      "regulatory": "CONFLICTING",
+      "evidence": "CONFLICTING",
+      "risk": "SEVERE_RISK"
+    },
+    "expected_verification_state": "CONFLICTING",
+    "expected_conflict_state": "CRITICAL_CONFLICT",
+    "expected_confidence_behavior": "HIGH_CONFIDENCE_OF_RISK",
+    "expected_score_behavior": {
+      "overall_trust_index": 0.12,
+      "conflict_penalty_applied": 0.45,
+      "missing_evidence_penalty_applied": 0.0
+    },
+    "provenance_references": ["https://www.sec.gov/news/extra/enron.htm"],
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotator_id": "ANN-1042",
+    "is_synthetic": false
+  },
+  {
+    "scenario_id": "40000000-0000-4000-8000-000000000010",
+    "scenario_name": "Credit Suisse Swiss Merger Regulatory State",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000032",
+    "evidence_state": {
+      "identity": "VERIFIED_FULL",
+      "regulatory": "VERIFIED_FULL"
+    },
+    "expected_dimension_behavior": {
+      "identity": "VERIFIED_FULL",
+      "technical_provenance": "VERIFIED_FULL",
+      "regulatory": "VERIFIED_FULL",
+      "evidence": "VERIFIED_FULL",
+      "risk": "MEDIUM_RISK"
+    },
+    "expected_verification_state": "VERIFIED",
+    "expected_conflict_state": "NO_CONFLICT",
+    "expected_confidence_behavior": "HIGH_CONFIDENCE",
+    "expected_score_behavior": {
+      "overall_trust_index": 0.78,
+      "conflict_penalty_applied": 0.0,
+      "missing_evidence_penalty_applied": 0.0
+    },
+    "provenance_references": ["https://www.finma.ch/en/news/2023/03/20230319-mm-cs/"],
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotator_id": "ANN-2091",
+    "is_synthetic": false
+  },
+  {
+    "scenario_id": "40000000-0000-4000-8000-000000000011",
+    "scenario_name": "TCS MCA Regulatory Verification",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000007",
+    "evidence_state": {
+      "identity": "VERIFIED_FULL",
+      "regulatory": "VERIFIED_FULL"
+    },
+    "expected_dimension_behavior": {
+      "identity": "VERIFIED_FULL",
+      "technical_provenance": "VERIFIED_FULL",
+      "regulatory": "VERIFIED_FULL",
+      "evidence": "VERIFIED_FULL",
+      "risk": "LOW_RISK"
+    },
+    "expected_verification_state": "VERIFIED",
+    "expected_conflict_state": "NO_CONFLICT",
+    "expected_confidence_behavior": "HIGH_CONFIDENCE",
+    "expected_score_behavior": {
+      "overall_trust_index": 0.94,
+      "conflict_penalty_applied": 0.0,
+      "missing_evidence_penalty_applied": 0.0
+    },
+    "provenance_references": ["https://www.mca.gov.in"],
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotator_id": "ANN-1042",
+    "is_synthetic": false
+  },
+  {
+    "scenario_id": "40000000-0000-4000-8000-000000000012",
+    "scenario_name": "NVIDIA Fabless Model Evidence Density",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000008",
+    "evidence_state": {
+      "identity": "VERIFIED_FULL",
+      "regulatory": "VERIFIED_FULL"
+    },
+    "expected_dimension_behavior": {
+      "identity": "VERIFIED_FULL",
+      "technical_provenance": "VERIFIED_FULL",
+      "regulatory": "VERIFIED_FULL",
+      "evidence": "VERIFIED_FULL",
+      "risk": "LOW_RISK"
+    },
+    "expected_verification_state": "VERIFIED",
+    "expected_conflict_state": "NO_CONFLICT",
+    "expected_confidence_behavior": "HIGH_CONFIDENCE",
+    "expected_score_behavior": {
+      "overall_trust_index": 0.95,
+      "conflict_penalty_applied": 0.0,
+      "missing_evidence_penalty_applied": 0.0
+    },
+    "provenance_references": ["https://www.sec.gov/edgar/browse/?CIK=0001045810"],
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotator_id": "ANN-2091",
+    "is_synthetic": false
+  },
+  {
+    "scenario_id": "40000000-0000-4000-8000-000000000013",
+    "scenario_name": "Stripe Private Tech High Evidence",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000006",
+    "evidence_state": {
+      "identity": "VERIFIED_FULL",
+      "regulatory": "VERIFIED_PARTIAL"
+    },
+    "expected_dimension_behavior": {
+      "identity": "VERIFIED_FULL",
+      "technical_provenance": "VERIFIED_FULL",
+      "regulatory": "VERIFIED_PARTIAL",
+      "evidence": "VERIFIED_FULL",
+      "risk": "LOW_RISK"
+    },
+    "expected_verification_state": "VERIFIED",
+    "expected_conflict_state": "NO_CONFLICT",
+    "expected_confidence_behavior": "HIGH_CONFIDENCE",
+    "expected_score_behavior": {
+      "overall_trust_index": 0.88,
+      "conflict_penalty_applied": 0.0,
+      "missing_evidence_penalty_applied": 0.05
+    },
+    "provenance_references": ["https://stripe.com/about"],
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotator_id": "ANN-1042",
+    "is_synthetic": false
+  },
+  {
+    "scenario_id": "40000000-0000-4000-8000-000000000014",
+    "scenario_name": "Infosys MCA Verification State",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000002",
+    "evidence_state": {
+      "identity": "VERIFIED_FULL",
+      "regulatory": "VERIFIED_FULL"
+    },
+    "expected_dimension_behavior": {
+      "identity": "VERIFIED_FULL",
+      "technical_provenance": "VERIFIED_FULL",
+      "regulatory": "VERIFIED_FULL",
+      "evidence": "VERIFIED_FULL",
+      "risk": "LOW_RISK"
+    },
+    "expected_verification_state": "VERIFIED",
+    "expected_conflict_state": "NO_CONFLICT",
+    "expected_confidence_behavior": "HIGH_CONFIDENCE",
+    "expected_score_behavior": {
+      "overall_trust_index": 0.95,
+      "conflict_penalty_applied": 0.0,
+      "missing_evidence_penalty_applied": 0.0
+    },
+    "provenance_references": ["https://www.mca.gov.in"],
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotator_id": "ANN-2091",
+    "is_synthetic": false
+  },
+  {
+    "scenario_id": "40000000-0000-4000-8000-000000000015",
+    "scenario_name": "Unverified Footprint Entity Penalty",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000014",
+    "evidence_state": {
+      "identity": "UNABLE_TO_VERIFY",
+      "regulatory": "UNABLE_TO_VERIFY"
+    },
+    "expected_dimension_behavior": {
+      "identity": "UNABLE_TO_VERIFY",
+      "technical_provenance": "UNABLE_TO_VERIFY",
+      "regulatory": "UNABLE_TO_VERIFY",
+      "evidence": "LOW_DENSITY",
+      "risk": "UNKNOWN_RISK"
+    },
+    "expected_verification_state": "UNABLE_TO_VERIFY",
+    "expected_conflict_state": "NO_CONFLICT",
+    "expected_confidence_behavior": "LOW_CONFIDENCE",
+    "expected_score_behavior": {
+      "overall_trust_index": 0.40,
+      "conflict_penalty_applied": 0.0,
+      "missing_evidence_penalty_applied": 0.25
+    },
+    "provenance_references": ["https://modal.com/about"],
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotator_id": "ANN-1042",
+    "is_synthetic": false
+  },
+  {
+    "scenario_id": "40000000-0000-4000-8000-000000000016",
+    "scenario_name": "Severe Regulatory Sanction Penalty",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000028",
+    "evidence_state": {
+      "identity": "VERIFIED_FULL",
+      "regulatory": "CONFLICTING"
+    },
+    "expected_dimension_behavior": {
+      "identity": "VERIFIED_FULL",
+      "technical_provenance": "VERIFIED_FULL",
+      "regulatory": "CONFLICTING",
+      "evidence": "CONFLICTING",
+      "risk": "SEVERE_RISK"
+    },
+    "expected_verification_state": "CONFLICTING",
+    "expected_conflict_state": "SEVERE_CONFLICT",
+    "expected_confidence_behavior": "HIGH_CONFIDENCE_OF_RISK",
+    "expected_score_behavior": {
+      "overall_trust_index": 0.22,
+      "conflict_penalty_applied": 0.35,
+      "missing_evidence_penalty_applied": 0.0
+    },
+    "provenance_references": ["https://www.sec.gov/news/press-release/2020-319"],
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotator_id": "ANN-2091",
+    "is_synthetic": false
+  }
+]

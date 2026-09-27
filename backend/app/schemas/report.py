@@ -19,3 +19,6 @@ class ReportResponse(BaseModel):
     trust_score: Optional[TrustScoreResponse] = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+ReportResponse.model_rebuild()

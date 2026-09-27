@@ -1,0 +1,36 @@
+[
+  {
+    "question_id": "50000000-0000-4000-8000-000000000001",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000001",
+    "question": "What is the official SEC CIK and primary incorporation jurisdiction for Microsoft Corporation?",
+    "expected_answer": "Microsoft Corporation has SEC CIK 0000789019 and is incorporated under the laws of the State of Delaware.",
+    "required_evidence_ids": [
+      "20000000-0000-4000-8000-000000000001"
+    ],
+    "acceptable_source_types": [
+      "government_regulatory",
+      "authoritative"
+    ],
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotator_id": "ANN-1042",
+    "is_synthetic": false,
+    "notes": "Factual query grounded in SEC EDGAR registration data."
+  },
+  {
+    "question_id": "50000000-0000-4000-8000-000000000002",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000018",
+    "question": "What led to the insolvency proceedings of Wirecard AG in 2020?",
+    "expected_answer": "Wirecard AG filed for insolvency following a BaFin and EY audit revealing that 1.9 billion EUR in purported Philippine bank escrow balances did not exist.",
+    "required_evidence_ids": [
+      "20000000-0000-4000-8000-000000000004"
+    ],
+    "acceptable_source_types": [
+      "government_regulatory",
+      "reputable_secondary"
+    ],
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotator_id": "ANN-2091",
+    "is_synthetic": false,
+    "notes": "Risk query requiring regulatory audit citation."
+  }
+]

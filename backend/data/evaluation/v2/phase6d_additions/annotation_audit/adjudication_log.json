@@ -1,0 +1,11 @@
+[
+  {
+    "record_id": "30000000-0000-4000-8000-000000000019",
+    "initial_annotator_A": "NEUTRAL",
+    "initial_annotator_B": "CONTRADICTION",
+    "adjudicated_label": "NEUTRAL",
+    "adjudication_rationale": "Claim regarding wheat farming machinery is topically unrelated to GPU microprocessors; NEUTRAL is the canonical NLI label per guidelines.",
+    "adjudicated_by": "LEAD-ANNOTATOR-AUDIT",
+    "timestamp": "2026-09-27T12:30:00Z"
+  }
+]

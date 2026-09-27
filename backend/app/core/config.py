@@ -15,6 +15,18 @@ class Settings(BaseSettings):
     SUPABASE_SERVICE_ROLE_KEY: str = ""
     SUPABASE_JWT_SECRET: str = ""
 
+    # OpenAI / AI Providers
+    OPENAI_API_KEY: str = ""
+    RAG_EMBEDDING_MODEL: str = "text-embedding-3-small"
+    RAG_EMBEDDING_DIM: int = 1536
+
+    # Redis & Queue Settings
+    REDIS_URL: str = "redis://localhost:6379/0"
+
+    # Rate Limiting Settings
+    RESEARCH_RATE_LIMIT: str = "5/minute"
+    ASK_RATE_LIMIT: str = "10/minute"
+
     # Orchestrator settings
     RESEARCH_ORCHESTRATOR_MODE: str = "langgraph"  # "langgraph" (default) or "local"
 

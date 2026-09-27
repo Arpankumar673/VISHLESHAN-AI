@@ -1,0 +1,172 @@
+[
+  {
+    "record_id": "10000000-0000-4000-8000-000000000001",
+    "subset": "identity_eval",
+    "status": "CONCORDANT",
+    "annotator_A_label": "VERIFIED",
+    "annotator_B_label": "VERIFIED",
+    "final_adjudicated_label": "VERIFIED",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-25T19:50:00Z"
+  },
+  {
+    "record_id": "10000000-0000-4000-8000-000000000002",
+    "subset": "identity_eval",
+    "status": "CONCORDANT",
+    "annotator_A_label": "VERIFIED",
+    "annotator_B_label": "VERIFIED",
+    "final_adjudicated_label": "VERIFIED",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-25T19:50:00Z"
+  },
+  {
+    "record_id": "10000000-0000-4000-8000-000000000003",
+    "subset": "identity_eval",
+    "status": "CONCORDANT",
+    "annotator_A_label": "VERIFIED",
+    "annotator_B_label": "VERIFIED",
+    "final_adjudicated_label": "VERIFIED",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-25T19:50:00Z"
+  },
+  {
+    "record_id": "10000000-0000-4000-8000-000000000004",
+    "subset": "identity_eval",
+    "status": "CONCORDANT",
+    "annotator_A_label": "VERIFIED",
+    "annotator_B_label": "VERIFIED",
+    "final_adjudicated_label": "VERIFIED",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-25T19:50:00Z"
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000001",
+    "subset": "evidence_eval",
+    "status": "CONCORDANT",
+    "annotator_A_label": "VERIFIED",
+    "annotator_B_label": "VERIFIED",
+    "final_adjudicated_label": "VERIFIED",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-25T19:50:00Z"
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000002",
+    "subset": "evidence_eval",
+    "status": "CONCORDANT",
+    "annotator_A_label": "VERIFIED",
+    "annotator_B_label": "VERIFIED",
+    "final_adjudicated_label": "VERIFIED",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-25T19:50:00Z"
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000003",
+    "subset": "evidence_eval",
+    "status": "ADJUDICATED_DISAGREEMENT",
+    "annotator_A_label": "UNABLE_TO_VERIFY",
+    "annotator_B_label": "CONFLICTING",
+    "final_adjudicated_label": "UNABLE_TO_VERIFY",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-25T19:50:00Z"
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000004",
+    "subset": "evidence_eval",
+    "status": "CONCORDANT",
+    "annotator_A_label": "CONFLICTING",
+    "annotator_B_label": "CONFLICTING",
+    "final_adjudicated_label": "CONFLICTING",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-25T19:50:00Z"
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000005",
+    "subset": "evidence_eval",
+    "status": "ADJUDICATED_DISAGREEMENT",
+    "annotator_A_label": "VERIFIED",
+    "annotator_B_label": "PARTIALLY_VERIFIED",
+    "final_adjudicated_label": "PARTIALLY_VERIFIED",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-25T19:51:00Z"
+  },
+  {
+    "record_id": "30000000-0000-4000-8000-000000000001",
+    "subset": "conflict_eval",
+    "status": "CONCORDANT",
+    "annotator_A_label": "ENTAILMENT",
+    "annotator_B_label": "ENTAILMENT",
+    "final_adjudicated_label": "ENTAILMENT",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-25T19:50:00Z"
+  },
+  {
+    "record_id": "30000000-0000-4000-8000-000000000002",
+    "subset": "conflict_eval",
+    "status": "CONCORDANT",
+    "annotator_A_label": "CONTRADICTION",
+    "annotator_B_label": "CONTRADICTION",
+    "final_adjudicated_label": "CONTRADICTION",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-25T19:50:00Z"
+  },
+  {
+    "record_id": "30000000-0000-4000-8000-000000000003",
+    "subset": "conflict_eval",
+    "status": "CONCORDANT",
+    "annotator_A_label": "NEUTRAL",
+    "annotator_B_label": "NEUTRAL",
+    "final_adjudicated_label": "NEUTRAL",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-25T19:50:00Z"
+  },
+  {
+    "record_id": "40000000-0000-4000-8000-000000000001",
+    "subset": "trust_eval",
+    "status": "CONCORDANT",
+    "annotator_A_label": "VERIFIED",
+    "annotator_B_label": "VERIFIED",
+    "final_adjudicated_label": "VERIFIED",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-25T19:50:00Z"
+  },
+  {
+    "record_id": "40000000-0000-4000-8000-000000000002",
+    "subset": "trust_eval",
+    "status": "CONCORDANT",
+    "annotator_A_label": "UNABLE_TO_VERIFY",
+    "annotator_B_label": "UNABLE_TO_VERIFY",
+    "final_adjudicated_label": "UNABLE_TO_VERIFY",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-25T19:50:00Z"
+  },
+  {
+    "record_id": "40000000-0000-4000-8000-000000000003",
+    "subset": "trust_eval",
+    "status": "CONCORDANT",
+    "annotator_A_label": "CONFLICTING",
+    "annotator_B_label": "CONFLICTING",
+    "final_adjudicated_label": "CONFLICTING",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-25T19:50:00Z"
+  },
+  {
+    "record_id": "50000000-0000-4000-8000-000000000001",
+    "subset": "rag_eval",
+    "status": "CONCORDANT",
+    "annotator_A_label": "CORRECT_GROUNDED",
+    "annotator_B_label": "CORRECT_GROUNDED",
+    "final_adjudicated_label": "CORRECT_GROUNDED",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-25T19:50:00Z"
+  },
+  {
+    "record_id": "50000000-0000-4000-8000-000000000002",
+    "subset": "rag_eval",
+    "status": "CONCORDANT",
+    "annotator_A_label": "CORRECT_GROUNDED",
+    "annotator_B_label": "CORRECT_GROUNDED",
+    "final_adjudicated_label": "CORRECT_GROUNDED",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-25T19:50:00Z"
+  }
+]

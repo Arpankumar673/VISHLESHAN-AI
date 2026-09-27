@@ -1,0 +1,50 @@
+[
+  {
+    "pair_id": "30000000-0000-4000-8000-000000000001",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000001",
+    "premise_claim_id": "20000000-0000-4000-8000-000000000001",
+    "hypothesis_claim_id": "20000000-0000-4000-8000-000000000010",
+    "premise_text": "Microsoft Corporation was incorporated in Washington in 1975 and reincorporated in Delaware in 1993 with SEC CIK 0000789019.",
+    "hypothesis_text": "Microsoft Corporation is registered as a Delaware corporation with SEC CIK 0000789019.",
+    "expected_nli_label": "ENTAILMENT",
+    "source_urls": [
+      "https://www.sec.gov/edgar/browse/?CIK=0000789019"
+    ],
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotator_id": "ANN-1042",
+    "is_synthetic": false,
+    "notes": "Premise guarantees hypothesis."
+  },
+  {
+    "pair_id": "30000000-0000-4000-8000-000000000002",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000018",
+    "premise_claim_id": "20000000-0000-4000-8000-000000000004",
+    "hypothesis_claim_id": "20000000-0000-4000-8000-000000000040",
+    "premise_text": "German financial regulator BaFin and auditing firm EY confirmed that 1.9 billion EUR in Wirecard trustee accounts did not exist in Philippine banks.",
+    "hypothesis_text": "Wirecard AG held 1.9 billion EUR in cash balances at Philippine trustee banks in June 2020.",
+    "expected_nli_label": "CONTRADICTION",
+    "source_urls": [
+      "https://www.bafin.de"
+    ],
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotator_id": "ANN-2091",
+    "is_synthetic": false,
+    "notes": "Premise logically contradicts hypothesis."
+  },
+  {
+    "pair_id": "30000000-0000-4000-8000-000000000003",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000006",
+    "premise_claim_id": "20000000-0000-4000-8000-000000000060",
+    "hypothesis_claim_id": "20000000-0000-4000-8000-000000000061",
+    "premise_text": "Stripe, Inc. operates global online payment processing infrastructure incorporated in Delaware.",
+    "hypothesis_text": "Stripe, Inc. plans to initiate an initial public offering in the fourth quarter of 2027.",
+    "expected_nli_label": "NEUTRAL",
+    "source_urls": [
+      "https://stripe.com/about"
+    ],
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotator_id": "ANN-1042",
+    "is_synthetic": false,
+    "notes": "Premise provides no evidence for or against future IPO plans."
+  }
+]

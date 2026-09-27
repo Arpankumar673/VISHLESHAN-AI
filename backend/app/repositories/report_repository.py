@@ -55,3 +55,9 @@ class ReportRepository:
         if res.data and len(res.data) > 0:
             return res.data[0]
         raise RuntimeError("Failed to insert report record")
+
+    def update_content(self, report_id: UUID, content: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        res = self.supabase.table("reports").update({"content": content}).eq("id", str(report_id)).execute()
+        if res.data and len(res.data) > 0:
+            return res.data[0]
+        return None

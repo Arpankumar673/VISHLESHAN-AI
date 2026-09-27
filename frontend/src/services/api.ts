@@ -117,3 +117,29 @@ export const apiClient = {
     return this.request<T>(endpoint, { ...options, method: 'DELETE' });
   },
 };
+
+export interface Citation {
+  evidence_id: string;
+  source_title: string;
+  source_url: string;
+  similarity: number;
+}
+
+export interface AskQuestionPayload {
+  company_id: string;
+  question: string;
+  company_name?: string;
+  top_k?: number;
+}
+
+export interface AskQuestionResponseData {
+  answer: string;
+  company_name: string;
+  company_id: string;
+  citations: Citation[];
+  evidence_count: number;
+}
+
+export const askQuestion = (payload: AskQuestionPayload): Promise<AskQuestionResponseData> => {
+  return apiClient.post<AskQuestionResponseData>('/ask', payload);
+};

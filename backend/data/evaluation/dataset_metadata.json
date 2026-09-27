@@ -1,0 +1,10 @@
+{
+  "dataset_id": "VISHLESHAN-EVAL-v1",
+  "version": "v1.0.0",
+  "creation_timestamp": "2026-09-25T19:20:00+00:00",
+  "description": "Vishleshan AI v2 Phase 6A Ground-Truth Evaluation Foundation Dataset Framework",
+  "schema_version": "v1",
+  "provenance_policy": "Ground-truth claims must be traceable to explicit first-party, government, or authoritative source URLs.",
+  "annotation_policy": "Annotated according to backend/data/evaluation/ANNOTATION_GUIDELINES.md. LLM predictions cannot serve as sole ground truth.",
+  "dataset_hash": ""
+}

@@ -4,9 +4,11 @@ from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from slowapi.errors import RateLimitExceeded
 from app.api import api_router
 from app.core.config import settings
 from app.core.errors import AppException
+from app.core.limiter import limiter
 from app.core.logging import logger
 
 app = FastAPI(
@@ -20,6 +22,9 @@ app = FastAPI(
     redoc_url="/redoc",
     openapi_url=f"{settings.API_V1_PREFIX}/openapi.json",
 )
+
+app.state.limiter = limiter
+
 
 # ------------------------------------------------------------
 # CORS Middleware
@@ -72,7 +77,24 @@ async def log_and_time_requests(request: Request, call_next):
 # ------------------------------------------------------------
 # Global Exception Handlers
 # ------------------------------------------------------------
+@app.exception_handler(RateLimitExceeded)
+async def handle_rate_limit_exceeded(_request: Request, exc: RateLimitExceeded):
+    retry_after = getattr(exc, "retry_after", 60) or 60
+    return JSONResponse(
+        status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+        content={
+            "error": {
+                "code": "HTTP_429",
+                "message": f"Rate limit exceeded: {exc.detail}",
+                "details": None,
+            }
+        },
+        headers={"Retry-After": str(retry_after)},
+    )
+
+
 @app.exception_handler(AppException)
+
 async def handle_app_exception(_request: Request, exc: AppException):
     return JSONResponse(
         status_code=exc.status_code,

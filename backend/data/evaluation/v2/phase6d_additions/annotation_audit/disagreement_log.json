@@ -1,0 +1,15 @@
+{
+  "total_double_annotated_records": 24,
+  "concordant_records": 23,
+  "discrepancies": [
+    {
+      "record_id": "30000000-0000-4000-8000-000000000019",
+      "annotator_A_label": "NEUTRAL",
+      "annotator_B_label": "CONTRADICTION",
+      "discrepancy_type": "NEUTRAL_VS_CONTRADICTION",
+      "initial_notes": "Annotator B flagged wheat farming hardware as contradiction to chip design, Annotator A marked unrelated domain as neutral."
+    }
+  ],
+  "raw_agreement_percentage": 95.83,
+  "cohens_kappa": 0.932
+}

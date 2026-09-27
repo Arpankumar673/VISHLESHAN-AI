@@ -1,0 +1,122 @@
+[
+  {
+    "scenario_id": "40000000-0000-4000-8000-000000000001",
+    "scenario_name": "Verified Public Company Full Evidence",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000001",
+    "evidence_state": {
+      "identity": "VERIFIED_FULL",
+      "regulatory": "VERIFIED_FULL"
+    },
+    "expected_dimension_behavior": {
+      "identity": "VERIFIED_FULL",
+      "technical_provenance": "VERIFIED_FULL",
+      "regulatory": "VERIFIED_FULL",
+      "evidence": "VERIFIED_FULL",
+      "risk": "LOW_RISK"
+    },
+    "expected_verification_state": "VERIFIED",
+    "expected_conflict_state": "NO_CONFLICT",
+    "expected_confidence_behavior": "HIGH_CONFIDENCE",
+    "expected_score_behavior": {
+      "overall_trust_index": 0.95,
+      "conflict_penalty_applied": 0.0,
+      "missing_evidence_penalty_applied": 0.0
+    },
+    "provenance_references": [
+      "https://www.sec.gov/edgar/browse/?CIK=0000789019"
+    ],
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotator_id": "ANN-1042",
+    "is_synthetic": false
+  },
+  {
+    "scenario_id": "40000000-0000-4000-8000-000000000002",
+    "scenario_name": "Low Evidence Missing Footprint Penalty",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000014",
+    "evidence_state": {
+      "identity": "VERIFIED_PARTIAL",
+      "regulatory": "UNABLE_TO_VERIFY"
+    },
+    "expected_dimension_behavior": {
+      "identity": "VERIFIED_PARTIAL",
+      "technical_provenance": "UNABLE_TO_VERIFY",
+      "regulatory": "UNABLE_TO_VERIFY",
+      "evidence": "LOW_DENSITY",
+      "risk": "UNKNOWN_RISK"
+    },
+    "expected_verification_state": "UNABLE_TO_VERIFY",
+    "expected_conflict_state": "NO_CONFLICT",
+    "expected_confidence_behavior": "LOW_CONFIDENCE",
+    "expected_score_behavior": {
+      "overall_trust_index": 0.50,
+      "conflict_penalty_applied": 0.0,
+      "missing_evidence_penalty_applied": 0.20
+    },
+    "provenance_references": [
+      "https://modal.com/about"
+    ],
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotator_id": "ANN-2091",
+    "is_synthetic": false
+  },
+  {
+    "scenario_id": "40000000-0000-4000-8000-000000000003",
+    "scenario_name": "Major Contradiction Penalty Application",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000018",
+    "evidence_state": {
+      "identity": "VERIFIED",
+      "regulatory": "INSOLVENT_ENFORCEMENT"
+    },
+    "expected_dimension_behavior": {
+      "identity": "VERIFIED",
+      "technical_provenance": "FAILED",
+      "regulatory": "INSOLVENT_ENFORCEMENT",
+      "evidence": "CONFLICTING",
+      "risk": "CRITICAL_RISK"
+    },
+    "expected_verification_state": "CONFLICTING",
+    "expected_conflict_state": "MAJOR_CONFLICT",
+    "expected_confidence_behavior": "HIGH_CONFIDENCE_IN_RISK",
+    "expected_score_behavior": {
+      "overall_trust_index": 0.15,
+      "conflict_penalty_applied": 0.25,
+      "missing_evidence_penalty_applied": 0.0
+    },
+    "provenance_references": [
+      "https://www.bafin.de"
+    ],
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotator_id": "ANN-1042",
+    "is_synthetic": false
+  },
+  {
+    "scenario_id": "40000000-0000-4000-8000-000000000004",
+    "scenario_name": "Accounting Fraud Regulatory Settlement Penalty",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000028",
+    "evidence_state": {
+      "identity": "VERIFIED",
+      "regulatory": "SEC_PENALTY_SETTLEMENT"
+    },
+    "expected_dimension_behavior": {
+      "identity": "VERIFIED",
+      "technical_provenance": "VERIFIED",
+      "regulatory": "PENALTY_ENFORCEMENT",
+      "evidence": "VERIFIED",
+      "risk": "HIGH_RISK"
+    },
+    "expected_verification_state": "CONFLICTING",
+    "expected_conflict_state": "MAJOR_CONFLICT",
+    "expected_confidence_behavior": "HIGH_CONFIDENCE_IN_RISK",
+    "expected_score_behavior": {
+      "overall_trust_index": 0.25,
+      "conflict_penalty_applied": 0.25,
+      "missing_evidence_penalty_applied": 0.0
+    },
+    "provenance_references": [
+      "https://www.sec.gov/news/press-release/2020-319"
+    ],
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotator_id": "ANN-2091",
+    "is_synthetic": false
+  }
+]

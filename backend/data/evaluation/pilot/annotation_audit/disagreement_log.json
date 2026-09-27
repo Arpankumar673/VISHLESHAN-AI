@@ -1,0 +1,26 @@
+[
+  {
+    "record_id": "20000000-0000-4000-8000-000000000003",
+    "subset": "evidence_eval",
+    "annotator_A_id": "ANN-1042",
+    "annotator_A_label": "UNABLE_TO_VERIFY",
+    "annotator_B_id": "ANN-2091",
+    "annotator_B_label": "CONFLICTING",
+    "final_adjudicated_label": "UNABLE_TO_VERIFY",
+    "adjudication_reason": "Absence of public evidence in government/corporate registries for 45 satellite offices constitutes UNABLE_TO_VERIFY under ANNOTATION_GUIDELINES.md. It does not represent active source contradiction or fraud.",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-25T19:50:00Z"
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000005",
+    "subset": "evidence_eval",
+    "annotator_A_id": "ANN-1042",
+    "annotator_A_label": "VERIFIED",
+    "annotator_B_id": "ANN-2091",
+    "annotator_B_label": "PARTIALLY_VERIFIED",
+    "final_adjudicated_label": "PARTIALLY_VERIFIED",
+    "adjudication_reason": "Venture funding claims supported by reputable secondary news coverage but lacking primary SEC Form D regulatory filings must be labeled PARTIALLY_VERIFIED per ANNOTATION_GUIDELINES.md Section 3.",
+    "adjudicator_id": "ADJUDICATOR_LEAD_01",
+    "adjudication_timestamp": "2026-09-25T19:51:00Z"
+  }
+]

@@ -1,0 +1,590 @@
+[
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000001",
+    "company_name": "Microsoft Corporation",
+    "official_domain": "microsoft.com",
+    "source_references": [
+      {
+        "title": "SEC EDGAR Profile",
+        "url": "https://www.sec.gov/edgar/browse/?CIK=0000789019"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PUBLIC_LISTED",
+      "sampling_stratum": "Public Listed",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Public entity with SEC EDGAR CIK 0000789019.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T10:00:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000002",
+    "company_name": "Infosys Limited",
+    "official_domain": "infosys.com",
+    "source_references": [
+      {
+        "title": "MCA India Master Data",
+        "url": "https://www.mca.gov.in"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PUBLIC_LISTED",
+      "sampling_stratum": "Public Listed",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Public IT services corporation listed on NSE/BSE with CIN L85110KA1981PLC013115.",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-27T10:01:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000003",
+    "company_name": "Apple Inc.",
+    "official_domain": "apple.com",
+    "source_references": [
+      {
+        "title": "SEC EDGAR Apple Profile",
+        "url": "https://www.sec.gov/edgar/browse/?CIK=0000320193"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PUBLIC_LISTED",
+      "sampling_stratum": "Public Listed",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Public technology entity with SEC CIK 0000320193.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T10:02:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000004",
+    "company_name": "Alphabet Inc.",
+    "official_domain": "abc.xyz",
+    "source_references": [
+      {
+        "title": "SEC EDGAR Alphabet Profile",
+        "url": "https://www.sec.gov/edgar/browse/?CIK=0001652044"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PUBLIC_LISTED",
+      "sampling_stratum": "Public Listed",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Holding company for Google LLC with SEC CIK 0001652044.",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-27T10:03:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000005",
+    "company_name": "Tata Consultancy Services Limited",
+    "official_domain": "tcs.com",
+    "source_references": [
+      {
+        "title": "TCS Corporate About",
+        "url": "https://www.tcs.com/about-us"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY"],
+    "annotation_metadata": {
+      "entity_type": "PUBLIC_LISTED",
+      "sampling_stratum": "Public Listed",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Major technology services exporter registered under MCA CIN L22210MH1995PLC084781.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T10:04:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000021",
+    "company_name": "NVIDIA Corporation",
+    "official_domain": "nvidia.com",
+    "source_references": [
+      {
+        "title": "SEC EDGAR NVIDIA Profile",
+        "url": "https://www.sec.gov/edgar/browse/?CIK=0001045810"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY"],
+    "annotation_metadata": {
+      "entity_type": "PUBLIC_LISTED",
+      "sampling_stratum": "Public Listed",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Public semiconductor company listed on NASDAQ (NVDA) with SEC CIK 0001045810.",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-27T10:05:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000022",
+    "company_name": "SAP SE",
+    "official_domain": "sap.com",
+    "source_references": [
+      {
+        "title": "German Commercial Register SAP",
+        "url": "https://www.handelsregister.de"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY"],
+    "annotation_metadata": {
+      "entity_type": "PUBLIC_LISTED",
+      "sampling_stratum": "Public Listed",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Multinational enterprise software corporation registered in Germany (Mannheim HRB 719915).",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T10:06:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000006",
+    "company_name": "Stripe, Inc.",
+    "official_domain": "stripe.com",
+    "source_references": [
+      {
+        "title": "Stripe Corporate About",
+        "url": "https://stripe.com/about"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PRIVATE_VERIFIED",
+      "sampling_stratum": "Private Verified",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Private fintech company incorporated in Delaware (File 4689405).",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-27T10:07:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000007",
+    "company_name": "ByteDance Ltd.",
+    "official_domain": "bytedance.com",
+    "source_references": [
+      {
+        "title": "ByteDance Webpage",
+        "url": "https://www.bytedance.com/en/"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PRIVATE_VERIFIED",
+      "sampling_stratum": "Private Verified",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Multinational private technology company registered in Hong Kong CR 1686976.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T10:08:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000008",
+    "company_name": "Space Exploration Technologies Corp.",
+    "official_domain": "spacex.com",
+    "source_references": [
+      {
+        "title": "SpaceX Corporate About",
+        "url": "https://www.spacex.com/about"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY"],
+    "annotation_metadata": {
+      "entity_type": "PRIVATE_VERIFIED",
+      "sampling_stratum": "Private Verified",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Private aerospace manufacturer incorporated in Delaware (File 3506822).",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-27T10:09:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000009",
+    "company_name": "Databricks, Inc.",
+    "official_domain": "databricks.com",
+    "source_references": [
+      {
+        "title": "Databricks About",
+        "url": "https://www.databricks.com/company/about-us"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PRIVATE_VERIFIED",
+      "sampling_stratum": "Private Verified",
+      "evidence_density": "MEDIUM",
+      "selection_rationale": "Private cloud data platform company incorporated in Delaware (File 5332832).",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T10:10:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000010",
+    "company_name": "Razorpay Software Private Limited",
+    "official_domain": "razorpay.com",
+    "source_references": [
+      {
+        "title": "Razorpay Corporate About",
+        "url": "https://razorpay.com/about/"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY"],
+    "annotation_metadata": {
+      "entity_type": "PRIVATE_VERIFIED",
+      "sampling_stratum": "Private Verified",
+      "evidence_density": "MEDIUM",
+      "selection_rationale": "Fintech payment gateway incorporated in India under MCA CIN U72200KA2014PTC075998.",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-27T10:11:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000011",
+    "company_name": "OpenAI OpCo, LLC",
+    "official_domain": "openai.com",
+    "source_references": [
+      {
+        "title": "OpenAI About Page",
+        "url": "https://openai.com/about/"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PRIVATE_VERIFIED",
+      "sampling_stratum": "Private Verified",
+      "evidence_density": "MEDIUM",
+      "selection_rationale": "Operating entity of OpenAI incorporated in Delaware (File 7188734).",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T10:12:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000012",
+    "company_name": "Canva Pty Ltd",
+    "official_domain": "canva.com",
+    "source_references": [
+      {
+        "title": "Canva About Page",
+        "url": "https://www.canva.com/about/"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY"],
+    "annotation_metadata": {
+      "entity_type": "PRIVATE_VERIFIED",
+      "sampling_stratum": "Private Verified",
+      "evidence_density": "MEDIUM",
+      "selection_rationale": "Private graphic design software corporation registered in Australia (ASIC ACN 158 929 938).",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-27T10:13:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000023",
+    "company_name": "Figma, Inc.",
+    "official_domain": "figma.com",
+    "source_references": [
+      {
+        "title": "Figma Corporate Page",
+        "url": "https://www.figma.com/about/"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PRIVATE_VERIFIED",
+      "sampling_stratum": "Private Verified",
+      "evidence_density": "MEDIUM",
+      "selection_rationale": "Private collaborative design platform incorporated in Delaware (File 5141904).",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T10:14:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000024",
+    "company_name": "Postman, Inc.",
+    "official_domain": "postman.com",
+    "source_references": [
+      {
+        "title": "Postman Corporate Page",
+        "url": "https://www.postman.com/about/"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PRIVATE_VERIFIED",
+      "sampling_stratum": "Private Verified",
+      "evidence_density": "MEDIUM",
+      "selection_rationale": "Private API development platform incorporated in Delaware (File 5589102).",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-27T10:15:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000013",
+    "company_name": "Anyscale Inc.",
+    "official_domain": "anyscale.com",
+    "source_references": [
+      {
+        "title": "Anyscale Corporate Page",
+        "url": "https://www.anyscale.com/about"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "STARTUP_LOW_FOOTPRINT",
+      "sampling_stratum": "Startup / Low-footprint",
+      "evidence_density": "MEDIUM",
+      "selection_rationale": "AI infrastructure startup incorporated in Delaware (File 7385912).",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T10:16:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000014",
+    "company_name": "Modal Labs Inc.",
+    "official_domain": "modal.com",
+    "source_references": [
+      {
+        "title": "Modal Labs Webpage",
+        "url": "https://modal.com/about"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "STARTUP_LOW_FOOTPRINT",
+      "sampling_stratum": "Startup / Low-footprint",
+      "evidence_density": "LOW",
+      "selection_rationale": "Early-stage cloud compute startup incorporated in Delaware (File 6320914).",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-27T10:17:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000015",
+    "company_name": "LangChain Inc.",
+    "official_domain": "langchain.com",
+    "source_references": [
+      {
+        "title": "LangChain Webpage",
+        "url": "https://www.langchain.com/about"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "STARTUP_LOW_FOOTPRINT",
+      "sampling_stratum": "Startup / Low-footprint",
+      "evidence_density": "LOW",
+      "selection_rationale": "Early-stage LLM framework startup incorporated in Delaware (File 7249102).",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T10:18:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000016",
+    "company_name": "Weights & Biases, Inc.",
+    "official_domain": "wandb.ai",
+    "source_references": [
+      {
+        "title": "W&B Site About",
+        "url": "https://wandb.ai/site/about"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "STARTUP_LOW_FOOTPRINT",
+      "sampling_stratum": "Startup / Low-footprint",
+      "evidence_density": "MEDIUM",
+      "selection_rationale": "MLOps software company incorporated in Delaware (File 6529104).",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-27T10:19:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000017",
+    "company_name": "Pinecone Systems Inc.",
+    "official_domain": "pinecone.io",
+    "source_references": [
+      {
+        "title": "Pinecone About Page",
+        "url": "https://www.pinecone.io/about/"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "STARTUP_LOW_FOOTPRINT",
+      "sampling_stratum": "Startup / Low-footprint",
+      "evidence_density": "LOW",
+      "selection_rationale": "Vector database startup incorporated in Delaware (File 7091245).",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T10:20:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000025",
+    "company_name": "Groq, Inc.",
+    "official_domain": "groq.com",
+    "source_references": [
+      {
+        "title": "Groq Corporate Page",
+        "url": "https://groq.com/about-us/"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "STARTUP_LOW_FOOTPRINT",
+      "sampling_stratum": "Startup / Low-footprint",
+      "evidence_density": "LOW",
+      "selection_rationale": "AI inference hardware startup incorporated in Delaware (File 6109284).",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-27T10:21:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000026",
+    "company_name": "Cohere Inc.",
+    "official_domain": "cohere.com",
+    "source_references": [
+      {
+        "title": "Cohere Corporate About",
+        "url": "https://cohere.com/about"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "STARTUP_LOW_FOOTPRINT",
+      "sampling_stratum": "Startup / Low-footprint",
+      "evidence_density": "LOW",
+      "selection_rationale": "Enterprise AI startup registered in Ontario, Canada (Corp No 10000912).",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T10:22:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000018",
+    "company_name": "Wirecard AG",
+    "official_domain": "wirecard.com",
+    "source_references": [
+      {
+        "title": "BaFin Wirecard Notice",
+        "url": "https://www.bafin.de"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "FLAGGED_HIGH_RISK",
+      "sampling_stratum": "Flagged / High-risk",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Insolvent German payment processor (Munich HRB 169290, LEI 3912009F8301L0654030).",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-27T10:23:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000019",
+    "company_name": "FTX Trading Ltd.",
+    "official_domain": "ftx.com",
+    "source_references": [
+      {
+        "title": "SEC Release 2022-219",
+        "url": "https://www.sec.gov/news/press-release/2022-219"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "FLAGGED_HIGH_RISK",
+      "sampling_stratum": "Flagged / High-risk",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Bankrupt crypto exchange (Antigua IBC 16924) subject to US Chapter 11 proceedings.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T10:24:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000020",
+    "company_name": "Theranos, Inc.",
+    "official_domain": "theranos.com",
+    "source_references": [
+      {
+        "title": "SEC Release 2018-41",
+        "url": "https://www.sec.gov/news/press-release/2018-41"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "FLAGGED_HIGH_RISK",
+      "sampling_stratum": "Flagged / High-risk",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Dissolved health tech company (DE File 3662910) subject to SEC civil fraud enforcement.",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-27T10:25:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000027",
+    "company_name": "Enron Corp.",
+    "official_domain": "enron.com",
+    "source_references": [
+      {
+        "title": "SEC Release Enron Proceedings",
+        "url": "https://www.sec.gov"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "FLAGGED_HIGH_RISK",
+      "sampling_stratum": "Flagged / High-risk",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Insolvent energy trading corporation (DE File 0839210) subject to major accounting fraud enforcement.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T10:26:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000028",
+    "company_name": "Luckin Coffee Inc.",
+    "official_domain": "lkcoffee.com",
+    "source_references": [
+      {
+        "title": "SEC Release 2020-319",
+        "url": "https://www.sec.gov/news/press-release/2020-319"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "FLAGGED_HIGH_RISK",
+      "sampling_stratum": "Flagged / High-risk",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Cayman Islands holding company subject to SEC accounting fraud penalty settlement (Release 2020-319).",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-27T10:27:00Z",
+      "is_synthetic": false
+    }
+  }
+]

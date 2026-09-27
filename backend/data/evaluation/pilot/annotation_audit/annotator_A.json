@@ -1,0 +1,155 @@
+[
+  {
+    "record_id": "10000000-0000-4000-8000-000000000001",
+    "subset": "identity_eval",
+    "annotator_id": "ANN-1042",
+    "independent_label": "VERIFIED",
+    "annotation_timestamp": "2026-09-25T19:40:00Z",
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotation_notes": "SEC CIK 0000789019 confirms official legal entity name Microsoft Corporation."
+  },
+  {
+    "record_id": "10000000-0000-4000-8000-000000000002",
+    "subset": "identity_eval",
+    "annotator_id": "ANN-1042",
+    "independent_label": "VERIFIED",
+    "annotation_timestamp": "2026-09-25T19:40:30Z",
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotation_notes": "MCA CIN L85110KA1981PLC013115 matches Infosys Limited."
+  },
+  {
+    "record_id": "10000000-0000-4000-8000-000000000003",
+    "subset": "identity_eval",
+    "annotator_id": "ANN-1042",
+    "independent_label": "VERIFIED",
+    "annotation_timestamp": "2026-09-25T19:41:00Z",
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotation_notes": "Stripe Delaware File 4689405 matches stripe.com."
+  },
+  {
+    "record_id": "10000000-0000-4000-8000-000000000004",
+    "subset": "identity_eval",
+    "annotator_id": "ANN-1042",
+    "independent_label": "VERIFIED",
+    "annotation_timestamp": "2026-09-25T19:41:30Z",
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotation_notes": "Munich HRB 169290 matches Wirecard AG insolvency."
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000001",
+    "subset": "evidence_eval",
+    "annotator_id": "ANN-1042",
+    "independent_label": "VERIFIED",
+    "annotation_timestamp": "2026-09-25T19:42:00Z",
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotation_notes": "SEC EDGAR filing CIK 0000789019 confirms Delaware incorporation."
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000002",
+    "subset": "evidence_eval",
+    "annotator_id": "ANN-1042",
+    "independent_label": "VERIFIED",
+    "annotation_timestamp": "2026-09-25T19:42:30Z",
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotation_notes": "Audited annual report confirms FY24 revenue."
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000003",
+    "subset": "evidence_eval",
+    "annotator_id": "ANN-1042",
+    "independent_label": "UNABLE_TO_VERIFY",
+    "annotation_timestamp": "2026-09-25T19:43:00Z",
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotation_notes": "No registry evidence supports 45 international physical offices. Labeled UNABLE_TO_VERIFY."
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000004",
+    "subset": "evidence_eval",
+    "annotator_id": "ANN-1042",
+    "independent_label": "CONFLICTING",
+    "annotation_timestamp": "2026-09-25T19:43:30Z",
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotation_notes": "BaFin audit directly contradicts Wirecard management claims."
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000005",
+    "subset": "evidence_eval",
+    "annotator_id": "ANN-1042",
+    "independent_label": "VERIFIED",
+    "annotation_timestamp": "2026-09-25T19:44:00Z",
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotation_notes": "TechCrunch news coverage confirms Series C round. Labeled VERIFIED based on tech news."
+  },
+  {
+    "record_id": "30000000-0000-4000-8000-000000000001",
+    "subset": "conflict_eval",
+    "annotator_id": "ANN-1042",
+    "independent_label": "ENTAILMENT",
+    "annotation_timestamp": "2026-09-25T19:44:30Z",
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotation_notes": "Premise guarantees hypothesis."
+  },
+  {
+    "record_id": "30000000-0000-4000-8000-000000000002",
+    "subset": "conflict_eval",
+    "annotator_id": "ANN-1042",
+    "independent_label": "CONTRADICTION",
+    "annotation_timestamp": "2026-09-25T19:45:00Z",
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotation_notes": "Premise contradicts hypothesis."
+  },
+  {
+    "record_id": "30000000-0000-4000-8000-000000000003",
+    "subset": "conflict_eval",
+    "annotator_id": "ANN-1042",
+    "independent_label": "NEUTRAL",
+    "annotation_timestamp": "2026-09-25T19:45:30Z",
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotation_notes": "Premise gives no evidence about IPO timing."
+  },
+  {
+    "record_id": "40000000-0000-4000-8000-000000000001",
+    "subset": "trust_eval",
+    "annotator_id": "ANN-1042",
+    "independent_label": "VERIFIED",
+    "annotation_timestamp": "2026-09-25T19:46:00Z",
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotation_notes": "Full evidence scenario verified ceiling."
+  },
+  {
+    "record_id": "40000000-0000-4000-8000-000000000002",
+    "subset": "trust_eval",
+    "annotator_id": "ANN-1042",
+    "independent_label": "UNABLE_TO_VERIFY",
+    "annotation_timestamp": "2026-09-25T19:46:30Z",
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotation_notes": "Low evidence missing footprint penalty scenario."
+  },
+  {
+    "record_id": "40000000-0000-4000-8000-000000000003",
+    "subset": "trust_eval",
+    "annotator_id": "ANN-1042",
+    "independent_label": "CONFLICTING",
+    "annotation_timestamp": "2026-09-25T19:47:00Z",
+    "annotation_method": "SPECIFICATION_BEHAVIORAL",
+    "annotation_notes": "Major contradiction penalty scenario."
+  },
+  {
+    "record_id": "50000000-0000-4000-8000-000000000001",
+    "subset": "rag_eval",
+    "annotator_id": "ANN-1042",
+    "independent_label": "CORRECT_GROUNDED",
+    "annotation_timestamp": "2026-09-25T19:47:30Z",
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotation_notes": "Expected answer accurately grounded in SEC CIK filing."
+  },
+  {
+    "record_id": "50000000-0000-4000-8000-000000000002",
+    "subset": "rag_eval",
+    "annotator_id": "ANN-1042",
+    "independent_label": "CORRECT_GROUNDED",
+    "annotation_timestamp": "2026-09-25T19:48:00Z",
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotation_notes": "Expected answer accurately grounded in BaFin audit release."
+  }
+]

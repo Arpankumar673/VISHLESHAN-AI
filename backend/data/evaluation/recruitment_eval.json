@@ -1,0 +1,13 @@
+{
+  "reference_id": "PHASE_5A_RECRUITMENT_EVAL_MANIFEST",
+  "dataset_id": "EMSCAD_REAL_DATASET_V1",
+  "dataset_sha256": "54e7f339cf0627b0b2e88102ad0db63c1935aa0f317eeae41ae645ee6e379dd8",
+  "source_file": "backend/data/fake_job_postings.csv",
+  "total_samples": 17880,
+  "fraudulent_count": 866,
+  "legitimate_count": 17014,
+  "model_artifact_path": "backend/app/services/recruitment_scam_v1.joblib",
+  "evaluation_protocol": "Phase 5A leakage-corrected group-split evaluation on company_profile",
+  "is_synthetic": false,
+  "notes": "Phase 5A recruitment classifier is frozen. Do not retrain or modify model artifact."
+}

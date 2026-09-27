@@ -1,0 +1,12 @@
+{
+  "dataset_id": "VISHLESHAN-EVAL-PILOT-v1",
+  "version": "pilot-v1.0.0",
+  "created_at": "2026-09-25T19:56:00Z",
+  "description": "Small real-world pilot evaluation dataset constructed under Phase 6B-2A to validate data acquisition, double-blind annotation, disagreement adjudication, and quality control workflows.",
+  "schema_version": "1.0.0",
+  "provenance_policy": "Strict provenance capture with mandatory source URLs, retrieval timestamps, and publisher authority ratings. Ground truth established via double-blind human annotation.",
+  "annotation_policy": "Double-blind human annotation with anonymized IDs (ANN-1042, ANN-2091). Zero model-assisted or LLM predictions permitted in ground truth. Disagreements adjudicated by lead domain expert.",
+  "status": "PILOT_COMPLETED",
+  "dataset_hash": null,
+  "notes": "PILOT / NOT FOR FINAL BENCHMARK. Isolated sample testing workflow."
+}

@@ -1,0 +1,660 @@
+{
+  "metadata": {
+    "evaluation_id": "BENCHMARK-RUN-PHASE-6C",
+    "dataset_id": "VISHLESHAN-EVAL-v2",
+    "version": "v2.0.0",
+    "canonical_hash": "8bd44b481a7211a1f54e8461f6678933de6a26390b5c726b24e97e4ec2a4c3c3",
+    "hash_verified": true,
+    "executed_at": "2026-09-27T06:47:20.938590+00:00",
+    "status": "PHASE 6C: BENCHMARK EXECUTED \u2014 PRELIMINARY RESULTS",
+    "seed": 42,
+    "bootstrap_resamples": 1000
+  },
+  "task_a_identity_resolution": {
+    "baseline": {
+      "metrics": {
+        "accuracy": 1.0,
+        "macro_precision": 1.0,
+        "macro_recall": 1.0,
+        "macro_f1": 1.0,
+        "weighted_precision": 1.0,
+        "weighted_recall": 1.0,
+        "weighted_f1": 1.0,
+        "per_class": {
+          "VERIFIED": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 6
+          },
+          "UNABLE_TO_VERIFY": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          },
+          "SUSPICIOUS": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          },
+          "CONFLICTING": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          }
+        },
+        "total_samples": 6
+      },
+      "confidence_interval_95_acc": [
+        1.0,
+        1.0
+      ],
+      "confusion_matrix": {
+        "VERIFIED": {
+          "VERIFIED": 6,
+          "UNABLE_TO_VERIFY": 0,
+          "SUSPICIOUS": 0,
+          "CONFLICTING": 0
+        },
+        "UNABLE_TO_VERIFY": {
+          "VERIFIED": 0,
+          "UNABLE_TO_VERIFY": 0,
+          "SUSPICIOUS": 0,
+          "CONFLICTING": 0
+        },
+        "SUSPICIOUS": {
+          "VERIFIED": 0,
+          "UNABLE_TO_VERIFY": 0,
+          "SUSPICIOUS": 0,
+          "CONFLICTING": 0
+        },
+        "CONFLICTING": {
+          "VERIFIED": 0,
+          "UNABLE_TO_VERIFY": 0,
+          "SUSPICIOUS": 0,
+          "CONFLICTING": 0
+        }
+      }
+    },
+    "vishleshan_system": {
+      "metrics": {
+        "accuracy": 0.8333,
+        "macro_precision": 0.5,
+        "macro_recall": 0.4167,
+        "macro_f1": 0.4545,
+        "weighted_precision": 1.0,
+        "weighted_recall": 0.8333,
+        "weighted_f1": 0.9091,
+        "per_class": {
+          "VERIFIED": {
+            "precision": 1.0,
+            "recall": 0.8333,
+            "f1": 0.9091,
+            "support": 6
+          },
+          "UNABLE_TO_VERIFY": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          },
+          "SUSPICIOUS": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          },
+          "CONFLICTING": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          }
+        },
+        "total_samples": 6
+      },
+      "confidence_interval_95_acc": [
+        0.5,
+        1.0
+      ],
+      "confidence_interval_95_macro_f1": [
+        0.3333,
+        1.0
+      ],
+      "confusion_matrix": {
+        "VERIFIED": {
+          "VERIFIED": 5,
+          "UNABLE_TO_VERIFY": 1,
+          "SUSPICIOUS": 0,
+          "CONFLICTING": 0
+        },
+        "UNABLE_TO_VERIFY": {
+          "VERIFIED": 0,
+          "UNABLE_TO_VERIFY": 0,
+          "SUSPICIOUS": 0,
+          "CONFLICTING": 0
+        },
+        "SUSPICIOUS": {
+          "VERIFIED": 0,
+          "UNABLE_TO_VERIFY": 0,
+          "SUSPICIOUS": 0,
+          "CONFLICTING": 0
+        },
+        "CONFLICTING": {
+          "VERIFIED": 0,
+          "UNABLE_TO_VERIFY": 0,
+          "SUSPICIOUS": 0,
+          "CONFLICTING": 0
+        }
+      }
+    },
+    "hypothesis_test": {
+      "paired_bootstrap_p_value": 1.0,
+      "statistically_significant": false
+    }
+  },
+  "task_b_evidence_verification": {
+    "baseline": {
+      "metrics": {
+        "accuracy": 0.625,
+        "macro_precision": 0.2833,
+        "macro_recall": 0.5,
+        "macro_f1": 0.3472,
+        "weighted_precision": 0.4417,
+        "weighted_recall": 0.625,
+        "weighted_f1": 0.5069,
+        "per_class": {
+          "VERIFIED": {
+            "precision": 0.8,
+            "recall": 1.0,
+            "f1": 0.8889,
+            "support": 4
+          },
+          "PARTIALLY_VERIFIED": {
+            "precision": 0.3333,
+            "recall": 1.0,
+            "f1": 0.5,
+            "support": 1
+          },
+          "UNABLE_TO_VERIFY": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 2
+          },
+          "CONFLICTING": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1
+          }
+        },
+        "total_samples": 8
+      },
+      "confidence_interval_95_acc": [
+        0.25,
+        0.875
+      ],
+      "confusion_matrix": {
+        "VERIFIED": {
+          "VERIFIED": 4,
+          "PARTIALLY_VERIFIED": 0,
+          "UNABLE_TO_VERIFY": 0,
+          "CONFLICTING": 0
+        },
+        "PARTIALLY_VERIFIED": {
+          "VERIFIED": 0,
+          "PARTIALLY_VERIFIED": 1,
+          "UNABLE_TO_VERIFY": 0,
+          "CONFLICTING": 0
+        },
+        "UNABLE_TO_VERIFY": {
+          "VERIFIED": 0,
+          "PARTIALLY_VERIFIED": 2,
+          "UNABLE_TO_VERIFY": 0,
+          "CONFLICTING": 0
+        },
+        "CONFLICTING": {
+          "VERIFIED": 1,
+          "PARTIALLY_VERIFIED": 0,
+          "UNABLE_TO_VERIFY": 0,
+          "CONFLICTING": 0
+        }
+      }
+    },
+    "vishleshan_system": {
+      "metrics": {
+        "accuracy": 1.0,
+        "macro_precision": 1.0,
+        "macro_recall": 1.0,
+        "macro_f1": 1.0,
+        "weighted_precision": 1.0,
+        "weighted_recall": 1.0,
+        "weighted_f1": 1.0,
+        "per_class": {
+          "VERIFIED": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 4
+          },
+          "PARTIALLY_VERIFIED": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1
+          },
+          "UNABLE_TO_VERIFY": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 2
+          },
+          "CONFLICTING": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1
+          }
+        },
+        "total_samples": 8
+      },
+      "confidence_interval_95_acc": [
+        1.0,
+        1.0
+      ],
+      "confidence_interval_95_macro_f1": [
+        1.0,
+        1.0
+      ],
+      "confusion_matrix": {
+        "VERIFIED": {
+          "VERIFIED": 4,
+          "PARTIALLY_VERIFIED": 0,
+          "UNABLE_TO_VERIFY": 0,
+          "CONFLICTING": 0
+        },
+        "PARTIALLY_VERIFIED": {
+          "VERIFIED": 0,
+          "PARTIALLY_VERIFIED": 1,
+          "UNABLE_TO_VERIFY": 0,
+          "CONFLICTING": 0
+        },
+        "UNABLE_TO_VERIFY": {
+          "VERIFIED": 0,
+          "PARTIALLY_VERIFIED": 0,
+          "UNABLE_TO_VERIFY": 2,
+          "CONFLICTING": 0
+        },
+        "CONFLICTING": {
+          "VERIFIED": 0,
+          "PARTIALLY_VERIFIED": 0,
+          "UNABLE_TO_VERIFY": 0,
+          "CONFLICTING": 1
+        }
+      }
+    },
+    "hypothesis_test": {
+      "paired_bootstrap_p_value": 0.021,
+      "statistically_significant": true
+    }
+  },
+  "task_c_conflict_detection_nli": {
+    "baseline": {
+      "metrics": {
+        "accuracy": 0.5,
+        "macro_precision": 0.4444,
+        "macro_recall": 0.5,
+        "macro_f1": 0.3889,
+        "weighted_precision": 0.5833,
+        "weighted_recall": 0.5,
+        "weighted_f1": 0.4583,
+        "per_class": {
+          "ENTAILMENT": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1
+          },
+          "CONTRADICTION": {
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1": 0.6667,
+            "support": 2
+          },
+          "NEUTRAL": {
+            "precision": 0.3333,
+            "recall": 1.0,
+            "f1": 0.5,
+            "support": 1
+          }
+        },
+        "total_samples": 4
+      },
+      "confidence_interval_95_acc": [
+        0.0,
+        1.0
+      ],
+      "confusion_matrix": {
+        "ENTAILMENT": {
+          "ENTAILMENT": 0,
+          "CONTRADICTION": 0,
+          "NEUTRAL": 1
+        },
+        "CONTRADICTION": {
+          "ENTAILMENT": 0,
+          "CONTRADICTION": 1,
+          "NEUTRAL": 1
+        },
+        "NEUTRAL": {
+          "ENTAILMENT": 0,
+          "CONTRADICTION": 0,
+          "NEUTRAL": 1
+        }
+      }
+    },
+    "vishleshan_system": {
+      "metrics": {
+        "accuracy": 0.5,
+        "macro_precision": 0.4444,
+        "macro_recall": 0.5,
+        "macro_f1": 0.3889,
+        "weighted_precision": 0.5833,
+        "weighted_recall": 0.5,
+        "weighted_f1": 0.4583,
+        "per_class": {
+          "ENTAILMENT": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1
+          },
+          "CONTRADICTION": {
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1": 0.6667,
+            "support": 2
+          },
+          "NEUTRAL": {
+            "precision": 0.3333,
+            "recall": 1.0,
+            "f1": 0.5,
+            "support": 1
+          }
+        },
+        "total_samples": 4
+      },
+      "confidence_interval_95_acc": [
+        0.0,
+        1.0
+      ],
+      "confidence_interval_95_macro_f1": [
+        0.0,
+        1.0
+      ],
+      "confusion_matrix": {
+        "ENTAILMENT": {
+          "ENTAILMENT": 0,
+          "CONTRADICTION": 0,
+          "NEUTRAL": 1
+        },
+        "CONTRADICTION": {
+          "ENTAILMENT": 0,
+          "CONTRADICTION": 1,
+          "NEUTRAL": 1
+        },
+        "NEUTRAL": {
+          "ENTAILMENT": 0,
+          "CONTRADICTION": 0,
+          "NEUTRAL": 1
+        }
+      }
+    },
+    "hypothesis_test": {
+      "paired_bootstrap_p_value": 1.0,
+      "statistically_significant": false
+    },
+    "domain_note": "Evaluated on corporate evidence pairs (Task C). Distinct from generic MultiNLI benchmark (Phase 5B)."
+  },
+  "task_d_trust_engine": {
+    "baseline": {
+      "metrics": {
+        "accuracy": 0.5,
+        "macro_precision": 0.4444,
+        "macro_recall": 0.6667,
+        "macro_f1": 0.5,
+        "weighted_precision": 0.3333,
+        "weighted_recall": 0.5,
+        "weighted_f1": 0.375,
+        "per_class": {
+          "VERIFIED": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1
+          },
+          "UNABLE_TO_VERIFY": {
+            "precision": 0.3333,
+            "recall": 1.0,
+            "f1": 0.5,
+            "support": 1
+          },
+          "SUSPICIOUS": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          },
+          "CONFLICTING": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 2
+          }
+        },
+        "total_samples": 4
+      },
+      "confidence_interval_95_acc": [
+        0.0,
+        1.0
+      ],
+      "confusion_matrix": {
+        "VERIFIED": {
+          "VERIFIED": 1,
+          "UNABLE_TO_VERIFY": 0,
+          "SUSPICIOUS": 0,
+          "CONFLICTING": 0
+        },
+        "UNABLE_TO_VERIFY": {
+          "VERIFIED": 0,
+          "UNABLE_TO_VERIFY": 1,
+          "SUSPICIOUS": 0,
+          "CONFLICTING": 0
+        },
+        "SUSPICIOUS": {
+          "VERIFIED": 0,
+          "UNABLE_TO_VERIFY": 0,
+          "SUSPICIOUS": 0,
+          "CONFLICTING": 0
+        },
+        "CONFLICTING": {
+          "VERIFIED": 0,
+          "UNABLE_TO_VERIFY": 2,
+          "SUSPICIOUS": 0,
+          "CONFLICTING": 0
+        }
+      }
+    },
+    "vishleshan_system": {
+      "metrics": {
+        "accuracy": 1.0,
+        "macro_precision": 1.0,
+        "macro_recall": 1.0,
+        "macro_f1": 1.0,
+        "weighted_precision": 1.0,
+        "weighted_recall": 1.0,
+        "weighted_f1": 1.0,
+        "per_class": {
+          "VERIFIED": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1
+          },
+          "UNABLE_TO_VERIFY": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1
+          },
+          "SUSPICIOUS": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          },
+          "CONFLICTING": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 2
+          }
+        },
+        "total_samples": 4
+      },
+      "confidence_interval_95_acc": [
+        1.0,
+        1.0
+      ],
+      "confidence_interval_95_macro_f1": [
+        1.0,
+        1.0
+      ],
+      "confusion_matrix": {
+        "VERIFIED": {
+          "VERIFIED": 1,
+          "UNABLE_TO_VERIFY": 0,
+          "SUSPICIOUS": 0,
+          "CONFLICTING": 0
+        },
+        "UNABLE_TO_VERIFY": {
+          "VERIFIED": 0,
+          "UNABLE_TO_VERIFY": 1,
+          "SUSPICIOUS": 0,
+          "CONFLICTING": 0
+        },
+        "SUSPICIOUS": {
+          "VERIFIED": 0,
+          "UNABLE_TO_VERIFY": 0,
+          "SUSPICIOUS": 0,
+          "CONFLICTING": 0
+        },
+        "CONFLICTING": {
+          "VERIFIED": 0,
+          "UNABLE_TO_VERIFY": 0,
+          "SUSPICIOUS": 0,
+          "CONFLICTING": 2
+        }
+      }
+    },
+    "hypothesis_test": {
+      "paired_bootstrap_p_value": 0.068,
+      "statistically_significant": false
+    }
+  },
+  "task_e_rag_grounding": {
+    "baseline": {
+      "metrics": {
+        "accuracy": 0.0,
+        "macro_precision": 0.0,
+        "macro_recall": 0.0,
+        "macro_f1": 0.0,
+        "weighted_precision": 0.0,
+        "weighted_recall": 0.0,
+        "weighted_f1": 0.0,
+        "per_class": {
+          "GROUNDED": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 3
+          },
+          "UNGROUNDED": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          }
+        },
+        "total_samples": 3
+      },
+      "confidence_interval_95_acc": [
+        0.0,
+        0.0
+      ]
+    },
+    "vishleshan_system": {
+      "metrics": {
+        "accuracy": 1.0,
+        "macro_precision": 1.0,
+        "macro_recall": 1.0,
+        "macro_f1": 1.0,
+        "weighted_precision": 1.0,
+        "weighted_recall": 1.0,
+        "weighted_f1": 1.0,
+        "per_class": {
+          "GROUNDED": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 3
+          },
+          "UNGROUNDED": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          }
+        },
+        "total_samples": 3
+      },
+      "confidence_interval_95_acc": [
+        1.0,
+        1.0
+      ],
+      "grounding_rate": 1.0,
+      "evidence_id_recall_at_1": 1.0
+    },
+    "hypothesis_test": {
+      "paired_bootstrap_p_value": 0.001,
+      "statistically_significant": true
+    }
+  },
+  "task_f_recruitment_scam_ml_reference": {
+    "model_name": "recruitment_scam_v1",
+    "dataset": "EMSCAD Real-World Benchmark Reference",
+    "test_pr_auc": 0.3481,
+    "test_roc_auc": 0.6411,
+    "precision": 0.9474,
+    "recall": 0.1385,
+    "f1_score": 0.2416,
+    "uncalibrated_multiclass_decision_score_note": "NOT CALCULATED \u2014 the current evaluation interface does not expose a suitable continuous multiclass decision score for ranking-based AUC evaluation."
+  },
+  "performance_summary": {
+    "vishleshan_system": {
+      "mean_latency_ms": 0.01,
+      "p95_latency_ms": 0.04,
+      "p99_latency_ms": 0.13,
+      "throughput_queries_per_sec": 88432.91
+    },
+    "baseline": {
+      "mean_latency_ms": 0.01,
+      "p95_latency_ms": 0.03,
+      "p99_latency_ms": 0.16,
+      "throughput_queries_per_sec": 89190.1
+    }
+  }
+}

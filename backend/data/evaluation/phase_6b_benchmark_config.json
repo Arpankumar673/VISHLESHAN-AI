@@ -1,0 +1,92 @@
+{
+  "benchmark_version": "1.0.0",
+  "protocol_status": "PHASE_6B_DESIGN_COMPLETE",
+  "execution_status_statement": "Phase 6B benchmark execution is pending acquisition/annotation of a suitable evaluation sample.",
+  "random_seed": 42,
+  "dataset_reference": "VISHLESHAN-EVAL-v1",
+  "protocol_document": "backend/data/evaluation/PHASE_6B_BENCHMARK_PROTOCOL.md",
+  "sampling_document": "backend/data/evaluation/PHASE_6B_SAMPLING_METHODOLOGY.md",
+  "frozen_components": {
+    "phase_4_trust_engine": {
+      "status": "FROZEN",
+      "module": "backend/app/services/trust_engine.py",
+      "dimension_weights": {
+        "identity": 0.20,
+        "technical_provenance": 0.20,
+        "regulatory": 0.25,
+        "evidence": 0.20,
+        "risk": 0.15
+      }
+    },
+    "phase_5a_recruitment_classifier": {
+      "status": "FROZEN_RESEARCH_VALIDATED",
+      "module": "backend/app/services/recruitment_classifier.py",
+      "artifact": "backend/app/models/recruitment_scam_v1.joblib",
+      "dataset": "EMSCAD (backend/data/fake_job_postings.csv)",
+      "validated_test_pr_auc": 0.3481,
+      "validated_test_roc_auc": 0.6411,
+      "validated_test_precision": 0.9474,
+      "validated_test_recall": 0.1385,
+      "validated_test_f1": 0.2416
+    },
+    "phase_5b_nli_engine": {
+      "status": "FROZEN_IMPLEMENTED_PENDING_RESEARCH_VALIDATION",
+      "module": "backend/app/services/nli_engine.py",
+      "model_designation": "vishleshan_nli_v1",
+      "generic_multinli_macro_f1": 0.6546,
+      "generic_multinli_lexical_baseline_macro_f1": 0.4818
+    }
+  },
+  "task_configurations": {
+    "task_a_identity_resolution": {
+      "name": "Identity Resolution",
+      "baseline": "Simple Lowercase String & Domain Matching",
+      "system_target": "IdentityResolutionService",
+      "metrics": ["accuracy", "precision", "recall", "macro_f1"]
+    },
+    "task_b_evidence_verification": {
+      "name": "Evidence Quality & Verification Classification",
+      "baseline": "Rule-Based Keyword Evidence Classifier",
+      "system_target": "EvidenceVerificationEngine",
+      "labels": ["VERIFIED", "PARTIALLY_VERIFIED", "UNABLE_TO_VERIFY", "CONFLICTING"],
+      "metrics": ["accuracy", "macro_f1", "per_class_f1", "confusion_matrix"]
+    },
+    "task_c_conflict_detection": {
+      "name": "Semantic Evidence Conflict Detection",
+      "baseline": "Lexical Keyword Conflict Baseline",
+      "system_target": "Vishleshan NLI Engine (vishleshan_nli_v1)",
+      "labels": ["ENTAILMENT", "CONTRADICTION", "NEUTRAL"],
+      "metrics": ["macro_f1", "weighted_f1", "per_class_f1", "confusion_matrix"]
+    },
+    "task_d_trust_engine": {
+      "name": "Trust Engine Behavioral Correctness",
+      "baseline": "Uniform Weighting Static Baseline (0.50 all dimensions)",
+      "system_target": "TrustEngine (v2.0)",
+      "evaluation_type": "BEHAVIORAL_SPECIFICATION",
+      "metrics": ["execution_pass_rate", "score_delta_exact_match", "penalty_assignment_accuracy"]
+    },
+    "task_e_rag_grounding": {
+      "name": "RAG Evidence Grounding & Citation Quality",
+      "baseline": "Unretrieved Direct LLM Baseline",
+      "system_target": "Grounded Corporate RAG Pipeline",
+      "metrics": ["answer_correctness", "mrr_at_5", "citation_grounding_rate", "unsupported_claim_rate"]
+    },
+    "task_f_recruitment_ml": {
+      "name": "Recruitment Scam ML Risk Classification",
+      "baseline": "Reference to Frozen Phase 5A EMSCAD Benchmark",
+      "system_target": "recruitment_classifier.py (recruitment_scam_v1.joblib)",
+      "metrics": ["pr_auc", "roc_auc", "precision", "recall", "f1"]
+    },
+    "task_g_nli_evaluation": {
+      "name": "NLI Generic vs Corporate Domain Evaluation",
+      "baseline": "Reference to Frozen Phase 5B MultiNLI Benchmark",
+      "system_target": "nli_engine.py (vishleshan_nli_v1)",
+      "metrics": ["macro_f1", "weighted_f1", "confusion_matrix"]
+    }
+  },
+  "ground_truth_policy": {
+    "auto_labeling_allowed": false,
+    "synthetic_in_benchmark_allowed": false,
+    "missing_evidence_is_fraud": false
+  }
+}

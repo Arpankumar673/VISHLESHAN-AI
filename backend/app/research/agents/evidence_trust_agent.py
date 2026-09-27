@@ -118,7 +118,7 @@ class EvidenceTrustAgent(BaseAgent):
             else 0.5
         )
 
-        # 6. Calculate Existing Trust & Reliability Metrics
+        # 6. Execute Deterministic Vishleshan AI v2 Trust Engine
         total_items = len(unique_evidence)
         verified_count = sum(1 for e in unique_evidence if e.verification_status == VerificationStatus.VERIFIED)
         avg_reliability = (
@@ -131,8 +131,21 @@ class EvidenceTrustAgent(BaseAgent):
             if total_items > 0
             else 0.5
         )
-        trust_score_val = round(min(100.0, max(20.0, avg_reliability * 100.0)), 1)
-        risk_level = "low" if trust_score_val >= 75.0 else ("medium" if trust_score_val >= 50.0 else "high")
+        legacy_trust_score_val = round(min(100.0, max(20.0, avg_reliability * 100.0)), 1)
+        legacy_risk_level = "low" if legacy_trust_score_val >= 80.0 else ("medium" if legacy_trust_score_val >= 60.0 else "high")
+
+        from app.services.trust_engine import TrustEngine
+        trust_engine = TrustEngine()
+        trust_index_res = trust_engine.compute_trust_index(
+            evidence_items=unique_evidence,
+            target_name=name,
+            target_domain=agent_input.domain or (agent_input.context.get("domain") if agent_input.context else None),
+        )
+
+        trust_score_val = trust_index_res.trust_index
+        risk_level = trust_index_res.risk_level
+
+
 
         structured_findings = [
             {
@@ -176,11 +189,16 @@ class EvidenceTrustAgent(BaseAgent):
                 "raw_evidence_count": len(raw_evidence_list),
                 "verified_count": verified_count,
                 "avg_reliability": round(avg_reliability, 2),
-                "preliminary_trust_score": trust_score_val,
-                "preliminary_risk_level": risk_level,
-                "overall_confidence": round(avg_confidence, 2),
+                "preliminary_trust_score": legacy_trust_score_val,
+                "preliminary_risk_level": legacy_risk_level,
+                "trust_index": trust_score_val,
+                "risk_level": risk_level,
+                "overall_confidence": trust_index_res.confidence,
+                "verification_status": trust_index_res.verification_status.value,
+                "trust_index_result": trust_index_res.model_dump(),
                 "findings_count": len(structured_findings),
                 "evidence_count": len(unique_evidence),
+
                 # Evidence Fusion Engine metadata integration
                 "fusion_result": fusion_result.model_dump(),
                 "total_claim_groups": fusion_result.total_claim_groups,

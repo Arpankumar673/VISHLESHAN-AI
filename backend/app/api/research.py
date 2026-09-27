@@ -1,7 +1,9 @@
 from typing import Any, Dict, Optional
 from uuid import UUID
-from fastapi import APIRouter, Depends, Header, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
 from app.core.config import settings
+from app.core.limiter import limiter
+
 from app.core.logging import logger
 from app.core.security import AuthenticatedUser, get_current_user
 from app.schemas.common import ApiResponse
@@ -22,11 +24,14 @@ router = APIRouter(prefix="/research", tags=["Research"])
     summary="Initiate Company Research Run",
     description="Queue an asynchronous research run for a target company under the authenticated user.",
 )
+@limiter.limit(settings.RESEARCH_RATE_LIMIT)
 async def start_research(
+    request: Request,
     payload: StartResearchRequest,
     current_user: AuthenticatedUser = Depends(get_current_user),
     research_service: ResearchService = Depends(get_research_service),
 ) -> ApiResponse[StartResearchResponse]:
+
     response = research_service.start_research(
         user_id=current_user.id,
         company_name=payload.company_name,

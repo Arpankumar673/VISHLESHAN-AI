@@ -1,0 +1,29 @@
+{
+  "model_type": "Deterministic_Keyword_Baseline",
+  "validation_set": {
+    "samples": 2715,
+    "confusion_matrix": {
+      "tp": 4,
+      "fp": 1,
+      "tn": 2562,
+      "fn": 148
+    },
+    "precision": 0.8,
+    "recall": 0.0263,
+    "f1_score": 0.051,
+    "pr_auc": 0.0896
+  },
+  "test_set": {
+    "samples": 2693,
+    "confusion_matrix": {
+      "tp": 2,
+      "fp": 41,
+      "tn": 2522,
+      "fn": 128
+    },
+    "precision": 0.0465,
+    "recall": 0.0154,
+    "f1_score": 0.0231,
+    "pr_auc": 0.0555
+  }
+}

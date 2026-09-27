@@ -1,0 +1,296 @@
+[
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000001",
+    "company_name": "Microsoft Corporation",
+    "official_domain": "microsoft.com",
+    "source_references": [
+      {
+        "title": "SEC EDGAR Profile",
+        "url": "https://www.sec.gov/edgar/browse/?CIK=0000789019"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PUBLIC_LISTED",
+      "sampling_stratum": "Public Listed",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Public entity with SEC EDGAR CIK 0000789019.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T10:00:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000002",
+    "company_name": "Infosys Limited",
+    "official_domain": "infosys.com",
+    "source_references": [
+      {
+        "title": "MCA India Master Data",
+        "url": "https://www.mca.gov.in"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PUBLIC_LISTED",
+      "sampling_stratum": "Public Listed",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Public IT services corporation listed on NSE/BSE with CIN L85110KA1981PLC013115.",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-27T10:01:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000003",
+    "company_name": "Apple Inc.",
+    "official_domain": "apple.com",
+    "source_references": [
+      {
+        "title": "SEC EDGAR Apple Inc Profile",
+        "url": "https://www.sec.gov/edgar/browse/?CIK=0000320193"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PUBLIC_LISTED",
+      "sampling_stratum": "Public Listed",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Public technology corporation with SEC CIK 0000320193.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T12:00:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000004",
+    "company_name": "Alphabet Inc.",
+    "official_domain": "abc.xyz",
+    "source_references": [
+      {
+        "title": "SEC EDGAR Alphabet Inc Profile",
+        "url": "https://www.sec.gov/edgar/browse/?CIK=0001652044"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PUBLIC_LISTED",
+      "sampling_stratum": "Public Listed",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Public holding company of Google LLC with SEC CIK 0001652044.",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-27T12:01:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000005",
+    "company_name": "Tesla, Inc.",
+    "official_domain": "tesla.com",
+    "source_references": [
+      {
+        "title": "SEC EDGAR Tesla Profile",
+        "url": "https://www.sec.gov/edgar/browse/?CIK=0001318605"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PUBLIC_LISTED",
+      "sampling_stratum": "Public Listed",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Public automotive and clean energy corporation with SEC CIK 0001318605.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T12:02:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000006",
+    "company_name": "Stripe, Inc.",
+    "official_domain": "stripe.com",
+    "source_references": [
+      {
+        "title": "Stripe Corporate About",
+        "url": "https://stripe.com/about"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "ESTABLISHED_PRIVATE",
+      "sampling_stratum": "Established Private",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Delaware incorporated financial infrastructure technology firm File 4689405.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T10:02:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000007",
+    "company_name": "Tata Consultancy Services Limited",
+    "official_domain": "tcs.com",
+    "source_references": [
+      {
+        "title": "MCA India Master Data",
+        "url": "https://www.mca.gov.in"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PUBLIC_LISTED",
+      "sampling_stratum": "Public Listed",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Public IT multinational incorporated in India with CIN L22210MH1995PLC084781.",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-27T12:03:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000008",
+    "company_name": "NVIDIA Corporation",
+    "official_domain": "nvidia.com",
+    "source_references": [
+      {
+        "title": "SEC EDGAR NVIDIA Profile",
+        "url": "https://www.sec.gov/edgar/browse/?CIK=0001045810"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PUBLIC_LISTED",
+      "sampling_stratum": "Public Listed",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Public semiconductor entity with SEC CIK 0001045810.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T12:04:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000014",
+    "company_name": "Modal Labs Inc.",
+    "official_domain": "modal.com",
+    "source_references": [
+      {
+        "title": "Modal Corporate Webpage",
+        "url": "https://modal.com/about"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "EARLY_STAGE",
+      "sampling_stratum": "Early-Stage / Low-Footprint",
+      "evidence_density": "LOW",
+      "selection_rationale": "Cloud compute platform incorporated in Delaware.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T10:04:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000018",
+    "company_name": "Wirecard AG",
+    "official_domain": "wirecard.com",
+    "source_references": [
+      {
+        "title": "BaFin Insolvency Release",
+        "url": "https://www.bafin.de"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "FLAGGED_HIGH_RISK",
+      "sampling_stratum": "Flagged / High-Risk",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Insolvent German payment processor HRB 169290.",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-27T10:05:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000028",
+    "company_name": "Luckin Coffee Inc.",
+    "official_domain": "luckincoffee.com",
+    "source_references": [
+      {
+        "title": "SEC Accounting Settlement Notice",
+        "url": "https://www.sec.gov/news/press-release/2020-319"
+      }
+    ],
+    "evaluation_categories": ["REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "FLAGGED_HIGH_RISK",
+      "sampling_stratum": "Flagged / High-Risk",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Securities regulatory accounting fraud settlement CIK 0001767582.",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-27T10:06:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000030",
+    "company_name": "Theranos, Inc.",
+    "official_domain": "theranos.com",
+    "source_references": [
+      {
+        "title": "SEC Fraud Action Press Release",
+        "url": "https://www.sec.gov/news/press-release/2018-41"
+      }
+    ],
+    "evaluation_categories": ["REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "FLAGGED_HIGH_RISK",
+      "sampling_stratum": "Flagged / High-Risk",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Dissolved health technology firm charged with massive fraud by SEC.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T12:05:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000031",
+    "company_name": "Enron Corp.",
+    "official_domain": "enron.com",
+    "source_references": [
+      {
+        "title": "SEC Enron Accounting Fraud Release",
+        "url": "https://www.sec.gov/news/extra/enron.htm"
+      }
+    ],
+    "evaluation_categories": ["REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "FLAGGED_HIGH_RISK",
+      "sampling_stratum": "Flagged / High-Risk",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Bankrupt energy commodities firm CIK 0001024401.",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-27T12:06:00Z",
+      "is_synthetic": false
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000032",
+    "company_name": "Credit Suisse Group AG",
+    "official_domain": "credit-suisse.com",
+    "source_references": [
+      {
+        "title": "FINMA Acquisition Decision",
+        "url": "https://www.finma.ch/en/news/2023/03/20230319-mm-cs/"
+      }
+    ],
+    "evaluation_categories": ["REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "FLAGGED_HIGH_RISK",
+      "sampling_stratum": "Flagged / High-Risk",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Swiss financial services entity merged into UBS Group AG in 2023.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-27T12:07:00Z",
+      "is_synthetic": false
+    }
+  }
+]

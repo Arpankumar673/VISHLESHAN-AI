@@ -1,0 +1,140 @@
+{
+  "evaluation_timestamp": "2026-09-25T08:26:15.893014+00:00",
+  "nli_model_info": {
+    "model_name": "vishleshan_nli_v1",
+    "version": "v1",
+    "implementation_type": "engineered-feature/logistic fallback",
+    "model_description": "Vishleshan NLI v1 \u2014 engineered-feature multiclass NLI classifier",
+    "calibration_status": "UNCALIBRATED MODEL CONFIDENCE",
+    "label_mapping": {
+      "0": "ENTAILMENT",
+      "1": "CONTRADICTION",
+      "2": "NEUTRAL"
+    }
+  },
+  "dataset_provenance": {
+    "dataset_name": "MultiNLI (Multi-Genre Natural Language Inference) Validation Subset",
+    "source": "NYU Machine Learning for Language Group",
+    "repository_url": "https://cims.nyu.edu/~sbowman/multinli/",
+    "authors": "Adina Williams, Nikita Nangia, Samuel Bowman",
+    "license": "Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
+    "version": "1.0",
+    "retrieval_date": "2026-09-25",
+    "evaluation_scope": "Controlled 30-pair evaluation split (10 Entailment, 10 Contradiction, 10 Neutral)",
+    "sample_count": 30,
+    "label_distribution": {
+      "ENTAILMENT": 10,
+      "CONTRADICTION": 10,
+      "NEUTRAL": 10
+    },
+    "label_definitions": {
+      "ENTAILMENT": "The premise guarantees the truth of the hypothesis.",
+      "CONTRADICTION": "The premise guarantees that the hypothesis is false.",
+      "NEUTRAL": "The premise gives no conclusive proof for or against the hypothesis."
+    }
+  },
+  "level_a_generic_nli_evaluation": {
+    "lexical_baseline_metrics": {
+      "confusion_matrix": {
+        "ENTAILMENT": {
+          "ENTAILMENT": 1,
+          "CONTRADICTION": 0,
+          "NEUTRAL": 9
+        },
+        "CONTRADICTION": {
+          "ENTAILMENT": 2,
+          "CONTRADICTION": 5,
+          "NEUTRAL": 3
+        },
+        "NEUTRAL": {
+          "ENTAILMENT": 0,
+          "CONTRADICTION": 0,
+          "NEUTRAL": 10
+        }
+      },
+      "per_class_metrics": {
+        "ENTAILMENT": {
+          "precision": 0.3333,
+          "recall": 0.1,
+          "f1_score": 0.1538,
+          "support": 10
+        },
+        "CONTRADICTION": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1_score": 0.6667,
+          "support": 10
+        },
+        "NEUTRAL": {
+          "precision": 0.4545,
+          "recall": 1.0,
+          "f1_score": 0.625,
+          "support": 10
+        }
+      },
+      "macro_f1": 0.4818,
+      "weighted_f1": 0.4818,
+      "total_evaluated_samples": 30,
+      "multiclass_pr_auc": "NOT CALCULATED \u2014 multiclass ranking-score evaluation was outside the scope of this controlled 30-pair benchmark.",
+      "multiclass_roc_auc": "NOT CALCULATED \u2014 multiclass ranking-score evaluation was outside the scope of this controlled 30-pair benchmark."
+    },
+    "semantic_nli_metrics": {
+      "confusion_matrix": {
+        "ENTAILMENT": {
+          "ENTAILMENT": 4,
+          "CONTRADICTION": 0,
+          "NEUTRAL": 6
+        },
+        "CONTRADICTION": {
+          "ENTAILMENT": 4,
+          "CONTRADICTION": 6,
+          "NEUTRAL": 0
+        },
+        "NEUTRAL": {
+          "ENTAILMENT": 0,
+          "CONTRADICTION": 0,
+          "NEUTRAL": 10
+        }
+      },
+      "per_class_metrics": {
+        "ENTAILMENT": {
+          "precision": 0.5,
+          "recall": 0.4,
+          "f1_score": 0.4444,
+          "support": 10
+        },
+        "CONTRADICTION": {
+          "precision": 1.0,
+          "recall": 0.6,
+          "f1_score": 0.75,
+          "support": 10
+        },
+        "NEUTRAL": {
+          "precision": 0.625,
+          "recall": 1.0,
+          "f1_score": 0.7692,
+          "support": 10
+        }
+      },
+      "macro_f1": 0.6546,
+      "weighted_f1": 0.6546,
+      "total_evaluated_samples": 30,
+      "multiclass_pr_auc": "NOT CALCULATED \u2014 multiclass ranking-score evaluation was outside the scope of this controlled 30-pair benchmark.",
+      "multiclass_roc_auc": "NOT CALCULATED \u2014 multiclass ranking-score evaluation was outside the scope of this controlled 30-pair benchmark."
+    },
+    "baseline_vs_nli_delta": {
+      "absolute_macro_f1_improvement": 0.1728,
+      "macro_f1_percentage_points": 17.28,
+      "improvement_description": "+0.1728 absolute Macro-F1, equivalent to +17.28 percentage points",
+      "absolute_contradiction_recall_improvement": 0.1
+    }
+  },
+  "level_b_company_conflict_evaluation": {
+    "status": "DOMAIN-SPECIFIC NLI VALIDATION: PENDING",
+    "explanation": "No open peer-reviewed public dataset exists specifically for corporate intelligence evidence-pair NLI conflicts. Synthetic examples are reserved strictly for unit testing."
+  },
+  "phase_5b_conclusion": {
+    "status": "PHASE 5B: IMPLEMENTED BUT RESEARCH VALIDATION PENDING",
+    "justification": "Level A benchmark on controlled 30-pair MultiNLI evaluation split completed successfully using scikit-learn standard multiclass metrics (Weighted F1 strictly in [0,1]). Level B domain-specific validation remains pending due to absence of public corporate NLI conflict dataset."
+  }
+}

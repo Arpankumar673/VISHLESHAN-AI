@@ -328,6 +328,7 @@ async def node_persist_results(state: ResearchGraphState) -> Dict[str, Any]:
         try:
             supabase.table("evidence").insert(
                 {
+                    "id": str(ev.id),
                     "company_id": company_id,
                     "research_run_id": run_id,
                     "claim": ev.claim,
@@ -349,20 +350,41 @@ async def node_persist_results(state: ResearchGraphState) -> Dict[str, Any]:
 
     # Insert trust score
     try:
-        supabase.table("trust_scores").insert(
-            {
+        trust_res_meta = trust_meta.get("trust_index_result", {})
+        payload = {
+            "company_id": company_id,
+            "research_run_id": run_id,
+            "score": trust_meta.get("preliminary_trust_score", 75.0),
+            "confidence": trust_meta.get("overall_confidence", trust_meta.get("avg_reliability", 0.8)),
+            "risk_level": trust_meta.get("preliminary_risk_level", "low"),
+            "verification_status": trust_meta.get("verification_status", "unable_to_verify"),
+            "evidence_coverage": round(min(1.0, len(evidence_items) / 5.0), 2),
+            "algorithm_version": trust_res_meta.get("model_version", "v1"),
+            "explanation": trust_res_meta.get("explanation", f"LangGraph multi-agent synthesis with {len(evidence_items)} deduplicated evidence items."),
+            "dimension_scores": trust_res_meta.get("dimension_scores", {}),
+            "risk_adjustment": trust_res_meta.get("risk_adjustment", {}),
+            "conflict_summary": trust_res_meta.get("conflict_summary", {}),
+            "evidence_references": trust_res_meta.get("evidence_references", []),
+        }
+        try:
+            supabase.table("trust_scores").insert(payload).execute()
+        except Exception:
+            base_payload = {
                 "company_id": company_id,
                 "research_run_id": run_id,
                 "score": trust_meta.get("preliminary_trust_score", 75.0),
-                "confidence": trust_meta.get("avg_reliability", 0.8),
+                "confidence": trust_meta.get("overall_confidence", trust_meta.get("avg_reliability", 0.8)),
                 "risk_level": trust_meta.get("preliminary_risk_level", "low"),
                 "evidence_coverage": round(min(1.0, len(evidence_items) / 5.0), 2),
-                "algorithm_version": "v1.0-langgraph-m6",
-                "explanation": f"LangGraph multi-agent synthesis with {len(evidence_items)} deduplicated evidence items.",
+                "algorithm_version": trust_res_meta.get("model_version", "v1"),
+                "explanation": trust_res_meta.get("explanation", f"LangGraph multi-agent synthesis with {len(evidence_items)} deduplicated evidence items."),
             }
-        ).execute()
+            supabase.table("trust_scores").insert(base_payload).execute()
     except Exception as exc:
         logger.warning(f"[LangGraph:node_persist_results] Failed to insert trust score: {exc}")
+
+
+
 
     # Insert report
     report_id = None
@@ -381,6 +403,18 @@ async def node_persist_results(state: ResearchGraphState) -> Dict[str, Any]:
                 report_id = UUID(report_insert.data[0]["id"])
         except Exception as exc:
             logger.warning(f"[LangGraph:node_persist_results] Failed to insert report: {exc}")
+
+    # Index evidence for RAG Vector Search
+    try:
+        from app.services.rag_service import RAGService
+        rag_service = RAGService()
+        rag_service.index_research_evidence(
+            research_run_id=UUID(run_id),
+            company_id=UUID(company_id),
+            evidence_items=evidence_items,
+        )
+    except Exception as rag_exc:
+        logger.warning(f"[LangGraph:node_persist_results] RAG vector indexing note: {rag_exc}")
 
     # Determine final status
     if len(evidence_items) > 0 and len(errors) == 0:

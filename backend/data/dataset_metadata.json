@@ -1,0 +1,33 @@
+{
+  "dataset_name": "EMSCAD_Kaggle_Real_v1",
+  "total_samples": 17880,
+  "overall_distribution": {
+    "total": 17880,
+    "legitimate": 17014,
+    "fraudulent": 866,
+    "fraud_rate": 0.0484
+  },
+  "train_distribution": {
+    "total": 12472,
+    "legitimate": 11888,
+    "fraudulent": 584,
+    "fraud_rate": 0.0468
+  },
+  "val_distribution": {
+    "total": 2715,
+    "legitimate": 2563,
+    "fraudulent": 152,
+    "fraud_rate": 0.056
+  },
+  "test_distribution": {
+    "total": 2693,
+    "legitimate": 2563,
+    "fraudulent": 130,
+    "fraud_rate": 0.0483
+  },
+  "split_ratios": {
+    "train": 0.7,
+    "val": 0.15,
+    "test": 0.15
+  }
+}

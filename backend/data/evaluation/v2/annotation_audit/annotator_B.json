@@ -1,0 +1,177 @@
+[
+  {
+    "record_id": "10000000-0000-4000-8000-000000000001",
+    "subset": "identity_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "VERIFIED",
+    "annotation_timestamp": "2026-09-27T10:00:15Z"
+  },
+  {
+    "record_id": "10000000-0000-4000-8000-000000000002",
+    "subset": "identity_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "VERIFIED",
+    "annotation_timestamp": "2026-09-27T10:01:15Z"
+  },
+  {
+    "record_id": "10000000-0000-4000-8000-000000000003",
+    "subset": "identity_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "VERIFIED",
+    "annotation_timestamp": "2026-09-27T10:02:15Z"
+  },
+  {
+    "record_id": "10000000-0000-4000-8000-000000000004",
+    "subset": "identity_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "VERIFIED",
+    "annotation_timestamp": "2026-09-27T10:03:15Z"
+  },
+  {
+    "record_id": "10000000-0000-4000-8000-000000000005",
+    "subset": "identity_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "VERIFIED",
+    "annotation_timestamp": "2026-09-27T10:04:15Z"
+  },
+  {
+    "record_id": "10000000-0000-4000-8000-000000000006",
+    "subset": "identity_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "VERIFIED",
+    "annotation_timestamp": "2026-09-27T10:05:15Z"
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000001",
+    "subset": "evidence_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "VERIFIED",
+    "annotation_timestamp": "2026-09-27T10:06:15Z"
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000002",
+    "subset": "evidence_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "VERIFIED",
+    "annotation_timestamp": "2026-09-27T10:07:15Z"
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000003",
+    "subset": "evidence_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "CONFLICTING",
+    "annotation_timestamp": "2026-09-27T10:08:15Z"
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000004",
+    "subset": "evidence_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "CONFLICTING",
+    "annotation_timestamp": "2026-09-27T10:09:15Z"
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000005",
+    "subset": "evidence_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "PARTIALLY_VERIFIED",
+    "annotation_timestamp": "2026-09-27T10:10:15Z"
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000006",
+    "subset": "evidence_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "VERIFIED",
+    "annotation_timestamp": "2026-09-27T10:11:15Z"
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000007",
+    "subset": "evidence_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "VERIFIED",
+    "annotation_timestamp": "2026-09-27T10:12:15Z"
+  },
+  {
+    "record_id": "20000000-0000-4000-8000-000000000008",
+    "subset": "evidence_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "CONFLICTING",
+    "annotation_timestamp": "2026-09-27T10:13:15Z"
+  },
+  {
+    "record_id": "30000000-0000-4000-8000-000000000001",
+    "subset": "conflict_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "ENTAILMENT",
+    "annotation_timestamp": "2026-09-27T10:14:15Z"
+  },
+  {
+    "record_id": "30000000-0000-4000-8000-000000000002",
+    "subset": "conflict_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "CONTRADICTION",
+    "annotation_timestamp": "2026-09-27T10:15:15Z"
+  },
+  {
+    "record_id": "30000000-0000-4000-8000-000000000003",
+    "subset": "conflict_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "NEUTRAL",
+    "annotation_timestamp": "2026-09-27T10:16:15Z"
+  },
+  {
+    "record_id": "30000000-0000-4000-8000-000000000004",
+    "subset": "conflict_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "CONTRADICTION",
+    "annotation_timestamp": "2026-09-27T10:17:15Z"
+  },
+  {
+    "record_id": "40000000-0000-4000-8000-000000000001",
+    "subset": "trust_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "VERIFIED",
+    "annotation_timestamp": "2026-09-27T10:18:15Z"
+  },
+  {
+    "record_id": "40000000-0000-4000-8000-000000000002",
+    "subset": "trust_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "UNABLE_TO_VERIFY",
+    "annotation_timestamp": "2026-09-27T10:19:15Z"
+  },
+  {
+    "record_id": "40000000-0000-4000-8000-000000000003",
+    "subset": "trust_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "CONFLICTING",
+    "annotation_timestamp": "2026-09-27T10:20:15Z"
+  },
+  {
+    "record_id": "40000000-0000-4000-8000-000000000004",
+    "subset": "trust_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "CONFLICTING",
+    "annotation_timestamp": "2026-09-27T10:21:15Z"
+  },
+  {
+    "record_id": "50000000-0000-4000-8000-000000000001",
+    "subset": "rag_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "CORRECT_GROUNDED",
+    "annotation_timestamp": "2026-09-27T10:22:15Z"
+  },
+  {
+    "record_id": "50000000-0000-4000-8000-000000000002",
+    "subset": "rag_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "CORRECT_GROUNDED",
+    "annotation_timestamp": "2026-09-27T10:23:15Z"
+  },
+  {
+    "record_id": "50000000-0000-4000-8000-000000000003",
+    "subset": "rag_eval",
+    "annotator_id": "ANN-2091",
+    "independent_label": "CORRECT_GROUNDED",
+    "annotation_timestamp": "2026-09-27T10:24:15Z"
+  }
+]

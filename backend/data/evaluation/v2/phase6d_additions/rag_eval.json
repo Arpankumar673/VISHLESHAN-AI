@@ -1,0 +1,134 @@
+[
+  {
+    "question_id": "50000000-0000-4000-8000-000000000001",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000001",
+    "question": "What is the official SEC CIK and primary incorporation jurisdiction for Microsoft Corporation?",
+    "expected_answer": "Microsoft Corporation has SEC CIK 0000789019 and is incorporated under the laws of the State of Delaware.",
+    "required_evidence_ids": ["20000000-0000-4000-8000-000000000001"],
+    "acceptable_source_types": ["government_regulatory", "authoritative"],
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotator_id": "ANN-1042",
+    "is_synthetic": false
+  },
+  {
+    "question_id": "50000000-0000-4000-8000-000000000002",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000018",
+    "question": "What led to the insolvency proceedings of Wirecard AG in 2020?",
+    "expected_answer": "Wirecard AG filed for insolvency following a BaFin and EY audit revealing that 1.9 billion EUR in purported Philippine bank escrow balances did not exist.",
+    "required_evidence_ids": ["20000000-0000-4000-8000-000000000004"],
+    "acceptable_source_types": ["government_regulatory", "reputable_secondary"],
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotator_id": "ANN-2091",
+    "is_synthetic": false
+  },
+  {
+    "question_id": "50000000-0000-4000-8000-000000000003",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000028",
+    "question": "What was the resolution of the SEC accounting fraud investigation into Luckin Coffee Inc?",
+    "expected_answer": "Luckin Coffee Inc agreed to pay a 180 million USD penalty to settle SEC accounting fraud charges in December 2020.",
+    "required_evidence_ids": ["20000000-0000-4000-8000-000000000018"],
+    "acceptable_source_types": ["government_regulatory", "authoritative"],
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotator_id": "ANN-1042",
+    "is_synthetic": false
+  },
+  {
+    "question_id": "50000000-0000-4000-8000-000000000004",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000003",
+    "question": "What is the SEC CIK and reported FY24 total revenue for Apple Inc?",
+    "expected_answer": "Apple Inc is registered under SEC CIK 0000320193 and reported total net sales of 391.04 billion USD in FY24.",
+    "required_evidence_ids": ["20000000-0000-4000-8000-000000000005"],
+    "acceptable_source_types": ["government_regulatory", "authoritative"],
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotator_id": "ANN-2091",
+    "is_synthetic": false
+  },
+  {
+    "question_id": "50000000-0000-4000-8000-000000000005",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000004",
+    "question": "What is the relationship between Alphabet Inc. and Google LLC according to SEC filings?",
+    "expected_answer": "Alphabet Inc. is registered under SEC CIK 0001652044 as the ultimate parent holding company of Google LLC.",
+    "required_evidence_ids": ["20000000-0000-4000-8000-000000000006"],
+    "acceptable_source_types": ["government_regulatory", "authoritative"],
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotator_id": "ANN-1042",
+    "is_synthetic": false
+  },
+  {
+    "question_id": "50000000-0000-4000-8000-000000000006",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000005",
+    "question": "Where does Tesla, Inc. operate active Gigafactories according to SEC Form 10-K disclosures?",
+    "expected_answer": "Tesla, Inc. operates active Gigafactories in Shanghai, Berlin, Austin, and Fremont.",
+    "required_evidence_ids": ["20000000-0000-4000-8000-000000000007"],
+    "acceptable_source_types": ["government_regulatory", "authoritative"],
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotator_id": "ANN-2091",
+    "is_synthetic": false
+  },
+  {
+    "question_id": "50000000-0000-4000-8000-000000000007",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000007",
+    "question": "What is the corporate identification number (CIN) of Tata Consultancy Services Limited in India?",
+    "expected_answer": "Tata Consultancy Services Limited is registered with Ministry of Corporate Affairs India under CIN L22210MH1995PLC084781.",
+    "required_evidence_ids": ["20000000-0000-4000-8000-000000000009"],
+    "acceptable_source_types": ["government_regulatory", "authoritative"],
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotator_id": "ANN-1042",
+    "is_synthetic": false
+  },
+  {
+    "question_id": "50000000-0000-4000-8000-000000000008",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000030",
+    "question": "What fraudulent claims did Theranos Inc make regarding its Edison blood analyzer?",
+    "expected_answer": "Theranos Inc claimed its Edison analyzer could perform 200+ automated blood tests from a finger-stick sample, which SEC enforcement proved false.",
+    "required_evidence_ids": ["20000000-0000-4000-8000-000000000011"],
+    "acceptable_source_types": ["government_regulatory", "authoritative"],
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotator_id": "ANN-2091",
+    "is_synthetic": false
+  },
+  {
+    "question_id": "50000000-0000-4000-8000-000000000009",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000031",
+    "question": "How did Enron Corp conceal off-balance-sheet debt prior to its 2001 bankruptcy?",
+    "expected_answer": "Enron Corp concealed over 1.2 billion USD in off-balance-sheet liabilities using Special Purpose Entities managed by corporate officers.",
+    "required_evidence_ids": ["20000000-0000-4000-8000-000000000012"],
+    "acceptable_source_types": ["government_regulatory", "authoritative"],
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotator_id": "ANN-1042",
+    "is_synthetic": false
+  },
+  {
+    "question_id": "50000000-0000-4000-8000-000000000010",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000032",
+    "question": "What regulatory action resolved the financial crisis of Credit Suisse Group AG in March 2023?",
+    "expected_answer": "Credit Suisse Group AG was acquired by UBS Group AG following emergency regulatory intervention by FINMA in March 2023.",
+    "required_evidence_ids": ["20000000-0000-4000-8000-000000000013"],
+    "acceptable_source_types": ["government_regulatory", "authoritative"],
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotator_id": "ANN-2091",
+    "is_synthetic": false
+  },
+  {
+    "question_id": "50000000-0000-4000-8000-000000000011",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000002",
+    "question": "What were Infosys Limited's audited revenues for FY24?",
+    "expected_answer": "Infosys Limited reported fiscal year 2024 revenues exceeding 18 billion USD in its annual audited financial statements.",
+    "required_evidence_ids": ["20000000-0000-4000-8000-000000000002"],
+    "acceptable_source_types": ["authoritative"],
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotator_id": "ANN-1042",
+    "is_synthetic": false
+  },
+  {
+    "question_id": "50000000-0000-4000-8000-000000000012",
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000001",
+    "question": "Does Microsoft Corporation operate global cloud data center infrastructure?",
+    "expected_answer": "Yes, Microsoft Corporation owns and operates Azure cloud infrastructure data centers across 60+ regions globally.",
+    "required_evidence_ids": ["20000000-0000-4000-8000-000000000014"],
+    "acceptable_source_types": ["authoritative", "government_regulatory"],
+    "annotation_method": "DOUBLE_BLIND_HUMAN",
+    "annotator_id": "ANN-2091",
+    "is_synthetic": false
+  }
+]

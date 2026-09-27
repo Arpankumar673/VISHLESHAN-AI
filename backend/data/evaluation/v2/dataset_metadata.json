@@ -1,0 +1,10 @@
+{
+  "dataset_id": "VISHLESHAN-EVAL-v2",
+  "version": "v2.0.0",
+  "creation_timestamp": "2026-09-27T10:26:00Z",
+  "description": "Expanded Full Evaluation Dataset for Vishleshan AI v2 constructed under Phase 6B-2B across 4 sampling strata.",
+  "schema_version": "v1",
+  "provenance_policy": "Strict multi-source provenance tracking with mandatory URLs, retrieval timestamps, publisher authority ratings, and verbatim quotes.",
+  "annotation_policy": "Double-blind human annotation with anonymized IDs (ANN-1042, ANN-2091). Zero model-assisted or LLM predictions permitted in ground truth. Raw annotation decision logs preserved in annotation_audit/.",
+  "dataset_hash": "8bd44b481a7211a1f54e8461f6678933de6a26390b5c726b24e97e4ec2a4c3c3"
+}

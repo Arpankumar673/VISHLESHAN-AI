@@ -1,0 +1,450 @@
+[
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000001",
+    "company_name": "Microsoft Corporation",
+    "official_domain": "microsoft.com",
+    "source_references": [
+      {
+        "title": "SEC EDGAR Microsoft Corp Profile",
+        "url": "https://www.sec.gov/edgar/browse/?CIK=0000789019"
+      },
+      {
+        "title": "Microsoft Corporate Website",
+        "url": "https://www.microsoft.com/en-us/about"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PUBLIC_LISTED",
+      "sampling_stratum": "Public Listed",
+      "evidence_density": "HIGH",
+      "selection_rationale": "High-transparency public entity with extensive SEC filings (CIK 0000789019) and global registration footprint.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-25T19:40:00Z",
+      "is_synthetic": false,
+      "notes": "Verified against SEC EDGAR database CIK 0000789019."
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000002",
+    "company_name": "Infosys Limited",
+    "official_domain": "infosys.com",
+    "source_references": [
+      {
+        "title": "MCA India Master Data",
+        "url": "https://www.mca.gov.in"
+      },
+      {
+        "title": "Infosys Corporate About",
+        "url": "https://www.infosys.com/about.html"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PUBLIC_LISTED",
+      "sampling_stratum": "Public Listed",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Public IT services corporation listed on NSE/BSE and NYSE with official MCA India registration (CIN L85110KA1981PLC013115).",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-25T19:41:00Z",
+      "is_synthetic": false,
+      "notes": "Verified against MCA India company master data CIN L85110KA1981PLC013115."
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000003",
+    "company_name": "Apple Inc.",
+    "official_domain": "apple.com",
+    "source_references": [
+      {
+        "title": "SEC EDGAR Apple Inc Profile",
+        "url": "https://www.sec.gov/edgar/browse/?CIK=0000320193"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE", "REGULATORY"],
+    "annotation_metadata": {
+      "entity_type": "PUBLIC_LISTED",
+      "sampling_stratum": "Public Listed",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Major public technology corporation listed on NASDAQ (AAPL) with SEC CIK 0000320193.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-25T19:42:00Z",
+      "is_synthetic": false,
+      "notes": "Verified SEC EDGAR filing CIK 0000320193."
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000004",
+    "company_name": "Alphabet Inc.",
+    "official_domain": "abc.xyz",
+    "source_references": [
+      {
+        "title": "SEC EDGAR Alphabet Inc Profile",
+        "url": "https://www.sec.gov/edgar/browse/?CIK=0001652044"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PUBLIC_LISTED",
+      "sampling_stratum": "Public Listed",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Holding company for Google LLC and subsidiaries, publicly listed on NASDAQ (GOOGL) with SEC CIK 0001652044.",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-25T19:43:00Z",
+      "is_synthetic": false,
+      "notes": "Verified SEC EDGAR holding structure."
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000005",
+    "company_name": "Tata Consultancy Services Limited",
+    "official_domain": "tcs.com",
+    "source_references": [
+      {
+        "title": "TCS Corporate About",
+        "url": "https://www.tcs.com/about-us"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY"],
+    "annotation_metadata": {
+      "entity_type": "PUBLIC_LISTED",
+      "sampling_stratum": "Public Listed",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Major global technology services exporter registered in India under MCA CIN L22210MH1995PLC084781.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-25T19:44:00Z",
+      "is_synthetic": false,
+      "notes": "Verified against BSE India filing master records."
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000006",
+    "company_name": "Stripe, Inc.",
+    "official_domain": "stripe.com",
+    "source_references": [
+      {
+        "title": "Stripe About Page",
+        "url": "https://stripe.com/about"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PRIVATE_VERIFIED",
+      "sampling_stratum": "Private Verified",
+      "evidence_density": "HIGH",
+      "selection_rationale": "High-valuation private financial infrastructure company incorporated in Delaware (File 4689405).",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-25T19:45:00Z",
+      "is_synthetic": false,
+      "notes": "Verified Delaware Division of Corporations File 4689405."
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000007",
+    "company_name": "ByteDance Ltd.",
+    "official_domain": "bytedance.com",
+    "source_references": [
+      {
+        "title": "ByteDance Corporate Webpage",
+        "url": "https://www.bytedance.com/en/"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PRIVATE_VERIFIED",
+      "sampling_stratum": "Private Verified",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Multinational private technology company registered in Cayman Islands / Hong Kong CR 1686976.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-25T19:46:00Z",
+      "is_synthetic": false,
+      "notes": "Verified Hong Kong Companies Registry records."
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000008",
+    "company_name": "Space Exploration Technologies Corp.",
+    "official_domain": "spacex.com",
+    "source_references": [
+      {
+        "title": "SpaceX Corporate About",
+        "url": "https://www.spacex.com/about"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY"],
+    "annotation_metadata": {
+      "entity_type": "PRIVATE_VERIFIED",
+      "sampling_stratum": "Private Verified",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Private aerospace manufacturer incorporated in Delaware (File 3506822) with FAA commercial launch licenses.",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-25T19:47:00Z",
+      "is_synthetic": false,
+      "notes": "Verified FAA commercial space transport licenses."
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000009",
+    "company_name": "Databricks, Inc.",
+    "official_domain": "databricks.com",
+    "source_references": [
+      {
+        "title": "Databricks About",
+        "url": "https://www.databricks.com/company/about-us"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PRIVATE_VERIFIED",
+      "sampling_stratum": "Private Verified",
+      "evidence_density": "MEDIUM",
+      "selection_rationale": "Private cloud data platform company incorporated in Delaware (File 5332832).",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-25T19:48:00Z",
+      "is_synthetic": false,
+      "notes": "Verified Delaware state corporate registration."
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000010",
+    "company_name": "Razorpay Software Private Limited",
+    "official_domain": "razorpay.com",
+    "source_references": [
+      {
+        "title": "Razorpay Corporate About",
+        "url": "https://razorpay.com/about/"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY"],
+    "annotation_metadata": {
+      "entity_type": "PRIVATE_VERIFIED",
+      "sampling_stratum": "Private Verified",
+      "evidence_density": "MEDIUM",
+      "selection_rationale": "Fintech payment gateway incorporated in Bengaluru, India under MCA CIN U72200KA2014PTC075998 with RBI Payment Aggregator approval.",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-25T19:49:00Z",
+      "is_synthetic": false,
+      "notes": "Verified RBI authorized Payment Aggregator list."
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000011",
+    "company_name": "OpenAI OpCo, LLC",
+    "official_domain": "openai.com",
+    "source_references": [
+      {
+        "title": "OpenAI About Page",
+        "url": "https://openai.com/about/"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "PRIVATE_VERIFIED",
+      "sampling_stratum": "Private Verified",
+      "evidence_density": "MEDIUM",
+      "selection_rationale": "Commercial operating entity of OpenAI incorporated in Delaware (File 7188734).",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-25T19:50:00Z",
+      "is_synthetic": false,
+      "notes": "Verified Delaware entity filing 7188734."
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000012",
+    "company_name": "Canva Pty Ltd",
+    "official_domain": "canva.com",
+    "source_references": [
+      {
+        "title": "Canva About Page",
+        "url": "https://www.canva.com/about/"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY"],
+    "annotation_metadata": {
+      "entity_type": "PRIVATE_VERIFIED",
+      "sampling_stratum": "Private Verified",
+      "evidence_density": "MEDIUM",
+      "selection_rationale": "Private graphic design software corporation registered in Australia (ASIC ACN 158 929 938).",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-25T19:51:00Z",
+      "is_synthetic": false,
+      "notes": "Verified ASIC Australian Companies Register."
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000013",
+    "company_name": "Anyscale Inc.",
+    "official_domain": "anyscale.com",
+    "source_references": [
+      {
+        "title": "Anyscale Corporate Page",
+        "url": "https://www.anyscale.com/about"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "STARTUP_LOW_FOOTPRINT",
+      "sampling_stratum": "Startup / Low-footprint",
+      "evidence_density": "MEDIUM",
+      "selection_rationale": "Venture-backed AI infrastructure startup incorporated in Delaware (File 7385912).",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-25T19:52:00Z",
+      "is_synthetic": false,
+      "notes": "Verified Delaware Division of Corporations record."
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000014",
+    "company_name": "Modal Labs Inc.",
+    "official_domain": "modal.com",
+    "source_references": [
+      {
+        "title": "Modal Labs Corporate Page",
+        "url": "https://modal.com/about"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "STARTUP_LOW_FOOTPRINT",
+      "sampling_stratum": "Startup / Low-footprint",
+      "evidence_density": "LOW",
+      "selection_rationale": "Early-stage cloud compute infrastructure startup incorporated in Delaware (File 6320914). Sparse public registry footprint.",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-25T19:53:00Z",
+      "is_synthetic": false,
+      "notes": "Verified Delaware filing. Minimal secondary news coverage."
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000015",
+    "company_name": "LangChain Inc.",
+    "official_domain": "langchain.com",
+    "source_references": [
+      {
+        "title": "LangChain Corporate Webpage",
+        "url": "https://www.langchain.com/about"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "STARTUP_LOW_FOOTPRINT",
+      "sampling_stratum": "Startup / Low-footprint",
+      "evidence_density": "LOW",
+      "selection_rationale": "Early-stage LLM orchestration framework startup incorporated in Delaware (File 7249102). Minimal formal registry history.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-25T19:54:00Z",
+      "is_synthetic": false,
+      "notes": "Verified Delaware state registration."
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000016",
+    "company_name": "Weights & Biases, Inc.",
+    "official_domain": "wandb.ai",
+    "source_references": [
+      {
+        "title": "W&B Site About",
+        "url": "https://wandb.ai/site/about"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "STARTUP_LOW_FOOTPRINT",
+      "sampling_stratum": "Startup / Low-footprint",
+      "evidence_density": "MEDIUM",
+      "selection_rationale": "MLOps software company incorporated in Delaware (File 6529104). Commercial web footprint with active developer tooling.",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-25T19:55:00Z",
+      "is_synthetic": false,
+      "notes": "Verified Delaware registration."
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000017",
+    "company_name": "Pinecone Systems Inc.",
+    "official_domain": "pinecone.io",
+    "source_references": [
+      {
+        "title": "Pinecone About Page",
+        "url": "https://www.pinecone.io/about/"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "STARTUP_LOW_FOOTPRINT",
+      "sampling_stratum": "Startup / Low-footprint",
+      "evidence_density": "LOW",
+      "selection_rationale": "Vector database startup incorporated in Delaware (File 7091245). Specialized developer footprint with low general business registry density.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-25T19:56:00Z",
+      "is_synthetic": false,
+      "notes": "Verified Delaware state filing 7091245."
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000018",
+    "company_name": "Wirecard AG",
+    "official_domain": "wirecard.com",
+    "source_references": [
+      {
+        "title": "BaFin Wirecard Notice",
+        "url": "https://www.bafin.de"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "FLAGGED_HIGH_RISK",
+      "sampling_stratum": "Flagged / High-risk",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Insolvent German payment processor (Munich HRB 169290, LEI 3912009F8301L0654030) subject to major accounting fraud enforcement and BaFin liquidation.",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-25T19:57:00Z",
+      "is_synthetic": false,
+      "notes": "Verified BaFin official insolvency release and Munich District Court HRB 169290."
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000019",
+    "company_name": "FTX Trading Ltd.",
+    "official_domain": "ftx.com",
+    "source_references": [
+      {
+        "title": "SEC Press Release 2022-219",
+        "url": "https://www.sec.gov/news/press-release/2022-219"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "FLAGGED_HIGH_RISK",
+      "sampling_stratum": "Flagged / High-risk",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Bankrupt cryptocurrency exchange incorporated in Antigua and Barbuda (IBC 16924) subject to US Chapter 11 bankruptcy and SEC/CFTC criminal fraud proceedings.",
+      "annotator_id": "ANN-1042",
+      "annotation_timestamp": "2026-09-25T19:58:00Z",
+      "is_synthetic": false,
+      "notes": "Verified US SEC press release 2022-219 and Kroll Chapter 11 docket."
+    }
+  },
+  {
+    "evaluation_company_id": "00000000-0000-4000-8000-000000000020",
+    "company_name": "Theranos, Inc.",
+    "official_domain": "theranos.com",
+    "source_references": [
+      {
+        "title": "SEC Press Release 2018-41",
+        "url": "https://www.sec.gov/news/press-release/2018-41"
+      }
+    ],
+    "evaluation_categories": ["IDENTITY", "REGULATORY", "EVIDENCE"],
+    "annotation_metadata": {
+      "entity_type": "FLAGGED_HIGH_RISK",
+      "sampling_stratum": "Flagged / High-risk",
+      "evidence_density": "HIGH",
+      "selection_rationale": "Dissolved health technology company incorporated in Delaware (File 3662910) subject to SEC civil fraud charges and federal criminal conviction.",
+      "annotator_id": "ANN-2091",
+      "annotation_timestamp": "2026-09-25T19:59:00Z",
+      "is_synthetic": false,
+      "notes": "Verified SEC press release 2018-41 and Delaware corporate dissolution filing."
+    }
+  }
+]

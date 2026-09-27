@@ -41,3 +41,6 @@ class ResearchRunResponse(BaseModel):
     report_id: Optional[UUID] = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+ResearchRunResponse.model_rebuild()

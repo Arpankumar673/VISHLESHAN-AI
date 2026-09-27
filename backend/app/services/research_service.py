@@ -30,6 +30,36 @@ class ResearchService:
         self.orchestrator = multi_agent_orchestrator or MultiAgentOrchestrator()
         self.fallback_engine = fallback_engine or ResearchEngine()
 
+    async def enqueue_job(
+        self,
+        research_run_id: UUID,
+        company_name: str,
+        company_url: Optional[str] = None,
+    ) -> bool:
+        """
+        Enqueues research run job to Redis ARQ queue.
+        Returns True if enqueued successfully, False if Redis is offline/unavailable.
+        """
+        try:
+            from arq import create_pool
+            from arq.connections import RedisSettings
+
+            redis_url = settings.REDIS_URL or "redis://localhost:6379/0"
+            redis_pool = await create_pool(RedisSettings.from_dsn(redis_url))
+
+            await redis_pool.enqueue_job(
+                "run_research",
+                str(research_run_id),
+                company_name,
+                company_url,
+            )
+            await redis_pool.close()
+            logger.info(f"[ResearchService] Enqueued research job {research_run_id} to Redis ARQ queue.")
+            return True
+        except Exception as exc:
+            logger.debug(f"[ResearchService] Redis ARQ enqueue unavailable ({exc}); using fallback runner.")
+            return False
+
     def start_research(
         self,
         user_id: UUID,
@@ -49,21 +79,44 @@ class ResearchService:
 
         run_id = UUID(run_data["id"])
 
-        # Asynchronously trigger research pipeline
-        asyncio.create_task(
-            self._dispatch_research_run(
-                research_run_id=run_id,
-                company_id=company.id,
-                company_name=company_name,
-                company_url=company_url,
+        # Try async enqueue to Redis ARQ queue, or fallback to in-memory task
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                asyncio.create_task(self._start_research_async_dispatch(run_id, company.id, company_name, company_url))
+            else:
+                loop.run_until_complete(self._start_research_async_dispatch(run_id, company.id, company_name, company_url))
+        except Exception:
+            asyncio.create_task(
+                self._dispatch_research_run(
+                    research_run_id=run_id,
+                    company_id=company.id,
+                    company_name=company_name,
+                    company_url=company_url,
+                )
             )
-        )
 
         return StartResearchResponse(
             research_run_id=run_id,
             company_id=company.id,
             status=ResearchStatus.QUEUED,
         )
+
+    async def _start_research_async_dispatch(
+        self,
+        research_run_id: UUID,
+        company_id: UUID,
+        company_name: str,
+        company_url: Optional[str] = None,
+    ):
+        enqueued = await self.enqueue_job(research_run_id, company_name, company_url)
+        if not enqueued:
+            await self._dispatch_research_run(
+                research_run_id=research_run_id,
+                company_id=company_id,
+                company_name=company_name,
+                company_url=company_url,
+            )
 
     async def _dispatch_research_run(
         self,
