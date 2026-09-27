@@ -18,7 +18,7 @@ class MockResearchService:
         self.sample_run_id = uuid4()
         self.sample_company_id = uuid4()
 
-    def start_research(self, user_id, company_name, company_url=None):
+    async def start_research(self, user_id, company_name, company_url=None):
         return StartResearchResponse(
             research_run_id=self.sample_run_id,
             company_id=self.sample_company_id,

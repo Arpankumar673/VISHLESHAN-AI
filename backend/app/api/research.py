@@ -32,7 +32,7 @@ async def start_research(
     research_service: ResearchService = Depends(get_research_service),
 ) -> ApiResponse[StartResearchResponse]:
 
-    response = research_service.start_research(
+    response = await research_service.start_research(
         user_id=current_user.id,
         company_name=payload.company_name,
         company_url=payload.company_url,

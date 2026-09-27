@@ -87,7 +87,7 @@ export const ResearchProgress: React.FC = () => {
         if (isMounted) {
           setRun(data);
 
-          if (data.status === 'completed') {
+          if (data.status === 'completed' || data.status === 'partial') {
             setAgentSteps((prev) =>
               prev.map((step) => ({ ...step, status: 'completed' }))
             );
@@ -153,7 +153,7 @@ export const ResearchProgress: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
           <StatusBadge
             status={
-              run?.status === 'completed'
+              run?.status === 'completed' || run?.status === 'partial'
                 ? 'verified'
                 : run?.status === 'failed'
                 ? 'conflicting'
@@ -170,7 +170,7 @@ export const ResearchProgress: React.FC = () => {
       <div className="rounded-2xl sm:rounded-[32px] bg-white border border-slate-200/80 p-5 sm:p-7 shadow-sm space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="flex items-center gap-2.5">
-            {run?.status === 'completed' ? (
+            {run?.status === 'completed' || run?.status === 'partial' ? (
               <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
             ) : run?.status === 'failed' ? (
               <XCircle className="h-5 w-5 text-rose-500 shrink-0" />
@@ -178,7 +178,7 @@ export const ResearchProgress: React.FC = () => {
               <Loader2 className="h-5 w-5 animate-spin text-[#5b5dfa] shrink-0" />
             )}
             <span className="font-bold text-sm sm:text-base text-[#181534]">
-              {run?.status === 'completed'
+              {run?.status === 'completed' || run?.status === 'partial'
                 ? 'Research Run Completed'
                 : run?.status === 'failed'
                 ? 'Research Run Terminated with Error'
@@ -195,14 +195,14 @@ export const ResearchProgress: React.FC = () => {
           color={
             run?.status === 'failed'
               ? 'rose'
-              : run?.status === 'completed'
+              : run?.status === 'completed' || run?.status === 'partial'
               ? 'emerald'
               : 'cyan'
           }
           showPercentage
         />
 
-        {run?.status === 'completed' && (run.report_id || run.id) && (
+        {(run?.status === 'completed' || run?.status === 'partial') && (run.report_id || run.id) && (
           <div className="pt-3 flex justify-end">
             <Link to={`/reports/${run.report_id || run.id}`} className="w-full sm:w-auto">
               <Button

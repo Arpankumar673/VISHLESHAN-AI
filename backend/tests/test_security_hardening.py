@@ -21,7 +21,7 @@ test_user_id = uuid4()
 
 
 class DummyResearchService:
-    def start_research(self, user_id, company_name, company_url=None):
+    async def start_research(self, user_id, company_name, company_url=None):
         return StartResearchResponse(
             research_run_id=uuid4(),
             company_id=uuid4(),

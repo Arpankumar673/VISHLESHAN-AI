@@ -58,7 +58,7 @@ def make_test_ev(
 
 
 class MockResearchServiceForTrust:
-    def start_research(self, user_id, company_name, company_url=None):
+    async def start_research(self, user_id, company_name, company_url=None):
         from app.schemas.research import ResearchStatus, StartResearchResponse
         return StartResearchResponse(
             research_run_id=uuid4(),

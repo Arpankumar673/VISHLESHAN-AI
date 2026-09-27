@@ -60,7 +60,7 @@ class ResearchService:
             logger.debug(f"[ResearchService] Redis ARQ enqueue unavailable ({exc}); using fallback runner.")
             return False
 
-    def start_research(
+    async def start_research(
         self,
         user_id: UUID,
         company_name: str,
@@ -79,27 +79,31 @@ class ResearchService:
 
         run_id = UUID(run_data["id"])
 
-        # Try async enqueue to Redis ARQ queue, or fallback to in-memory task
-        try:
-            loop = asyncio.get_event_loop()
-            if loop.is_running():
-                asyncio.create_task(self._start_research_async_dispatch(run_id, company.id, company_name, company_url))
-            else:
-                loop.run_until_complete(self._start_research_async_dispatch(run_id, company.id, company_name, company_url))
-        except Exception:
-            asyncio.create_task(
-                self._dispatch_research_run(
-                    research_run_id=run_id,
-                    company_id=company.id,
-                    company_name=company_name,
-                    company_url=company_url,
-                )
+        # Try async enqueue to Redis ARQ queue.
+        # If Redis worker is running, enqueue and return QUEUED status immediately.
+        # If Redis is unavailable (e.g., serverless Vercel deployment or single-process setup),
+        # await direct execution so container termination doesn't abort the research run midway.
+        enqueued = await self.enqueue_job(run_id, company_name, company_url)
+        if not enqueued:
+            await self._dispatch_research_run(
+                research_run_id=run_id,
+                company_id=company.id,
+                company_name=company_name,
+                company_url=company_url,
             )
+
+        # Retrieve current status after dispatch attempt
+        updated_run = self.research_repo.get_by_id(run_id)
+        current_status_str = updated_run.get("status") if updated_run else ResearchStatus.QUEUED.value
+        try:
+            current_status = ResearchStatus(current_status_str)
+        except ValueError:
+            current_status = ResearchStatus.QUEUED
 
         return StartResearchResponse(
             research_run_id=run_id,
             company_id=company.id,
-            status=ResearchStatus.QUEUED,
+            status=current_status,
         )
 
     async def _start_research_async_dispatch(
