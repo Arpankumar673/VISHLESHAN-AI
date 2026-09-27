@@ -10,6 +10,9 @@ from app.schemas.evidence import SourceType
 class PublicSearchAdapter(BaseSourceAdapter):
     """Adapter that queries public knowledge graphs and open APIs for corporate identity resolution."""
 
+    def __init__(self, timeout_seconds: float = 4.0):
+        super().__init__(timeout_seconds=timeout_seconds)
+
     async def collect(
         self,
         company_name: str,

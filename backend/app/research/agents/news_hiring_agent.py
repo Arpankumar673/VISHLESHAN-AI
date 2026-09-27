@@ -335,14 +335,14 @@ class NewsHiringAgent(BaseAgent):
     - Phase 7C: Final hardening, dynamic source reliability, atomic claims, exact publication date integrity
     """
 
-    def __init__(self, timeout_seconds: float = 5.0, search_adapter: Optional[PublicSearchAdapter] = None):
+    def __init__(self, timeout_seconds: float = 4.0, search_adapter: Optional[PublicSearchAdapter] = None):
         super().__init__(
             agent_name="news_hiring",
             agent_description="Gathers corporate press announcements, careers portals, open roles, news events, and recruitment signals.",
             agent_version="1.0",
         )
         self.timeout_seconds = timeout_seconds
-        self.search_adapter = search_adapter or PublicSearchAdapter()
+        self.search_adapter = search_adapter or PublicSearchAdapter(timeout_seconds=4.0)
 
     async def _probe_url(self, target_url: str) -> Dict[str, Any]:
         """Executes active HTTPS probe against target URL safely with SSRF protection."""
@@ -370,8 +370,10 @@ class NewsHiringAgent(BaseAgent):
                     "html": html_text,
                 }
         except httpx.TimeoutException:
+            logger.warning(f"[{self.agent_name}] HTTPS probe timed out ({self.timeout_seconds}s) for {target_url}")
             return {"reachable": False, "status_code": None, "error": f"Timeout ({self.timeout_seconds}s)", "final_url": target_url, "html": ""}
         except Exception as exc:
+            logger.warning(f"[{self.agent_name}] HTTPS probe error for {target_url}: {exc}")
             return {"reachable": False, "status_code": None, "error": f"Connection error: {exc}", "final_url": target_url, "html": ""}
 
     async def execute(
@@ -435,18 +437,24 @@ class NewsHiringAgent(BaseAgent):
             fail_careers = bool(agent_input.context and agent_input.context.get("fail_careers"))
             fail_news = bool(agent_input.context and agent_input.context.get("fail_news"))
 
+            # Single shared homepage probe if valid domain exists (REUSED for both careers and news)
+            main_url = f"https://{clean_domain}" if (clean_domain and _is_safe_public_url(clean_domain)) else None
+            home_res: Optional[Dict[str, Any]] = None
+            if main_url:
+                try:
+                    home_res = await self._probe_url(main_url)
+                except Exception as h_exc:
+                    logger.warning(f"[{self.agent_name}] Shared homepage probe error: {h_exc}")
+
             # -----------------------------------------------------------------
             # STEP A: CAREER DISCOVERY & ACTIVE PROBING (Phase 7A)
             # -----------------------------------------------------------------
             if clean_domain and _is_safe_public_url(clean_domain) and not fail_careers:
                 discovered_urls: List[str] = []
 
-                # Source 1: Probe main homepage to discover HTML career links
-                main_url = f"https://{clean_domain}"
-                home_res = await self._probe_url(main_url)
-
-                if home_res["reachable"]:
-                    page_links = _extract_career_links(home_res["html"], main_url)
+                # Source 1: Reuse shared homepage probe to discover HTML career links
+                if home_res and home_res.get("reachable"):
+                    page_links = _extract_career_links(home_res.get("html", ""), main_url or "")
                     discovered_urls.extend(page_links)
 
                 # Source 2: PublicSearchAdapter career search
@@ -472,13 +480,20 @@ class NewsHiringAgent(BaseAgent):
                     if url_candidate not in unique_candidates:
                         unique_candidates.append(url_candidate)
 
-                # Process top candidate career URLs
-                for cand_url in unique_candidates[:2]:
-                    probe_res = await self._probe_url(cand_url)
+                # Process top candidate career URLs CONCURRENTLY via asyncio.gather
+                if unique_candidates:
+                    top_candidates = unique_candidates[:2]
+                    probe_results = await asyncio.gather(
+                        *[self._probe_url(cand_url) for cand_url in top_candidates],
+                        return_exceptions=True,
+                    )
 
-                    if probe_res["reachable"]:
-                        html = probe_res["html"]
-                        final_url = probe_res["final_url"]
+                    for probe_res in probe_results:
+                        if isinstance(probe_res, Exception) or not isinstance(probe_res, dict) or not probe_res.get("reachable"):
+                            continue
+
+                        html = probe_res.get("html", "")
+                        final_url = probe_res.get("final_url", "")
                         cand_host = _normalize_host(final_url)
 
                         title_match = re.search(r"<title[^>]*>(.*?)</title>", html, re.IGNORECASE | re.DOTALL)
@@ -626,30 +641,29 @@ class NewsHiringAgent(BaseAgent):
             if clean_domain and _is_safe_public_url(clean_domain) and not fail_news:
                 discovered_news: List[Dict[str, Any]] = []
 
-                # Source 1: Check main domain HTML for news links & RSS feeds
-                main_url = f"https://{clean_domain}"
-                main_res = await self._probe_url(main_url)
-
-                if main_res["reachable"]:
-                    news_extracted = _extract_news_links(main_res["html"], main_url)
+                # Reuse main homepage probe result (ZERO duplicate fetch)
+                if home_res and home_res.get("reachable"):
+                    news_extracted = _extract_news_links(home_res.get("html", ""), main_url or "")
                     for n_link in news_extracted["article_links"][:2]:
                         discovered_news.append({"url": n_link, "is_official": True})
 
-                    # If RSS feeds found, fetch and parse RSS
-                    for rss_url in news_extracted["rss_links"][:1]:
-                        rss_res = await self._probe_url(rss_url)
-                        if rss_res["reachable"]:
-                            rss_entries = _extract_rss_entries(rss_res["html"], main_url)
-                            for entry in rss_entries[:3]:
-                                discovered_news.append({
-                                    "url": entry["url"],
-                                    "title": entry["title"],
-                                    "description": entry["description"],
-                                    "published_at": entry["published_at"],
-                                    "is_official": True,
-                                })
+                    # If RSS feeds found, fetch RSS feed concurrently
+                    if news_extracted["rss_links"]:
+                        rss_tasks = [self._probe_url(rss_u) for rss_u in news_extracted["rss_links"][:1]]
+                        rss_results = await asyncio.gather(*rss_tasks, return_exceptions=True)
+                        for rss_res in rss_results:
+                            if isinstance(rss_res, dict) and rss_res.get("reachable"):
+                                rss_entries = _extract_rss_entries(rss_res.get("html", ""), main_url or "")
+                                for entry in rss_entries[:3]:
+                                    discovered_news.append({
+                                        "url": entry["url"],
+                                        "title": entry["title"],
+                                        "description": entry["description"],
+                                        "published_at": entry["published_at"],
+                                        "is_official": True,
+                                    })
 
-                # Source 2: PublicSearchAdapter news search
+                # PublicSearchAdapter news search
                 if self.search_adapter:
                     try:
                         news_search_results = await self.search_adapter.collect(f'"{name}" latest news press release', clean_domain)
@@ -677,27 +691,35 @@ class NewsHiringAgent(BaseAgent):
                     except Exception:
                         context_pub_date = None
 
-                # Process discovered news items
+                # Process discovered news items - probe missing titles CONCURRENTLY via asyncio.gather
                 processed_news_urls: Set[str] = set()
+                news_items_to_process: List[Dict[str, Any]] = []
 
                 for item in discovered_news:
                     item_url = item["url"]
                     if not item_url or item_url in processed_news_urls:
                         continue
                     processed_news_urls.add(item_url)
+                    news_items_to_process.append(item)
 
-                    # Probe news article if missing title/text
-                    raw_title = item.get("title", "")
+                missing_title_items = [it for it in news_items_to_process if not it.get("title")]
+                if missing_title_items:
+                    probe_results = await asyncio.gather(
+                        *[self._probe_url(it["url"]) for it in missing_title_items],
+                        return_exceptions=True,
+                    )
+                    for item, p_res in zip(missing_title_items, probe_results):
+                        if isinstance(p_res, dict) and p_res.get("reachable"):
+                            html = p_res.get("html", "")
+                            title_m = re.search(r"<title[^>]*>(.*?)</title>", html, re.IGNORECASE | re.DOTALL)
+                            item["title"] = re.sub(r"\s+", " ", title_m.group(1)).strip() if title_m else f"{name} News Record"
+
+                for item in news_items_to_process:
+                    item_url = item["url"]
+                    raw_title = item.get("title", "") or f"{name} News Record"
                     raw_desc = item.get("description", "")
                     pub_date = item.get("published_at") or context_pub_date
                     is_off = item.get("is_official", False)
-
-                    if not raw_title:
-                        probe_news = await self._probe_url(item_url)
-                        if probe_news["reachable"]:
-                            html = probe_news["html"]
-                            title_m = re.search(r"<title[^>]*>(.*?)</title>", html, re.IGNORECASE | re.DOTALL)
-                            raw_title = re.sub(r"\s+", " ", title_m.group(1)).strip() if title_m else f"{name} News Record"
 
                     rel_score, conf_score, s_type = _get_news_reliability(item_url, is_off)
                     classified = _classify_news_event(raw_title, raw_desc)

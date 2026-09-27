@@ -94,16 +94,23 @@ export const ResearchProgress: React.FC = () => {
           } else if (data.status === 'running') {
             setAgentSteps((prev) =>
               prev.map((step, idx) => {
-                if (idx < 3) return { ...step, status: 'completed' };
-                if (idx === 3) return { ...step, status: 'running' };
-                return { ...step, status: 'pending' };
+                if (idx === 0) return { ...step, status: 'completed' }; // Orchestrator initialized
+                if (idx >= 1 && idx <= 4) return { ...step, status: 'running' }; // Stage 2 parallel research branches running
+                return { ...step, status: 'pending' }; // Stage 3-5 fan-in pipeline queued
               })
             );
           } else if (data.status === 'failed') {
             setAgentSteps((prev) =>
               prev.map((step, idx) => {
-                if (idx < 2) return { ...step, status: 'completed' };
-                if (idx === 2) return { ...step, status: 'failed' };
+                if (idx === 0) return { ...step, status: 'completed' };
+                if (idx >= 1 && idx <= 4) return { ...step, status: 'failed' };
+                return { ...step, status: 'pending' };
+              })
+            );
+          } else if (data.status === 'queued') {
+            setAgentSteps((prev) =>
+              prev.map((step, idx) => {
+                if (idx === 0) return { ...step, status: 'running' };
                 return { ...step, status: 'pending' };
               })
             );
