@@ -1,4 +1,7 @@
+import ipaddress
+import re
 from typing import Any, Dict, List, Optional, Union
+from urllib.parse import urlparse
 from uuid import UUID
 from app.core.logging import logger
 from app.research.agents.base import (
@@ -11,6 +14,45 @@ from app.research.agents.base import (
 from app.research.models import NormalizedEvidence, SourceFinding
 from app.research.normalizer import EvidenceNormalizer
 from app.schemas.evidence import SourceType, VerificationStatus
+
+
+def _normalize_host(url_or_host: str) -> str:
+    if not url_or_host:
+        return ""
+    cand = url_or_host.strip().lower()
+    if not cand.startswith(("http://", "https://")):
+        cand = "https://" + cand
+    try:
+        parsed = urlparse(cand)
+        host = (parsed.hostname or "").strip().lower()
+        if host.startswith("www."):
+            host = host[4:]
+        return host
+    except Exception:
+        return ""
+
+
+def _is_safe_public_url(url_or_host: str) -> bool:
+    """Verifies that a URL or hostname is public and safe to probe, preventing SSRF attacks."""
+    if not url_or_host:
+        return False
+    host = _normalize_host(url_or_host)
+    if not host:
+        return False
+
+    blocked_names = {"localhost", "127.0.0.1", "0.0.0.0", "::1"}
+    if host.lower() in blocked_names or host.endswith((".local", ".internal", ".lan", ".home", ".arpa")):
+        return False
+
+    try:
+        ip = ipaddress.ip_address(host)
+        if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_multicast or ip.is_reserved:
+            return False
+    except ValueError:
+        pass
+
+    return True
+
 
 
 class VerificationAgent(BaseAgent):
